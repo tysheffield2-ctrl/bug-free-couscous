@@ -7,5 +7,15 @@
       "binding": "BUCKET",
       "bucket_name": "encore-saves"
     }
-  ]
+  ],
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "destination_address": "tysheffield2@icloud.com"
+    }
+  ],
+  "vars": {
+    "FEEDBACK_TO": "tysheffield2@icloud.com",
+    "FEEDBACK_FROM": "feedback@encoremusicsim.com"
+  }
 }
