@@ -1,3 +1,19 @@
+# ENCORE — Studio & Career update · 0.3.2-beta.1
+
+This update is based on the GitHub/Cloudflare build and preserves the existing R2 save bucket and feedback email binding.
+
+- Swipeable radio selectors for creative direction, production budget and album pricing; keyboard access remains available.
+- Eight creative directions affect craft weights, debut reach, fan conversion, discovery and longevity.
+- Active drafts, parked projects and unstarted song ideas persist between weeks. Resume projects from Create → Project library. A same-revision local checkpoint can recover a change interrupted before its server save; it never overrides a conflicting server revision.
+- Six targeted marketing channels, up to two different channels per week. Review costs, target and expected reach before booking. Existing campaign budgets and four-week rollouts remain.
+- Album downloads priced at $5, $10, $15 or $20. Prices change future demand; downloads enter cash, taxes, overhead, album chart units and certifications. Streaming payout remains $0.50. Historical sales are not invented.
+- Settings in the persistent header. Career grouped into Overview, Business, Legacy and Manage. Navy, teal and gold Career edition.
+- Weekly recap omits already-paid action expenses; full weekly accounting remains in Finances.
+
+Validation: automated checks cover all three draft stages across week advance and save/reload; parked project swaps; pending idea recovery and conflicting saves; campaign targeting/limits; import validation; paid album units and no duplicate income; normal and sandbox modes. Physical iPhone layout has not been verified in this environment.
+
+Editable gameplay/UI extension: `src/experience.js`. Main simulation: `src/core.js`. Styles: `dist/index.html`. Build with `npm run build`; do not edit generated `dist/game.js` or `dist/server/index.js` directly.
+
 # ENCORE — full editable project
 
 This beta export includes version labels, known issues, tester checklist, player-controlled report sharing, backup reminders, and a title screen shown at every launch, portable career export/import, recovery snapshots, optional isolated practice, five tour venue tiers, three recording budgets, multi-week album campaigns, incoming career offers, 26-week label contracts, annual ENCORE Record Awards, audience churn, release lifecycle/genre fit, career milestones, and optional replayable tutorial, light/dark mode, condensed Home, and background-based starting skills and fans, 100 starting energy, six starting time slots, achievement collection and memo briefings, weekly song and album chart history, automatic song/album certifications, redesigned career profile, large-number denominations through decillion, installable offline edition at /offline, income taxes, career overhead, NO living-cost charges, separate sandbox, live career profile, dedicated Stats tab, independent abilities, progressive energy-based XP training, song quality and commercial potential, local touring, 50-cent stream payouts, six weekly slots, +40 weekly energy, charts, collaborations, albums, and save support. No ChatGPT credentials or player save data are included. You can edit this source without ChatGPT credits.
@@ -75,3 +91,4 @@ This export contains the code, NOT your existing career or other players' data. 
 https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository
 https://developers.cloudflare.com/r2/reference/wrangler-commands/
 https://developers.cloudflare.com/workers/wrangler/configuration/
+

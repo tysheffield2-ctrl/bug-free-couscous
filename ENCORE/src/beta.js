@@ -1,5 +1,5 @@
 /* Beta support: explicit, player-controlled sharing; no automatic reports. */
-const GAME_VERSION='0.3.1-beta.1';
+const GAME_VERSION='0.3.2-beta.1';
 const PUBLIC_GAME_URL='https://encoremusicsim.com';
 const BETA_EXPORT_KEY='encore-last-export-'+(SANDBOX?'sandbox':'career')+'-'+(OFFLINE?'offline':'online');
 let betaReportText='';
@@ -33,3 +33,4 @@ async function shareBetaText(invitation){const text=invitation?betaInvitation():
 function downloadBetaReport(){const url=URL.createObjectURL(new Blob([betaReportText],{type:'text/plain;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='ENCORE-beta-report.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);$('beta-copy-status').textContent='Download prepared. Send the saved file to your beta host.'}
 function noteBetaExport(){try{localStorage.setItem(BETA_EXPORT_KEY,JSON.stringify({week:s.week,at:Date.now()}))}catch{}}
 function betaHomeNotice(){let last=null;try{last=JSON.parse(localStorage.getItem(BETA_EXPORT_KEY)||'null')}catch{}const due=s.started&&(!last||s.week-last.week>=4||s.week<last.week);return `<aside class="beta-strip"><div><strong>ENCORE BETA · ${GAME_VERSION}</strong><p>${due?'Keep a downloaded career backup. Recovery snapshots stay on this device.':'Help us test your first ten weeks. Report confusing controls, bugs, or balance issues.'}</p></div><div class="controls">${due?'<button class="secondary" onclick="exportCareer()">Export backup</button>':''}<button class="secondary" onclick="betaInfo()">Beta & feedback</button></div></aside>`}
+
