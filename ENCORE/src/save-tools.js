@@ -35,7 +35,7 @@ function validateBundle(bundle){
  for(const t of state.careerRecords.tours)if(!t||!numeric(t,['week','gross','profit','fans','review'])||typeof t.title!=='string')throw Error('Invalid tour record.');
  if(e){for(const a of e.awards)if(!a||!numeric(a,['year','score'])||typeof a.nominated!=='boolean'||typeof a.won!=='boolean')throw Error('Invalid award.');for(const m of e.timeline)if(!m||typeof m.id!=='string'||typeof m.title!=='string'||typeof m.detail!=='string'||!Number.isFinite(m.week))throw Error('Invalid milestone.');}
  const candidate=JSON.parse(JSON.stringify(state)),active=s;
- try{s=candidate;migrateCharts();migratePacing();migrateDevelopment();migrateCareerRecords();migrateFinance();migrateChartBook();migrateAchievements();migrateExpansion();for(const view of [home,studio,careerProfile,catalog,training,financeScreen,achievementsPage,certificationsPage,tourPage,marketingPage,opportunitiesPage,labelPage,legacyPage])view();}
+ try{s=candidate;migrateCharts();migratePacing();migrateDevelopment();migrateCareerRecords();migrateFinance();migrateChartBook();migrateAchievements();migrateExpansion();migrateLabelBusiness();validateLabelBusiness();for(const view of [home,studio,careerProfile,catalog,training,financeScreen,achievementsPage,certificationsPage,tourPage,marketingPage,opportunitiesPage,labelPage,legacyPage])view();}
  catch{throw Error('This save has incomplete gameplay data. Your active career was not changed.');}finally{s=active}
  return candidate;
 }

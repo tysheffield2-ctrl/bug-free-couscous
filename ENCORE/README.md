@@ -1,3 +1,17 @@
+# ENCORE 0.4.0-beta.1 — Labels & direct features
+
+Career → Business → Labels now supports incoming offers and demo submissions. Offers can be standard recording deals, a negotiated lower share with a smaller advance, or a 360 deal with a larger advance. Recording deals cover streaming and album downloads; 360 adds live income. Existing contracts retain their previous streaming-only scope. Deals expire without renewal.
+
+Independent players can found a label for $25,000, 1 slot and 10 energy. Negotiate recording/360 rights, 10–80% label shares, 26/52-week terms and non-recoupable advances. Higher shares, longer terms and 360 rights raise the requested advance; relationships, reputation and A&R staff matter. Review and confirm before payment. Artists can belong to only one active player-owned contract. Maximum roster: 3, or 6 with a manager.
+
+Staff: manager $1,500/week, marketing $2,500/week, A&R $1,000/week. Unfunded payroll pauses staff without charging that week. Marketing adds 15% to new roster-release streams while funded. A&R reduces requested advances by 15% while hired. Hiring/dismissal requires confirmation; no action slot. Weekly settlements are automatic.
+
+Roster recording receipts use $0.50 times eligible weekly streams times the negotiated share. Pre-signing catalog is excluded, including same-week releases already present at signing. 360 live/merch gross is a simplified modeled amount every fourth contract week: fans × 0.02 × (0.5 + skill/100), then the negotiated share. 360 deals at 60%+ label share reduce the relationship by one each week. Receipts, payroll and tax accounting are tracked separately; no income is collected after expiry. Signing advances are deductible costs, not recoverable loans in this version.
+
+Create → active song → Choose a featured artist opens genre filters, prices, access requirements, talk/negotiation and confirmed booking without leaving the project. Booking consumes no additional slot; social actions still use 1 slot and 5 energy. Weekly slots remain six while routine label work is automatic.
+
+Implementation: src/label-business.js. Build: npm run build. Validation: node tests/label-business.mjs and node tests/lab-editor.mjs. Automated checks cover formation, confirmation, payroll, duplicate protections, revenue, expiry, import/reload, feature booking, pre-signing exclusions and insufficient payroll. Physical iPhone UI testing was not performed in this environment.
+
 # ENCORE 0.3.3-beta.1 — Sandbox editor & title dial
 
 Sandbox banner → Edit sandbox opens the editor for eight skills, cash, fans, energy, time slots, reputation, loyalty and every artist relationship. Save changes explicitly; normal-mode functions reject these edits. Changing a skill resets that skill’s XP. Test money is not earned revenue. Existing recordings retain their original quality.
