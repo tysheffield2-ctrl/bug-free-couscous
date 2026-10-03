@@ -1,5 +1,5 @@
 /* Beta support: explicit, player-controlled sharing; no automatic reports. */
-const GAME_VERSION='0.3.2-beta.1';
+const GAME_VERSION='0.3.3-beta.1';
 const PUBLIC_GAME_URL='https://encoremusicsim.com';
 const BETA_EXPORT_KEY='encore-last-export-'+(SANDBOX?'sandbox':'career')+'-'+(OFFLINE?'offline':'online');
 let betaReportText='';

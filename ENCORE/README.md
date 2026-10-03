@@ -1,3 +1,13 @@
+# ENCORE 0.3.3-beta.1 — Sandbox editor & title dial
+
+Sandbox banner → Edit sandbox opens the editor for eight skills, cash, fans, energy, time slots, reputation, loyalty and every artist relationship. Save changes explicitly; normal-mode functions reject these edits. Changing a skill resets that skill’s XP. Test money is not earned revenue. Existing recordings retain their original quality.
+
+Song and album name fields now offer a draggable rotary record dial with 40 suggestions per batch, previous/next controls, mouse wheel and arrow-key support. Custom typed names and Shuffle remain available.
+
+The expanded generator combines thousands of names and title patterns, tracks the last 500 suggestions per category, and avoids names/titles already used in the current world and catalog. Existing artists keep their identity; new games generate a fresh cast.
+
+Edit src/name-generator.js for vocabulary and src/lab-editor.js for sandbox/dial behavior. Version and build use the existing GitHub/Cloudflare pipeline.
+
 # ENCORE — Studio & Career update · 0.3.2-beta.1
 
 This update is based on the GitHub/Cloudflare build and preserves the existing R2 save bucket and feedback email binding.
