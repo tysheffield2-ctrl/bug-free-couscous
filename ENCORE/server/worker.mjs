@@ -101,7 +101,7 @@ export default {
         if(request.headers.get('Origin')!==url.origin)return json({error:'Origin not allowed'},403);
         if(!request.headers.get('Content-Type')?.includes('application/json'))return json({error:'JSON required'},415);
         const raw=await request.text();
-        if(raw.length>2000000)return json({error:'Save too large'},413);
+        if(raw.length>8500000)return json({error:'Save too large'},413);
         let save;try{save=JSON.parse(raw)}catch{return json({error:'Invalid JSON'},400)}
         if(save.schemaVersion!==1||!save.state||!Number.isInteger(save.state.week)||!Array.isArray(save.state.songs)||!Array.isArray(save.state.world))return json({error:'Invalid career'},400);
         if(!!save.state.sandbox!==lab)return json({error:'Wrong game mode'},400);
@@ -132,3 +132,4 @@ function offlineAssets(path){
   if(path==='/sw.js')return {type:'text/javascript; charset=utf-8',body:`const CACHE='encore-offline-__OFFLINE_VERSION__';const ASSETS=['/offline','/offline/','/offline/sandbox','/offline/sandbox/','/game.js','/manifest.webmanifest','/offline-icon.svg'];self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('encore-offline-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==self.location.origin||!ASSETS.includes(u.pathname))return;e.respondWith(caches.open(CACHE).then(async c=>{const hit=await c.match(u.pathname);return hit||fetch(e.request)}))});self.addEventListener('message',e=>{if(e.data?.type==='CHECK_OFFLINE')e.waitUntil(caches.open(CACHE).then(async c=>{const files=await Promise.all(ASSETS.map(p=>c.match(p)));e.ports[0]?.postMessage({ready:files.every(Boolean)})}))});`};
   return null
 }
+

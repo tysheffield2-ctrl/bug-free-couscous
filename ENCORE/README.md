@@ -1,3 +1,47 @@
+# ENCORE 0.6.0-beta.1 — The Empire expansion
+
+This version adds connected social, ownership and wealth gameplay while preserving existing careers. The sections below this release note document older builds; this section supersedes their pacing and feature limits.
+
+## Play and test
+
+- Normal career: https://encoremusicsim.com/
+- Separate sandbox: https://encoremusicsim.com/sandbox
+- Offline normal/sandbox: /offline and /offline/sandbox (open online first to install/cache).
+- These links show the new version after Cloudflare successfully deploys this commit. Check Settings for 0.6.0-beta.1. GitHub source publication is not itself proof of successful deployment.
+- Export a save before testing a large update. Normal and sandbox saves remain isolated.
+
+## Monthly progression
+
+Advance month resolves 4, 4, then 5 chart weeks, repeating: 12 advances equal 52 weeks. Chart movement, history, label terms and annual income-tax settlement retain their original weekly clock for save compatibility. Each monthly advance restores 200 energy; no time slots. Rest restores 40 once per playable month. Saved unfinished songs persist. Existing careers start the new cadence from their saved week; no time is skipped during migration. The new recap aggregates all chart weeks and cash changes. If an internal settlement throws, the monthly operation restores its starting state.
+
+## Social and deals
+
+PULSE has five post formats, captions, linked-song promotion, discovery surges, replies, industry-post support, followers distinct from true fans, engagement analytics and label scouting thresholds. Recent engaged reach affects advance capacity and minimum label shares. Up to three posts per playable month; posting alone does not guarantee discovery. The recent signal uses an eight-chart-week window. Label offers last nine chart weeks to remain actionable after a monthly advance. Notification buttons open negotiations; review, counter, sign or decline.
+
+Deal room adds live catalog estimates, monthly valuation history, catalog-participation buybacks and full contract buyouts. Estimates use current weekly streaming royalties times 52 times a quality multiplier of 1.5–2.5. They are neither cash nor guaranteed sale quotes. A buyout combines remaining credited label investment and discounted remaining-term expected royalties. Previous label receipts and buyback payments reduce investment still priced in. Catalog participation is term-limited, including existing contracts: no new permanent ownership is imposed on old saves. Catalog buyback removes recording/download shares and halves support; a 360 share still applies to non-recording career income. Full buyout ends all future shares and support. Payments are capitalized, not immediately deducted; advances retain their prior non-recoupable taxable treatment.
+
+## Wealth and properties
+
+Dedicated Wealth, Properties, Team and Commerce screens have original inline SVG category art, descriptions and cost reviews. Fourteen assets cover cars, jewelry, art, homes/rental buildings, stocks, bonds and fictional crypto. All can appreciate or depreciate monthly, and physical condition affects value. Bulk maintenance restores condition; bulk renovation has three tiers, adds 5% property value and 8% future asking rent, and leaves current lease rent intact. Purchases add tax to basis rather than career expenses; sales charge 2% and only gains/losses enter taxable revenue. Distributions and rent are taxable. Fictional purchase taxes: goods 8%, property 2%, securities 0%; property tax 1% annually collected monthly. Unrealized gains are untaxed. This is a simplified game model, not a complete real-world tax implementation.
+
+Rental management includes custom asking rent (up to three times market), 1–24-month leases, three screened applicants, reliability, projected occupancy, missed rent, arrears recovery, expiry/vacancy, upkeep and property taxes. Excessive rent reduces occupancy quadratically. Multi-unit buildings and quantity purchases currently use one aggregate tenant profile, not individual households. Renovations are capitalized in basis; rented-property operating costs are deductible. Personal property upkeep is not.
+
+## Team, commerce and collaborations
+
+Eleven selectable specialists cover artist managers, accountants, financial advisers, social managers and security. Competence, monthly salary and incident risk are visible before hiring. Unfunded roles pause; funded roles have explicit benefits and can suffer disclosed handling losses. Security incidents offer report, ignore or pay decisions. This is a fictional event system, not a criminal simulation.
+
+Eight merchandise products accept custom quantity and price, incur production cost upfront, retain unsold inventory, and sell monthly according to audience and price-sensitive demand. Five rotating media-offer categories support counteroffers, acceptance and decline. Active 360 contracts share touring, merchandise and media gross, excluding investments/rents. Artist staff is monthly; existing owned-label staff still settles its disclosed weekly payroll within the monthly advance.
+
+Songs support six distinct featured artists, with separate fees, relationships and diminishing incremental audience reach. A searchable, paginated directory provides 2,500 uniquely named additional artists across 14 genres and all seven fame tiers. Artists join the ongoing release simulation when contacted; the full directory is not simulated eagerly. Existing single-guest songs migrate through a backward-compatible guest list. Released songs display all featured names. Album assembly offers Select all/Clear for more than five eligible recordings.
+
+Artist File is a dedicated screen with current estimated wealth and career statistics, comparing fans, cash, streams and wealth with the last visit. New chart entries after release week generate a deduplicated celebration and chart shortcut.
+
+## Development and validation
+
+Source modules are in src/. Run npm run build to regenerate dist/game.js and dist/server/index.js. The existing Cloudflare Worker, R2 save bindings and email-feedback integration are preserved; the save size limit grows to accommodate expanded rosters. Do not place secrets in source.
+
+Run npm test for sandbox/name/label regression checks plus monthly year/energy preservation, new screen rendering, live Artist File, 2,500 unique directory names, six guests and save/reload, social limits/leverage, cost basis and sale-gain accounting, rentals/renovation, buyouts, merchandise/media, team payroll, delayed chart alerts, and malformed-save rejection. These are automated logic/render-string checks; physical iPhone interaction and screenshot review have not been performed. Cloudflare production deployment must be checked separately after pushing.
+
 # ENCORE 0.5.0-beta.1 — Custom negotiations & 200 energy
 
 All action-slot limits are removed. A new career and each new week start with 200 energy. Rest restores up to 40 once per week. Existing careers receive a one-time 200-energy migration; save/reload after that preserves remaining energy. Song creation still costs 45 total energy; feature booking costs 5, staff changes 5, counteroffers 5, and artist contract signing 10. Recurring operations remain automatic. Menus, previews and sandbox editing are free.
