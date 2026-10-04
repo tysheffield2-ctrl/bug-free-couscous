@@ -1,5 +1,13 @@
  {id:'jacket',name:'Limited Artist Jacket',price:325,cost:105,energy:15,conversion:.00028,detail:'Prestige merch with lower volume and high margin.'},
- {id:'cap',name:'Embroidered Cap',price:55,cost:16,energy:8,conversion:.0012,detail:'Easy add-on item that travels well on tour.'}
+ {id:'cap',name:'Embroidered Cap',price:55,cost:16,energy:8,conversion:.0012,detail:'Easy add-on item that travels well on tour.'},
+ {id:'poster',name:'Numbered Tour Poster',price:35,cost:7,energy:7,conversion:.00145,detail:'Low-cost collectible that sells well around tour dates.'},
+ {id:'jersey',name:'Artist Jersey',price:145,cost:47,energy:12,conversion:.00072,detail:'Premium apparel with strong visual branding and healthy margin.'},
+ {id:'boxset',name:'Deluxe Collector Box',price:225,cost:82,energy:16,conversion:.00038,detail:'Music, booklet, signed insert and limited collectibles for core fans.'},
+ {id:'photo',name:'Signed Photo Set',price:65,cost:9,energy:9,conversion:.0009,detail:'High-margin signed collectible with limited production capacity.'},
+ {id:'fragrance',name:'Artist Fragrance',price:135,cost:38,energy:18,conversion:.00034,detail:'Lifestyle extension with stronger brand upside and higher inventory risk.'},
+ {id:'chain',name:'Tour Jewelry Capsule',price:240,cost:88,energy:18,conversion:.00022,detail:'Small jewelry collection aimed at high-spend fans.'},
+ {id:'sneaker',name:'Limited Sneaker Collab',price:275,cost:112,energy:20,conversion:.0002,detail:'Scarce fashion drop with high prestige, cost and sell-out potential.'},
+ {id:'membership',name:'Annual Fan Membership',price:95,cost:12,energy:12,conversion:.00085,detail:'Digital membership bundle with exclusives, presales and recurring fan value.'}
 ];
 function migrateEmpire(){
  if(!s.empire)s.empire={version:1,createdWeek:s.week,social:{},offers:[],assets:[],staff:[],catalogRights:{},taxLedger:[],artistViews:{},universeRelations:{},universePage:0,wealthHistory:[],lastTick:0,ancillaryWeek:{merch:0,media:0,brand:0}};
