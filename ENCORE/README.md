@@ -1,3 +1,15 @@
+# ENCORE 0.5.0-beta.1 — Custom negotiations & 200 energy
+
+All action-slot limits are removed. A new career and each new week start with 200 energy. Rest restores up to 40 once per week. Existing careers receive a one-time 200-energy migration; save/reload after that preserves remaining energy. Song creation still costs 45 total energy; feature booking costs 5, staff changes 5, counteroffers 5, and artist contract signing 10. Recurring operations remain automatic. Menus, previews and sandbox editing are free.
+
+Contracts accept typed advances ($0 through the safe whole-dollar limit), label shares (1–90%) and durations (4–104 weeks). Artist and owned-label roster contracts offer recording, distribution and 360 types. Distribution covers recordings and album downloads with reduced support; 360 also covers live income (roster live/merch follows the model below). Each label may restrict its supported contract types.
+
+Eight labels: Boutique, Major, Afterhours Records, Neon Circuit, Open Road Music, Atlas Worldwide, Ironlight Audio, Independent Exchange. Each has its own fan/reputation requirements, demo target, budget, baseline royalty share, reach support and preferred starting term. Several have genre interests that improve negotiation leverage. Offers vary in advance, percentage, duration and type.
+
+Both scouted offers and successful demos open the same negotiation form. Enter terms and submit a counter; the label either accepts or sends a counter with its minimum acceptable share and affordable advance. Charisma, reputation, genre fit and marketability affect those terms. Further counters remain possible while the offer is valid and you have energy. Sign only after a separate confirmation showing the current proposal and full income scope. Existing signed contracts retain their original terms.
+
+Validation: node tests/negotiations.mjs, node tests/label-business.mjs and node tests/lab-editor.mjs. Checks include >6 actions in a week, recovery limits, migration, save/reload, input validation, arbitrary percentages and durations, counteroffers, no premature signing, duplicate-signing prevention, distribution scope, roster accounting and expiry. Physical iPhone UI testing has not been performed here.
+
 # ENCORE 0.4.0-beta.1 — Labels & direct features
 
 Career → Business → Labels now supports incoming offers and demo submissions. Offers can be standard recording deals, a negotiated lower share with a smaller advance, or a 360 deal with a larger advance. Recording deals cover streaming and album downloads; 360 adds live income. Existing contracts retain their previous streaming-only scope. Deals expire without renewal.
