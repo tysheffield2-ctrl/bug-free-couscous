@@ -1,3 +1,7 @@
+# Current build: 0.7.0-beta.1
+
+See [RELEASE-0.7.0.md](RELEASE-0.7.0.md) for the living-world update, editable modules and test limits. Run `npm test` before deployment.
+
 # ENCORE 0.6.1-beta.1 — Backstage & Private Office
 
 Backstage is now the home and title-screen art direction: original photographic concert scenery, live cash/fans/energy controls, a compact hero and direct action rows for recording, offers and latest releases. Private Office gives Wealth, Properties and Artist File forest-green surfaces, champagne accents, a photographic property hero and readable portfolio controls. Both screen types use real HTML controls over decorative imagery, not flattened mockups. Existing light-mode preference remains available; first-time default is dark.

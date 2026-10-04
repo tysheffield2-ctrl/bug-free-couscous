@@ -6,3 +6,6 @@ Created with the built-in image-generation tool for this project. No UI text is 
 - assets/estate.webp: modern hillside residence with pool at sunset, forest-green shadows, warm interior lighting and champagne sunset, realistic property photography, no people or text.
 
 Generated PNG originals remain in the generation output; these WebP copies are compressed for delivery. src/artwork.js contains the exact WebP bytes as data URLs and is consumed by the build. To replace an image, replace its data URL in ENCORE_ART, then run npm run build. No layout or controls are embedded in these images.
+
+## Living-world assets
+Ten additional original generated photographs are in assets/: coupe, hypercar, chain, watch, canvas, sculpture, condo, villa, duplex and block. Compressed WebP copies are embedded by src/asset-photos.js for offline availability. Brand names and financial instruments are fictional.
