@@ -19,3 +19,18 @@ m.run(`s.energy=200;hireTeam('m1',true);hireTeam('a1',true);globalThis.funds=s.c
 const n=harness('/sandbox');await n.run('boot()');n.run(`s.chartWeek=3;s.week=3;s.chartBook.sinceWeek=1;globalThis.song=s.songs[0];song.streams=1e10;song.total=1e10;trackChartIssue('songs',compileSongs());lateChartAlerts();lateChartAlerts()`);assert.equal(n.run('s.achievements.briefings.filter(x=>x.id.startsWith("late-chart:")).length'),1);
 h.run('validateBundle(saveBundle())');await h.run('saveNow()');await h.run('boot()');assert.equal(h.run('guestList(s.draft).length'),6);h.run(`globalThis.bad=saveBundle();bad.state.empire.assets[0].value=-1`);assert.throws(()=>h.run('validateBundle(bad)'));
 console.log('PASS monthly year/energy/project preservation, new screen renders, live Artist File, 2,500 names, six guests/save reload, social limits/leverage, asset basis/gain taxes, leases/renovation, buyouts, commerce, payroll, late-chart alerts and invalid-save rejection.');
+
+// Calendar is consistent across gameplay, title, recap, migration and year rollover.
+assert.equal(m.run('careerDate()'),'Month 01 · Year 02');
+assert.ok(m.elements.modal.innerHTML.includes('Month 12 · Year 01'));
+assert.equal(m.run('s.empire.lastMonth.monthIndex'),11);
+const calendar=harness('/');await calendar.run('boot()');
+assert.equal(calendar.run('careerDate()'),'Month 01 · Year 01');
+calendar.run('s.week=5;delete s.empire.calendarVersion;migrateCalendar()');
+assert.equal(calendar.run('careerDate()'),'Month 02 · Year 01');
+calendar.run('s.week=53;delete s.empire.calendarVersion;migrateCalendar();renderTitle()');
+assert.equal(calendar.run('careerDate()'),'Month 01 · Year 02');
+assert.ok(calendar.run('home()').includes('backstage-home'));
+assert.ok(calendar.run('wealthPage()').includes('PRIVATE OFFICE'));
+assert.ok(calendar.run('ENCORE_ART.backstage.startsWith("data:image/webp;base64,")'));
+console.log('PASS calendar migration/year rollover, completed-month recap, new screen markup and embedded offline artwork.');

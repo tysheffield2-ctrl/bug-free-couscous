@@ -1,3 +1,13 @@
+# ENCORE 0.6.1-beta.1 — Backstage & Private Office
+
+Backstage is now the home and title-screen art direction: original photographic concert scenery, live cash/fans/energy controls, a compact hero and direct action rows for recording, offers and latest releases. Private Office gives Wealth, Properties and Artist File forest-green surfaces, champagne accents, a photographic property hero and readable portfolio controls. Both screen types use real HTML controls over decorative imagery, not flattened mockups. Existing light-mode preference remains available; first-time default is dark.
+
+Month and Year share a calendar counter on the title, main header, home, wealth, artist file and monthly recap. A 4/4/5 chart-week cycle remains underneath; Month 12 Year 1 advances to Month 1 Year 2. The recap labels the completed month, while Continue identifies the new month. Old careers derive their starting month from their saved chart week once without resetting skills, cash, projects or contracts. Weekly labels remain for weekly chart/history records.
+
+Original photographic assets are compressed WebP images embedded by src/artwork.js so offline play has no external image dependency. Editable screen markup is src/presentation.js; styles are src/presentation.css. The build injects one stylesheet block idempotently. assets/ contains the compressed image originals. Asset generation notes are in ASSET-NOTES.md.
+
+Validation: npm test passes all existing regression checks plus calendar migration, completed-month recap and year rollover. Browser screenshot/physical iPhone checks were not completed: browser installation failed in the build environment. Confirm 0.6.1-beta.1 in Settings after Cloudflare deploys, then inspect sandbox on a real phone. Hosting completion is separate from the GitHub push.
+
 # ENCORE 0.6.0-beta.1 — The Empire expansion
 
 This version adds connected social, ownership and wealth gameplay while preserving existing careers. The sections below this release note document older builds; this section supersedes their pacing and feature limits.
