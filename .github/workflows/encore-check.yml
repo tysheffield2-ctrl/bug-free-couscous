@@ -1,0 +1,27 @@
+name: ENCORE Check
+
+on:
+  pull_request:
+    paths:
+      - 'ENCORE/**'
+      - '.github/workflows/encore-check.yml'
+  push:
+    branches:
+      - encore-empire-overhaul
+    paths:
+      - 'ENCORE/**'
+      - '.github/workflows/encore-check.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ENCORE
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install --no-audit --no-fund
+      - run: npm run build
