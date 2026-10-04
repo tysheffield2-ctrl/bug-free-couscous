@@ -12,9 +12,13 @@ on:
       - 'ENCORE/**'
       - '.github/workflows/encore-check.yml'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: ENCORE
