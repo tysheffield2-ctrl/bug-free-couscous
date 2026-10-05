@@ -8,7 +8,6 @@ V086_startCampaign=function(id){
  const old=V086_activeCampaign();
  if(old?.lastPaidWeek===s.week)s.boost=Math.max(0,s.boost-old.plan.streamBoost);
  if(!spend(5,p.cost)){if(old?.lastPaidWeek===s.week)s.boost+=old.plan.streamBoost;return}
- s.finance.week.expenses=cents((s.finance.week.expenses||0)+p.cost);
  s.v086.catalogCampaign={planId:p.id,startedWeek:s.week,lastPaidWeek:s.week,weeksPaid:(old?.planId===p.id?(old.weeksPaid||0):0)+1,totalSpent:cents((old?.planId===p.id?(old.totalSpent||0):0)+p.cost),autoRenew:true};
  s.boost+=p.streamBoost;moneyEvent('Catalog campaign · '+p.name,-p.cost);log(p.name+' active: +'+Math.round(p.streamBoost*100)+'% catalog streams and +'+Math.round(p.fanBoost*100)+'% fan conversion this week.');$('modal').close();render()
 };
