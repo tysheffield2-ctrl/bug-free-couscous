@@ -2,7 +2,7 @@ import vm from 'node:vm';import fs from 'node:fs';import assert from 'node:asser
 const source=fs.readFileSync(new URL('../dist/game.js',import.meta.url),'utf8').replace(/boot\(\);\s*$/,'');
 function harness(path='/sandbox'){const elements={},storage=new Map(),events={};let stored=null;const c={console,location:{pathname:path},localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)},document:{getElementById(id){return elements[id]??=({innerHTML:'',textContent:'',hidden:false,open:false,showModal(){this.open=true},close(){this.open=false}})},addEventListener(){},querySelectorAll(){return[]}},window:{scrollTo(){},addEventListener(k,fn){events[k]=fn}},setTimeout(){return 1},clearTimeout(){},fetch:async(u,o={})=>({ok:true,status:200,json:async()=>o.method==='PUT'?(stored=JSON.parse(o.body),{etag:'test'}):({save:stored,etag:stored?'test':null})}),FormData:class{constructor(v){this.v=v}get(k){return this.v[k]??null}getAll(k){return this.v[k]||[]}}};vm.createContext(c);vm.runInContext(source,c);return {run:x=>vm.runInContext(x,c),c,elements}}
 const h=harness();await h.run('boot()');
-assert.equal(h.run('GAME_VERSION'),'0.8.2-beta.1');
+assert.equal(h.run('GAME_VERSION'),'0.8.3-beta.1');
 h.run('migrateV080()');assert.equal(h.run('s.v080.version'),1);
 assert.ok(h.run("navigationTools().includes('Inbox')"));assert.ok(h.run("menuResults('catalog').includes('Catalog Market')"));assert.ok(h.run("guideResults('offers').includes('Offers Center')"));
 // New label offers are protected until first review.
