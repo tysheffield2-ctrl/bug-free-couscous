@@ -1,0 +1,12 @@
+import vm from 'node:vm';import fs from 'node:fs';import assert from 'node:assert/strict';
+const source=fs.readFileSync(new URL('../src/v085-unique-portraits.js',import.meta.url),'utf8');
+const world=Array.from({length:24},(_,i)=>({id:i,name:'Artist '+i,genre:'Pop',fans:1000}));
+const c={console,s:{world,v085:null},V083_nameGender:n=>n.includes('Mira')?'female':n.includes('Cairo')?'male':'neutral',esc:x=>x,personPhoto:()=>'<legacy>',industryTab:'Artists',industry:()=>'<span>18 featured · 18 active artists</span>',render:()=>'<render>',makeWorld:()=>world.map(x=>({...x})),V084_activeIndustryRoster:w=world=>w.slice(0,18),V084_filteredIndustryRoster:w=>w.slice(0,18),V084_featuredIndustryRoster:w=>w.slice(0,8)};
+vm.createContext(c);vm.runInContext(source,c);
+const made=c.makeWorld();assert.equal(made.length,24);assert.equal(made.slice(0,18).filter(x=>x.coreArtist).length,18);assert.equal(new Set(made.slice(0,18).map(x=>x.portraitId)).size,18);assert.equal(made[0].name,'Mira Wells');assert.equal(made[1].name,'Cairo Vale');
+c.s.world=made;c.migrateV085();assert.equal(new Set(c.s.world.slice(0,18).map(x=>x.portraitId)).size,18);
+const portraits=Array.from({length:18},(_,i)=>c.V085_portraitSource(`artist-${String(i+1).padStart(2,'0')}`));assert.equal(portraits.every(Boolean),true);assert.equal(new Set(portraits).size,18);
+const mira=c.personPhoto('artist-0','Mira Wells');const cairo=c.personPhoto('artist-1','Cairo Vale');assert.ok(mira.includes('v085-core-portrait'));assert.ok(cairo.includes('v085-core-portrait'));assert.notEqual(mira,cairo);
+assert.equal(c.V084_featuredIndustryRoster(made).length,18);assert.ok(c.industry().includes('18 artists'));assert.equal(c.industry().includes('featured'),false);
+const built=fs.readFileSync(new URL('../dist/game.js',import.meta.url),'utf8');assert.ok(built.includes('0.8.4-beta.1'));assert.ok(built.includes('Mira Wells'));assert.ok(built.includes('Kofi Dawn'));
+console.log('PASS 18 permanent unique core-artist portraits, canonical new-career identities and save migration.');
