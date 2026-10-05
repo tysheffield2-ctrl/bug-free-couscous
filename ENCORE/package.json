@@ -7,7 +7,7 @@
     "build": "node build.mjs",
     "dev": "npm run build && npx wrangler dev",
     "deploy": "npm run build && npx wrangler deploy",
-    "test": "npm run build && node tests/lab-editor.mjs && node tests/label-business.mjs && node tests/negotiations.mjs && node tests/empire.mjs && node tests/living-world.mjs && node tests/guidance-catalog.mjs && node tests/world-tours.mjs && node tests/v080.mjs && node tests/v081.mjs && node tests/v082.mjs && node tests/v083.mjs"
+    "test": "npm run build && node tests/lab-editor.mjs && node tests/label-business.mjs && node tests/negotiations.mjs && node tests/empire.mjs && node tests/living-world.mjs && node tests/guidance-catalog.mjs && node tests/world-tours.mjs && node tests/v080.mjs && node tests/v081.mjs && node tests/v082.mjs && node tests/v083.mjs && node tests/portrait-hotfix.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
