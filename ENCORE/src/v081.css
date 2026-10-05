@@ -1,0 +1,12 @@
+/* ENCORE 0.8.1 depth surfaces */
+.investment-note,.interest-meter,.recap-financial{border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:16px;background:color-mix(in srgb,var(--panel) 88%,transparent);display:grid;gap:8px}
+.investment-note strong,.investment-note span{display:block}.investment-note span{font-size:1.08rem;font-weight:800}
+.v081-chart{width:100%;height:auto;min-height:140px;margin-top:12px;color:var(--accent)}.v081-chart path{stroke:currentColor;opacity:.14}.v081-chart polyline{vector-effect:non-scaling-stroke}
+.market-intelligence{margin-bottom:18px}
+.upgrade-grid,.roster-intel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.upgrade-card{border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:8px}.upgrade-card>span{font-size:.8rem;opacity:.75}
+.roster-intel .person-photo{margin-bottom:12px}.mini-skill-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}.mini-skill-grid span{border:1px solid var(--line);border-radius:10px;padding:8px;display:grid;gap:2px}.mini-skill-grid small{text-transform:capitalize;opacity:.7}.mini-skill-grid strong{font-size:1.05rem}
+.interest-meter .bar{height:9px}.interest-meter small{opacity:.75}
+.dm-thread{display:grid;gap:10px;max-height:360px;overflow:auto;padding:10px 2px}.dm{max-width:82%;padding:10px 12px;border-radius:14px;background:var(--panel);border:1px solid var(--line)}.dm.you{justify-self:end;background:color-mix(in srgb,var(--accent) 16%,var(--panel))}.dm.them{justify-self:start}.dm p{margin:.25rem 0 0}.dm small{opacity:.65}
+.message-thread{width:100%;display:flex;gap:12px;align-items:center;text-align:left;padding:12px;border:1px solid var(--line);border-radius:14px;background:transparent;margin:8px 0}.message-thread .person-photo{width:52px;height:52px;flex:0 0 52px}.message-thread span{display:grid;min-width:0}.message-thread small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60ch}
+.recap-financial{margin:18px}.recap-financial h3{margin:0}.card-stack{display:grid;gap:14px}
+@media(max-width:650px){.mini-skill-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.upgrade-grid,.roster-intel-grid{grid-template-columns:1fr}.dm{max-width:92%}}
