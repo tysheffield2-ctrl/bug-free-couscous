@@ -1,0 +1,45 @@
+/* ENCORE 0.8.1 finishing pass: rollout cleanup, richer investment listings,
+   deterministic roster projects, wealth tips and milestone celebration effects. */
+
+function V081_celebrate(title='Career milestone'){
+  if(!globalThis.document?.createElement||!document.body?.appendChild)return;
+  const root=document.createElement('div');root.className='encore-celebration';root.setAttribute?.('aria-hidden','true');
+  const label=document.createElement('div');label.className='encore-celebration-label';label.textContent=title;root.appendChild?.(label);
+  for(let i=0;i<28;i++){const p=document.createElement('i');p.style?.setProperty?.('--x',String((i*37)%101));p.style?.setProperty?.('--delay',(i%7*.06)+'s');p.style?.setProperty?.('--spin',String(90+(i*47)%420));root.appendChild?.(p)}
+  document.body.appendChild(root);setTimeout(()=>root.remove?.(),2600);
+}
+
+const V081_milestoneDepth=milestone;
+milestone=function(id,title,detail=''){const existed=s.expansion?.timeline?.some(x=>x.id===id);V081_milestoneDepth(id,title,detail);if(!existed&&s.started)V081_celebrate(title)};
+
+const V081_confirmRosterOfferDepth=confirmRosterOffer;
+confirmRosterOffer=function(){const pending=pendingRosterOffer?{...pendingRosterOffer}:null,before=ownerContracts().length;V081_confirmRosterOfferDepth();if(pending&&ownerContracts().length>before){const a=s.world[pending.artist];V081_celebrate(a?'Signed '+a.name:'Artist signed')}};
+
+function V081_projectTitle(a){const w=Math.max(1,a.nextRelease||s.week+4),left=titles.song[0][(a.id+w)%titles.song[0].length],right=titles.song[1][(a.id*3+w)%titles.song[1].length];return left+' '+right}
+V081_artistProject=function(a){const until=Math.max(0,(a.nextRelease||s.week)-s.week),seed=(a.id*17+(a.nextRelease||0)*5)%12,collab=seed%4===0&&s.world.length>1,partner=collab?s.world[(a.id+seed+3)%s.world.length]:null,type=collab?'Feature / collaboration':until<=2?'Single':until<=5?'Album / EP sessions':'Early project development',stage=until<=1?'Final masters / scheduling':until<=3?'Recording & post-production':until<=6?'Writing / recording':'Concept & writing';return {type:partner?type+' with '+partner.name:type,stage,release:V081_releaseDateForWeek(a.nextRelease||s.week+4),weeks:until,title:V081_projectTitle(a),partner:partner?.name||null}}
+
+function V081_wealthTip(a){const inv=V081_artistInvestments(a),lead=inv[0]||'Index funds',tips={
+  'Index funds':'I keep a boring diversified position so every dollar does not depend on the next record.',
+  'Property':'I like assets that can produce rent while I wait for the value to move.',
+  'Art':'I only buy pieces I would be fine holding for years. Collector markets can turn fast.',
+  'Private businesses':'I look for cash flow first. Hype without income can disappear.',
+  'Catalog rights':'I separate the royalty payout from the resale value. A catalog can pay well even during a soft valuation year.',
+  'Sports ownership':'I treat team stakes like long holds. Winning helps, but franchise value is bigger than one season.'
+};return {lead,text:tips[lead]||'I spread risk across different things instead of betting everything on one asset.'}}
+const V081_profileDepth=profile;
+profile=function(id){V081_profileDepth(id);const a=s.world[id],el=$('modal');if(!a||!el?.open)return;const tip=V081_wealthTip(a);el.innerHTML+=`<section class="card wealth-tip"><span class="eyebrow">WEALTH TALK · ${esc(tip.lead)}</span><h3>${esc(a.name)}’s approach</h3><p>“${esc(tip.text)}”</p><small>Simulated character advice for gameplay only. It is not real financial advice.</small></section>`};
+
+const V081_catalogPageDepth=V080_catalogMarketPage;
+V080_catalogMarketPage=function(){migrateV081();if(V080_catalogFilter!=='Marketplace')return V081_catalogPageDepth();const tabs=['Marketplace','My holdings','Payout history'],universe=V080_catalogUniverse();return head('Own a piece of music history','Catalog Market.',`<span class="pill">${s.v080.catalog.holdings.length} holdings</span>`)+`<section class="card"><h2>Catalog investment intelligence</h2><p>Listings show both simulated annual resale-value range and estimated royalty yield. Those are separate: a catalog can distribute cash while its resale value falls.</p></section><div class="chips">${tabs.map(t=>`<button class="${V080_catalogFilter===t?'selected':''}" onclick="V080_catalogFilter='${t}';render()">${t}</button>`).join('')}</div><div class="catalog-market-grid">${universe.map(a=>{const st=V080_catalogStats(a),owned=V080_ownedShare(a.id),r=V081_catalogRange(a),annualPayout=st.weekly*.5*monthLength()*.15*12,payoutYield=st.value?annualPayout/st.value:0;return `<button class="card catalog-listing" onclick="V080_catalogBuyForm(${a.id})">${personPhoto('catalog-'+a.id,a.name)}<span class="eyebrow">${esc(a.genre)} · ${tierNames[tier(a.fans)]}</span><h2>${esc(a.name)}</h2><strong>${money(st.value)}</strong>${profileRows([['Annual value range',V081_pct(r.low)+' to '+V081_pct(r.high)],['Est. royalty yield',V081_pct(payoutYield,2)],['Weekly streams',compact(st.weekly)],['Availability',owned?Math.round((1-owned)*100)+'% remaining':'100% available']])}<small>${((st.cycle-1)*100)>=0?'+':''}${((st.cycle-1)*100).toFixed(1)}% current market cycle</small></button>`}).join('')}</div>`};
+
+const V081_marketPageDepth=marketPage;
+marketPage=function(){const html=V081_marketPageDepth();return html.replace('</section><section class="card market-terminal">','<p class="fine"><strong>Availability:</strong> tradeable on the simulated exchange while ENCORE is active; market/limit orders follow your current quote.</p></section><section class="card market-terminal">')};
+
+const V081_buySportsDepth=V081_buySports;
+V081_buySports=function(id,share=.01,confirmed=false){V081_buySportsDepth(id,share,confirmed);if(confirmed)return;const t=s.v081?.sports?.teams?.find(x=>x.id===id),el=$('modal');if(t&&el?.open)el.innerHTML+=`<section class="investment-note"><strong>Availability</strong><span>${Math.max(0,(.1-V081_sportsHolding(t))*100).toFixed(1)}% maximum player allocation remaining</span><small>ENCORE caps your ownership at 10% of any fictional franchise.</small></section>`};
+
+function V081_rolloutPhase(r){const elapsed=Math.max(0,s.week-r.started),pct=elapsed/Math.max(1,r.duration);return pct<.18?'Era announcement & positioning':pct<.42?'Lead-single push':pct<.68?'Press, content & second-wave promotion':pct<.88?'Tour / event tie-ins':'Album countdown & release week'}
+V081_longRolloutCard=function(){const r=s.expansion?.albumRollout,released=s.songs.filter(x=>x.released);return `<section class="card"><span class="eyebrow">ALBUM ROLLOUT</span><h2>Build a full era</h2><p>Plan an 8, 12 or 16-week campaign instead of a four-week sprint. Duration and scale change the cost and sustained reach.</p>${r&&r.until>=s.week?`${profileRows([['Campaign',r.name||'Album era'],['Duration',(r.duration||4)+' weeks'],['Current phase',V081_rolloutPhase(r)],['Lead single',esc(s.songs.find(x=>x.id===r.lead)?.title||'Catalog')],['Ends',V081_releaseDateForWeek(r.until)],['Budget',money(r.budget||0)],['Weekly reach boost','+'+Math.round((r.boost||0)*100)+'%']])}`:`<form class="form" onsubmit="V081_startRollout(event)"><label>Campaign name<input name="name" maxlength="55" required placeholder="Name this era"></label><label>Lead single<select name="lead">${released.map(x=>`<option value="${x.id}">${esc(x.title)}</option>`).join('')}</select></label><label>Duration<select name="duration">${V081_rolloutDurations.map(w=>`<option value="${w}">${w} weeks</option>`).join('')}</select></label><label>Campaign scale<select name="scale"><option value="1">Focused · $7,500/week</option><option value="3">Major push · $22,500/week</option><option value="10">Global era · $75,000/week</option></select></label><button class="primary" ${released.length?'':'disabled'}>Review & launch rollout</button></form>`}<p class="fine">Longer rollouts do not guarantee a hit. They create more sustained discovery and keep the album era active longer.</p></section>`};
+V081_startRollout=function(e){e?.preventDefault?.();if(!e?.target)return;const f=new FormData(e.target),weeks=Number(f.get('duration')),scale=Number(f.get('scale')),lead=Number(f.get('lead')),name=String(f.get('name')||'Album era').trim().slice(0,55),song=s.songs.find(x=>x.id===lead&&x.released);if(!V081_rolloutDurations.includes(weeks)||![1,3,10].includes(scale)||!song||!name)return;const cost=weeks*7500*scale,boost=Math.min(.6,.08+weeks*.012+scale*.025);if(s.cash<cost){toast('Not enough cash for that rollout.');return}if(!spend(15))return;changeCash(-cost);s.finance.week.expenses=cents(s.finance.week.expenses+cost);s.expansion.albumRollout={started:s.week,until:s.week+weeks-1,duration:weeks,budget:cost,boost,lead,name,scale};moneyEvent(weeks+'-week album rollout · '+name,-cost);render();toast(name+' rollout launched · '+weeks+' weeks')};
+const V081_marketingDepth=marketingPage;
+marketingPage=function(){const html=V081_marketingDepth();return html.replace(/<section class="card"><h2>Four-week album rollout<\/h2>[\s\S]*?<\/section>(?=<section class="card"><span class="eyebrow">ALBUM ROLLOUT<\/span>)/,'')};
