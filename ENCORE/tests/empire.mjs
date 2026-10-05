@@ -14,23 +14,23 @@ assert.equal(h.run('new Set(Array.from({length:2500},(_,i)=>directoryArtist(i).n
 h.run(`s.energy=200;newSong({preventDefault(){},target:{songtitle:'Six voices',mood:'Personal / storytelling',package:'0'}});for(let i=0;i<7;i++){const a=activateDirectoryArtist(i);a.relation=100;bookFeature(a.id,true)}`);assert.equal(h.run('guestList(s.draft).length'),6);assert.equal(h.run('s.world.length'),31);assert.ok(h.run('reach(s.draft)>reach({...s.draft,feature:null,features:[]})'));h.run('validateBundle(saveBundle())');
 h.run(`s.energy=200;s.expansion.contract={name:'Test label',share:.25,type:'360',started:1,ends:26,weeks:26,advance:10000,lift:.2,recovered:2000};s.finance.week.live=100;s.finance.week.albumSales=200;buyRights('catalog',true)`);assert.equal(h.run('artistLabelCut(1000)'),25);assert.equal(h.run('s.expansion.contract.lift'),.1);const b=h.run('s.cash');h.run(`buyRights('catalog',true)`);assert.equal(h.run('s.cash'),b);h.run(`buyRights('contract',true)`);assert.equal(h.run('artistLabelCut(1000)'),0);
 h.run(`s.energy=200;createMerch({preventDefault(){},target:{qty:'100',price:'30'}},'tee');confirmMerch();settleCommerce();globalThis.mediaId=s.empire.media[0].id;counterMedia({preventDefault(){},target:{fee:'99999999'}},mediaId);acceptMedia(mediaId)`);assert.equal(h.run('s.empire.merch[0].stock'),0);assert.equal(h.run('s.empire.media[0].fee'),h.run('s.empire.media[0].max'));const mc=h.run('s.cash');h.run('acceptMedia(mediaId)');assert.equal(h.run('s.cash'),mc);
-const m=harness('/sandbox');await m.run('boot()');m.run(`newSong({preventDefault(){},target:{songtitle:'Keep this',mood:'Personal / storytelling',package:'0'}});globalThis.projectId=s.draft.id`);for(let i=0;i<12;i++){m.run('advance(true)');assert.equal(m.run('s.energy'),200);assert.equal(m.run('s.empire.month'),i+1);m.run('validateBundle(saveBundle())')};assert.equal(m.run('s.week'),53);assert.equal(m.run('s.finance.year'),2);assert.equal(m.run('s.draft.id'),m.run('projectId'));assert.equal(m.run('s.empire.lastMonth.end-s.empire.lastMonth.start+1'),5);
+const m=harness('/sandbox');await m.run('boot()');m.run(`newSong({preventDefault(){},target:{songtitle:'Keep this',mood:'Personal / storytelling',package:'0'}});globalThis.projectId=s.draft.id`);for(let i=0;i<52;i++){m.run('advance(true)');assert.equal(m.run('s.energy'),200);assert.equal(m.run('s.empire.month'),m.run('calendarMonthAtWeek(s.week)'));m.run('validateBundle(saveBundle())')};assert.equal(m.run('s.week'),53);assert.equal(m.run('s.finance.year'),2);assert.equal(m.run('s.draft.id'),m.run('projectId'));assert.equal(m.run('s.empire.lastMonth.end-s.empire.lastMonth.start+1'),5);
 m.run(`s.energy=200;hireTeam('m1',true);hireTeam('a1',true);globalThis.funds=s.cash;settleTeam()`);assert.ok(m.run('funds-s.cash>=1800'));m.run(`s.cash=0;s.walletCents='0';settleTeam()`);assert.equal(m.run('teamEffect("Manager")'),0);assert.equal(m.run('s.cash'),0);
 const n=harness('/sandbox');await n.run('boot()');n.run(`s.chartWeek=3;s.week=3;s.chartBook.sinceWeek=1;globalThis.song=s.songs[0];song.streams=1e10;song.total=1e10;trackChartIssue('songs',compileSongs());lateChartAlerts();lateChartAlerts()`);assert.equal(n.run('s.achievements.briefings.filter(x=>x.id.startsWith("late-chart:")).length'),1);
 h.run('validateBundle(saveBundle())');await h.run('saveNow()');await h.run('boot()');assert.equal(h.run('guestList(s.draft).length'),6);h.run(`globalThis.bad=saveBundle();bad.state.empire.assets[0].value=-1`);assert.throws(()=>h.run('validateBundle(bad)'));
-console.log('PASS monthly year/energy/project preservation, new screen renders, live Artist File, 2,500 names, six guests/save reload, social limits/leverage, asset basis/gain taxes, leases/renovation, buyouts, commerce, payroll, late-chart alerts and invalid-save rejection.');
+console.log('PASS weekly year/energy/project preservation, new screen renders, live Artist File, 2,500 names, six guests/save reload, social limits/leverage, asset basis/gain taxes, leases/renovation, buyouts, commerce, payroll, late-chart alerts and invalid-save rejection.');
 
 // Calendar is consistent across gameplay, title, recap, migration and year rollover.
-assert.equal(m.run('careerDate()'),'Month 01 · Year 02');
-assert.ok(m.elements.modal.innerHTML.includes('Month 12 · Year 01'));
+assert.equal(m.run('careerDate()'),'January 2027');
+assert.ok(m.elements.modal.innerHTML.includes('December 2026'));
 assert.equal(m.run('s.empire.lastMonth.monthIndex'),11);
 const calendar=harness('/');await calendar.run('boot()');
-assert.equal(calendar.run('careerDate()'),'Month 01 · Year 01');
+assert.equal(calendar.run('careerDate()'),'January 2026');
 calendar.run('s.week=5;delete s.empire.calendarVersion;migrateCalendar()');
-assert.equal(calendar.run('careerDate()'),'Month 02 · Year 01');
+assert.equal(calendar.run('careerDate()'),'February 2026');
 calendar.run('s.week=53;delete s.empire.calendarVersion;migrateCalendar();renderTitle()');
-assert.equal(calendar.run('careerDate()'),'Month 01 · Year 02');
+assert.equal(calendar.run('careerDate()'),'January 2027');
 assert.ok(calendar.run('home()').includes('backstage-home'));
 assert.ok(calendar.run('wealthPage()').includes('PRIVATE OFFICE'));
 assert.ok(calendar.run('ENCORE_ART.backstage.startsWith("data:image/webp;base64,")'));
-console.log('PASS calendar migration/year rollover, completed-month recap, new screen markup and embedded offline artwork.');
+console.log('PASS real calendar migration/year rollover, completed-month recap, new screen markup and embedded offline artwork.');
