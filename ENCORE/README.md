@@ -186,3 +186,8 @@ https://docs.github.com/en/repositories/working-with-files/managing-files/adding
 https://developers.cloudflare.com/r2/reference/wrangler-commands/
 https://developers.cloudflare.com/workers/wrangler/configuration/
 
+
+## 0.7.1-beta.1
+See `RELEASE-0.7.1.md` for the full change log, audit findings, validation and remaining beta checks. This release adds the permanent guide, per-save optional tour, shared Back controls, section themes, illustrated cast, merch artwork choices, rotating collections, world-tour campaigns and label-proposed contract structures.
+
+Run `npm test` to build and execute all seven regression suites. `npm run deploy` deploys through your configured Cloudflare account; pushing source alone is not proof the public deployment succeeded.

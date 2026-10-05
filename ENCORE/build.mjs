@@ -1,6 +1,6 @@
 import {createHash} from 'node:crypto';
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
-const modules=['artwork','name-generator','core','career-systems','save-tools','beta','experience','lab-editor','label-business','negotiations','social','wealth','commerce','empire','directory','presentation','asset-photos','market','conversations','industry-life','navigation','studio-life'];
+const modules=['artwork','name-generator','core','career-systems','save-tools','beta','experience','lab-editor','label-business','negotiations','social','wealth','commerce','empire','directory','presentation','asset-photos','market','conversations','industry-life','navigation','studio-life','guidance','collections','people-products','world-tours'];
 const js=modules.map(name=>readFileSync('src/'+name+'.js','utf8')).join('\n')+'\nboot();\n';writeFileSync('dist/game.js',js);
 let html=readFileSync('dist/index.html','utf8');html=html.replace(/<style id="encore-presentation">[\s\S]*?<\/style>/,'');html=html.replace('</head>','<style id="encore-presentation">'+readFileSync('src/presentation.css','utf8')+'</style></head>');writeFileSync('dist/index.html',html);let worker=readFileSync('server/worker.mjs','utf8').replace('// __ASSETS__',()=> 'const HTML='+JSON.stringify(html)+';\nconst SCRIPT='+JSON.stringify(js)+';');worker=worker.replaceAll('__OFFLINE_VERSION__',createHash('sha256').update(html+js+worker).digest('hex').slice(0,12));mkdirSync('dist/server',{recursive:true});writeFileSync('dist/server/index.js',worker);
 
