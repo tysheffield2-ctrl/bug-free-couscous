@@ -2,7 +2,7 @@ name: ENCORE CI
 
 on:
   push:
-    branches: [main, encore-0.8-implementation, encore-0.8.1-depth]
+    branches: [main, encore-0.8-implementation, encore-0.8.1-depth, encore-0.8.2-polish]
   pull_request:
     branches: [main]
 
