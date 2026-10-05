@@ -1,0 +1,13 @@
+import vm from 'node:vm';import fs from 'node:fs';import assert from 'node:assert/strict';
+const source=fs.readFileSync(new URL('../src/v084-roster-weeklabel.js',import.meta.url),'utf8');
+const button={textContent:'Advance month',setAttribute(k,v){this[k]=v}};
+const world=Array.from({length:24},(_,i)=>({id:i,name:'Artist '+i,fans:1000,genre:'Pop'}));
+const c={console,s:{week:1,world},filter:'All',genreFilter:'All',tierNames:['Emerging'],tier:()=>0,V084_portraitIndex:(key)=>Number(key.match(/(\d+)$/)?.[1]||0)%8,industryTab:'Artists',industry:()=>`${c.s.world.length} artists · Tap to meet · Explore 2,500+ artists`,render:()=>{},renderTitle:()=>{},document:{querySelector(){return button}}};
+vm.createContext(c);vm.runInContext(source,c);
+assert.equal(c.V084_DISCOVERABLE_ARTISTS,18);
+assert.equal(c.V084_activeIndustryRoster().length,18);
+const featured=c.V084_featuredIndustryRoster();assert.equal(featured.length,8);assert.equal(new Set(featured.map(a=>c.V084_portraitIndex('artist-'+a.id,a.name))).size,featured.length);
+const html=c.industry();assert.ok(html.includes('8 featured · 18 active artists · Tap to meet'));assert.ok(html.includes('Explore the full artist directory'));
+c.render();assert.equal(button.textContent,'Advance week');assert.equal(button['aria-label'],'Advance one week');
+const built=fs.readFileSync(new URL('../dist/index.html',import.meta.url),'utf8');assert.ok(built.includes('<button class="primary" onclick="advance()">Advance week</button>'));assert.equal(built.includes('<button class="primary" onclick="advance()">Advance month</button>'),false);
+console.log('PASS 18-artist discoverable roster, unique-face featured rotation and weekly advance label.');
