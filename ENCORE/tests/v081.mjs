@@ -13,7 +13,7 @@ h.run("V081_upgradeLabel('equipment',true)");assert.equal(h.run('s.v081.label.up
 h.run('s.empire.month=3;s.v081.creative.lastGeneratedMonth=-1;s.v081.creative.songMarketMonth=-1;V081_generateCreativeOffers();V081_generateSongMarket()');assert.ok(h.run('s.v081.creative.offers.length>=2'));assert.equal(h.run('s.v081.creative.songMarket.length'),12);
 h.run("V081_featureAccessFilter='Available';featurePicker();globalThis.availableHTML=$('modal').innerHTML");assert.ok(h.run("availableHTML.includes('Available')&&availableHTML.includes('Locked')"));
 h.run('s.cash=1e12;globalThis.team=s.v081.sports.teams[0];globalThis.beforeSports=s.cash;V081_buySports(team.id,.001,true)');assert.equal(h.run('s.v081.sports.holdings.length'),1);assert.ok(h.run('s.cash<beforeSports'));h.run('s.v081.sports.lastSettledMonth=-1;V081_settleSports()');assert.ok(h.run('s.v081.sports.teams[0].games>0'));
-assert.deepEqual(h.run('Array.from(V081_rolloutDurations)'),[8,12,16]);
+assert.equal(h.run("V081_rolloutDurations.join(',')"),'8,12,16');
 h.run('s.fans=100000000;s.loyalty=90;globalThis.tf=V081_tourTakeHome(liveVenues[3],80,225)');assert.ok(h.run('tf.gross>0&&tf.production>0&&Number.isFinite(tf.net)'));
 h.run('validateBundle(saveBundle())');
 console.log('PASS ENCORE 0.8.1 label interest, roster development, creative network, investment intelligence, sports ownership, rollout depth and tour take-home forecast.');
