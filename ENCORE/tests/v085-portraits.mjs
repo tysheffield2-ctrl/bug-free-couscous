@@ -1,7 +1,7 @@
 import vm from 'node:vm';import fs from 'node:fs';import assert from 'node:assert/strict';
 const source=fs.readFileSync(new URL('../src/v085-unique-portraits.js',import.meta.url),'utf8');
 const world=Array.from({length:24},(_,i)=>({id:i,name:'Artist '+i,genre:'Pop',fans:1000}));
-const c={console,s:{world,v085:null},V083_nameGender:n=>n.includes('Mira')?'female':n.includes('Cairo')?'male':'neutral',esc:x=>x,personPhoto:()=>'<legacy>',industryTab:'Artists',industry:()=>'<span>18 featured · 18 active artists</span>',render:()=>'<render>',makeWorld:()=>world.map(x=>({...x})),V084_activeIndustryRoster:w=world=>w.slice(0,18),V084_filteredIndustryRoster:w=>w.slice(0,18),V084_featuredIndustryRoster:w=>w.slice(0,8)};
+const c={console,s:{world,v085:null},V083_nameGender:n=>n.includes('Mira')?'female':n.includes('Cairo')?'male':'neutral',esc:x=>x,personPhoto:()=>'<legacy>',industryTab:'Artists',industry:()=>'<span>18 featured · 18 active artists</span>',render:()=>'<render>',makeWorld:()=>world.map(x=>({...x})),V084_activeIndustryRoster:(w=world)=>w.slice(0,18),V084_filteredIndustryRoster:w=>w.slice(0,18),V084_featuredIndustryRoster:w=>w.slice(0,8)};
 vm.createContext(c);vm.runInContext(source,c);
 const made=c.makeWorld();assert.equal(made.length,24);assert.equal(made.slice(0,18).filter(x=>x.coreArtist).length,18);assert.equal(new Set(made.slice(0,18).map(x=>x.portraitId)).size,18);assert.equal(made[0].name,'Mira Wells');assert.equal(made[1].name,'Cairo Vale');
 c.s.world=made;c.migrateV085();assert.equal(new Set(c.s.world.slice(0,18).map(x=>x.portraitId)).size,18);
