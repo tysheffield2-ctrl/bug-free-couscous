@@ -1,4 +1,8 @@
 /* ENCORE 0.8.5 marketing safety fixes. */
+V086_activeCampaign=function(){
+ migrateV086();const c=s.v086.catalogCampaign,p=c&&V086_plan(c.planId);if(!c||!p)return null;
+ Object.defineProperty(c,'plan',{value:p,writable:true,configurable:true,enumerable:false});return c
+};
 V086_startCampaign=function(id){
  const p=V086_plan(id);if(!p||!s.songs.some(x=>x.released))return;migrateV086();
  const old=V086_activeCampaign();
