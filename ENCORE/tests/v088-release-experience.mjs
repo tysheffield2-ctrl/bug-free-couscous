@@ -1,0 +1,17 @@
+import vm from 'node:vm';import fs from 'node:fs';import assert from 'node:assert/strict';
+const source=fs.readFileSync(new URL('../src/v088-release-experience.js',import.meta.url),'utf8');
+const briefings=[],logs=[],milestones=[];
+const title={hidden:false,innerHTML:''},modal={innerHTML:''};
+const s={chartWeek:8,chartBook:{songs:{current:[{you:true,movement:'NEW',id:1,rank:37}]},albums:{current:[{you:true,movement:'NEW',id:2,rank:9}]}},songs:[{id:1,title:'First Light',released:8}],albums:[{id:2,title:'After Hours',week:8}]};
+const c={console,s,GAME_VERSION:'0.8.7-beta.1',ENCORE_RELEASE_NOTES:{items:['First chart alerts for songs and albums.','18 production artist portraits.']},esc:String,lateChartAlerts:()=>{},chartOwner:(kind,id)=>(kind==='songs'?s.songs:s.albums).find(x=>x.id===id),addBriefing:(...x)=>briefings.push(x),log:x=>logs.push(x),milestone:(...x)=>milestones.push(x),offerBriefingButton:()=>'<legacy>',renderTitle:()=>{title.innerHTML='<div class="intro-footer">footer</div>'},betaInfo:()=>{modal.innerHTML='<details><summary>What’s new · old</summary><p>stale</p></details>'},personPhoto:()=>'<legacy>',V085_CORE_COUNT:18,V085_artistForPhoto:(key,name)=>name==='Mira Wells'?{portraitId:'artist-01'}:name==='Kofi Dawn'?{portraitId:'artist-18'}:null,V085_portraitSource:id=>'fallback:'+id,$:id=>id==='title-screen'?title:modal};
+vm.createContext(c);vm.runInContext(source,c);const run=x=>vm.runInContext(x,c);
+run('lateChartAlerts()');assert.equal(briefings.length,2);assert.ok(briefings.some(x=>x[0]==='first-chart:songs:1'&&x[2].includes('#37')&&x[3].includes('Global Top 100')));assert.ok(briefings.some(x=>x[0]==='first-chart:albums:2'&&x[2].includes('#9')&&x[3].includes('Global Albums 50')));
+s.chartBook.songs.current[0].movement='RE';s.chartBook.albums.current[0].movement='HOLD';run('lateChartAlerts()');assert.equal(briefings.length,2);
+run('renderTitle()');assert.ok(title.innerHTML.includes('intro-whats-new'));assert.ok(title.innerHTML.includes('0.8.7-beta.1'));assert.ok(title.innerHTML.includes('First chart alerts for songs and albums.'));
+run('betaInfo()');assert.ok(modal.innerHTML.includes('release-whats-new'));assert.equal(modal.innerHTML.includes('stale'),false);
+const mira=run("personPhoto('artist-0','Mira Wells')"),kofi=run("personPhoto('artist-17','Kofi Dawn')");assert.ok(mira.includes('/portraits/core-atlas.webp'));assert.ok(mira.includes('left:-0%')&&mira.includes('top:-0%'));assert.ok(kofi.includes('left:-500%')&&kofi.includes('top:-200%'));
+const atlas=new URL('../public/portraits/core-atlas.webp',import.meta.url);assert.ok(fs.existsSync(atlas));assert.ok(fs.statSync(atlas).size>250000);
+const built=fs.readFileSync(new URL('../dist/game.js',import.meta.url),'utf8');assert.ok(built.includes("const GAME_VERSION='0.8.7-beta.1'")||built.includes('const GAME_VERSION="0.8.7-beta.1"'));assert.ok(built.includes('ENCORE_RELEASE_NOTES'));assert.ok(built.includes('/portraits/core-atlas.webp'));
+const wrangler=fs.readFileSync(new URL('../wrangler.jsonc',import.meta.url),'utf8');assert.ok(wrangler.includes('"directory": "./public"'));
+const worker=fs.readFileSync(new URL('../server/worker.mjs',import.meta.url),'utf8');assert.ok(worker.includes('/portraits/core-atlas.webp'));
+console.log('PASS first chart alerts for songs/albums, dynamic What’s New metadata and 18-artist production portrait atlas.');
