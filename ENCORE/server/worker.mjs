@@ -9,6 +9,8 @@ export default {
     const offlineAsset=offlineAssets(url.pathname);
     if(offlineAsset&&['GET','HEAD'].includes(request.method))return new Response(request.method==='HEAD'?null:offlineAsset.body,{headers:{...headers,'Content-Type':offlineAsset.type,...(url.pathname==='/sw.js'?{'Service-Worker-Allowed':'/'}:{})}});
 
+    if(url.pathname.startsWith('/portraits/')&&env.ASSETS&&['GET','HEAD'].includes(request.method))return env.ASSETS.fetch(request);
+
     if(url.pathname==='/api/feedback'){
       if(request.method!=='POST')return json({error:'Method not allowed'},405);
       if(request.headers.get('Origin')!==url.origin)return json({error:'Origin not allowed'},403);

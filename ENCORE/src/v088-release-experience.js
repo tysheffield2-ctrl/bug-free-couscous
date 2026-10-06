@@ -9,9 +9,9 @@ function V088_releaseItems(){
  const items=typeof ENCORE_RELEASE_NOTES!=='undefined'?ENCORE_RELEASE_NOTES.items:null;
  return Array.isArray(items)&&items.length?items:['Latest gameplay, presentation and stability improvements.'];
 }
-function V088_whatsNewMarkup(titleScreen=false){
- const items=V088_releaseItems().slice(0,titleScreen?6:8);
- return `<details class="${titleScreen?'intro-whats-new':'release-whats-new'}"><summary>What’s new · ${esc(GAME_VERSION)}</summary><ul>${items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>`
+function V088_openWhatsNew(){
+ const items=V088_releaseItems().slice(0,10);
+ modal(`<span class="eyebrow">ENCORE · ${esc(GAME_VERSION)}</span><h2>What’s new.</h2><ul class="release-whats-new">${items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><button class="primary" onclick="$('modal').close()">Back to ENCORE</button>`)
 }
 
 /* Every genuine first player chart entry gets surfaced, whether it happens on release week or later.
@@ -34,23 +34,28 @@ offerBriefingButton=function(b){
  return V088_offerBriefingButtonBase(b)
 };
 
-/* Inject current release notes into the title screen after the base title renderer runs. */
+/* Keep exactly one update surface on the title screen. Older 0.8.x wrappers created
+   their own button; normalize that button to the current build instead of stacking panels. */
 const V088_renderTitleBase=renderTitle;
 renderTitle=function(){
  V088_renderTitleBase();
  const el=$('title-screen');
- if(!el||el.hidden||!el.innerHTML||el.innerHTML.includes('intro-whats-new'))return;
- el.innerHTML=el.innerHTML.replace('<div class="intro-footer">',V088_whatsNewMarkup(true)+'<div class="intro-footer">')
+ if(!el||el.hidden||!el.innerHTML)return;
+ let html=el.innerHTML.replace(/<details class="intro-whats-new"[\s\S]*?<\/details>/gi,'');
+ const update=`<button class="intro-secondary" onclick="V088_openWhatsNew()">What’s new in ${esc(GAME_VERSION)}</button>`;
+ const legacy=/<button\b[^>]*>What(?:’|')s new in [^<]*<\/button>/i;
+ if(legacy.test(html))html=html.replace(legacy,update);
+ else html=html.replace('<button class="intro-secondary" onclick="betaInfo()">Beta info & feedback</button>',update+'<button class="intro-secondary" onclick="betaInfo()">Beta info & feedback</button>');
+ el.innerHTML=html
 };
 
-/* The beta modal used to contain hard-coded 0.7-era copy. Keep the surrounding help,
-   but always replace its What’s New panel with the release file used for this build. */
+/* Beta Info is for testing, backup and feedback. Release notes live in one place only:
+   the current-version What’s New button on the title screen. */
 const V088_betaInfoBase=betaInfo;
 betaInfo=function(){
  V088_betaInfoBase();
  const el=$('modal');if(!el?.innerHTML)return;
- const dynamic=V088_whatsNewMarkup(false);
- el.innerHTML=el.innerHTML.replace(/<details><summary>What’s new ·[\s\S]*?<\/details>/,dynamic)
+ el.innerHTML=el.innerHTML.replace(/<details><summary>What(?:’|')s new ·[\s\S]*?<\/details>/i,'')
 };
 
 function V088_portraitAtlasPosition(id){
