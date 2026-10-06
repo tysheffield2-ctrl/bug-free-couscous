@@ -2,6 +2,10 @@
   "name": "encore-artist-sim",
   "main": "dist/server/index.js",
   "compatibility_date": "2026-09-30",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
   "r2_buckets": [
     {
       "binding": "BUCKET",
