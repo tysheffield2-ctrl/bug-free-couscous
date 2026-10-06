@@ -13,10 +13,10 @@ h.run('s.fans=80000000;s.total=3000000000;s.streams=200000000;s.reputation=95;s.
 h.run('s.cash=1e12;s.energy=200;globalThis.cashBefore=s.cash;V080_confirmCatalogPurchase(1,.1)');assert.equal(h.run('s.v080.catalog.holdings.length'),1);assert.ok(h.run('s.cash<cashBefore'));h.run('globalThis.afterBuy=s.cash;settleCatalogHoldings080()');assert.ok(h.run('s.cash>afterBuy'));h.run('globalThis.hid=s.v080.catalog.holdings[0].id;V080_sellCatalog(hid,true)');assert.equal(h.run('s.v080.catalog.holdings.length'),0);
 // Six visual merch looks persist and validate.
 h.run("s.cash=1e9;s.energy=200;createMerch({preventDefault(){},target:{qty:'10',price:'40',look:'5'}},'tee');confirmMerch()");assert.equal(h.run('s.empire.merch.at(-1).look'),5);h.run('validateBundle(saveBundle())');
-// Expanded rotating asset market and illustrated people art.
-assert.ok(h.run('currentDrops().length>=6'));const portrait=h.run("personPhoto('artist-99','Test Artist')");assert.ok(portrait.includes('data:image/webp;base64,'));assert.ok(portrait.includes('<img class="v084-person-img"'));assert.equal(portrait.includes('data:image/svg+xml'),false);
+// Expanded rotating asset market and photo-based people art.
+assert.ok(h.run('currentDrops().length>=6'));const portrait=h.run("personPhoto('artist-99','Test Artist')");assert.ok(portrait.includes('data:image/webp;base64,'));assert.ok(portrait.includes('<img class="v088-atlas-image"'));assert.ok(portrait.includes('data-portrait-slot='));assert.equal(portrait.includes('data:image/svg+xml'),false);
 // Awards are a distinct annual system and not the Achievement page.
 h.run('s.week=52;annualAwards080()');assert.equal(h.run('s.v080.awards.ceremonies.length'),1);assert.ok(h.run("V080_awardsPage().includes('THE ENCORE')"));assert.ok(h.run("V080_achievementsPage().includes('Achievements are game challenges only')"));
 // 360 deals include media income but do not touch outside investments.
 h.run("s.expansion.contract={type:'360',share:.2,catalogReleased:false};s.finance.week={wages:0,live:0,media:1000,expenses:0,investment:5000,albumSales:0};globalThis.cut=artistLabelCut(0)");assert.equal(h.run('cut'),200);
-console.log('PASS ENCORE 0.8 protected offers, career-gated commercial scale, catalog ownership, merch looks, rotating assets, awards separation, illustrated people art and 360 media accounting.');
+console.log('PASS ENCORE 0.8 protected offers, career-gated commercial scale, catalog ownership, merch looks, rotating assets, awards separation, photo-based people art and 360 media accounting.');
