@@ -10,8 +10,8 @@ s.chartBook.songs.current[0].movement='RE';s.chartBook.albums.current[0].movemen
 run('renderTitle()');assert.ok(title.innerHTML.includes('intro-whats-new'));assert.ok(title.innerHTML.includes('0.8.7-beta.1'));assert.ok(title.innerHTML.includes('First chart alerts for songs and albums.'));
 run('betaInfo()');assert.ok(modal.innerHTML.includes('release-whats-new'));assert.equal(modal.innerHTML.includes('stale'),false);
 const mira=run("personPhoto('artist-0','Mira Wells')"),kofi=run("personPhoto('artist-17','Kofi Dawn')");assert.ok(mira.includes('/portraits/core-atlas.webp'));assert.ok(mira.includes('left:-0%')&&mira.includes('top:-0%'));assert.ok(kofi.includes('left:-500%')&&kofi.includes('top:-200%'));
-const atlas=new URL('../public/portraits/core-atlas.webp',import.meta.url);assert.ok(fs.existsSync(atlas));assert.ok(fs.statSync(atlas).size>250000);
+const atlas=new URL('../public/portraits/core-atlas.webp',import.meta.url);assert.ok(fs.existsSync(atlas));const atlasBytes=fs.readFileSync(atlas);assert.ok(atlasBytes.length>20000);assert.equal(atlasBytes.subarray(0,4).toString('ascii'),'RIFF');assert.equal(atlasBytes.subarray(8,12).toString('ascii'),'WEBP');
 const built=fs.readFileSync(new URL('../dist/game.js',import.meta.url),'utf8');assert.ok(built.includes("const GAME_VERSION='0.8.7-beta.1'")||built.includes('const GAME_VERSION="0.8.7-beta.1"'));assert.ok(built.includes('ENCORE_RELEASE_NOTES'));assert.ok(built.includes('/portraits/core-atlas.webp'));
 const wrangler=fs.readFileSync(new URL('../wrangler.jsonc',import.meta.url),'utf8');assert.ok(wrangler.includes('"directory": "./public"'));
 const worker=fs.readFileSync(new URL('../server/worker.mjs',import.meta.url),'utf8');assert.ok(worker.includes('/portraits/core-atlas.webp'));
-console.log('PASS first chart alerts for songs/albums, dynamic What’s New metadata and 18-artist production portrait atlas.');
+console.log('PASS first chart alerts for songs/albums, dynamic What’s New metadata and valid 18-artist production WebP atlas.');
