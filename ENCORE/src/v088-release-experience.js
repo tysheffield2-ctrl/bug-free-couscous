@@ -6,7 +6,7 @@ const V088_ATLAS_COLUMNS=6;
 const V088_ATLAS_ROWS=3;
 
 function V088_releaseItems(){
- const items=globalThis.ENCORE_RELEASE_NOTES?.items;
+ const items=typeof ENCORE_RELEASE_NOTES!=='undefined'?ENCORE_RELEASE_NOTES.items:null;
  return Array.isArray(items)&&items.length?items:['Latest gameplay, presentation and stability improvements.'];
 }
 function V088_whatsNewMarkup(titleScreen=false){
