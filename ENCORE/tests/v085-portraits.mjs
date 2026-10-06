@@ -8,5 +8,5 @@ c.s.world=made;c.migrateV085();assert.equal(new Set(c.s.world.slice(0,18).map(x=
 const portraits=Array.from({length:18},(_,i)=>c.V085_portraitSource(`artist-${String(i+1).padStart(2,'0')}`));assert.equal(portraits.every(Boolean),true);assert.equal(new Set(portraits).size,18);
 const mira=c.personPhoto('artist-0','Mira Wells');const cairo=c.personPhoto('artist-1','Cairo Vale');assert.ok(mira.includes('v085-core-portrait'));assert.ok(cairo.includes('v085-core-portrait'));assert.notEqual(mira,cairo);
 assert.equal(c.V084_featuredIndustryRoster(made).length,18);assert.ok(c.industry().includes('18 artists'));assert.equal(c.industry().includes('featured'),false);
-const built=fs.readFileSync(new URL('../dist/game.js',import.meta.url),'utf8');assert.ok(built.includes('0.8.6-beta.1'));assert.ok(built.includes('Mira Wells'));assert.ok(built.includes('Kofi Dawn'));
+const built=fs.readFileSync(new URL('../dist/game.js',import.meta.url),'utf8');assert.ok(built.includes('0.8.7-beta.1'));assert.ok(built.includes('Mira Wells'));assert.ok(built.includes('Kofi Dawn'));
 console.log('PASS 18 permanent unique core-artist portraits, canonical new-career identities and save migration.');
