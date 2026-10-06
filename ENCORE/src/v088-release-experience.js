@@ -1,9 +1,13 @@
 /* ENCORE 0.8.7 release experience.
-   First-chart celebrations, build-driven release notes, and the production core-artist portrait atlas. */
+   First-chart celebrations, build-driven release notes, and unified production artist portraits. */
 
 const V088_CORE_ATLAS='/portraits/core-atlas.webp';
 const V088_ATLAS_COLUMNS=6;
 const V088_ATLAS_ROWS=3;
+const V088_LEGACY_COLUMNS=4;
+const V088_LEGACY_ROWS=2;
+const V088_LEGACY_COUNT=8;
+const V088_PHOTO_POOL_SIZE=V085_CORE_COUNT+V088_LEGACY_COUNT;
 
 function V088_releaseItems(){
  const items=typeof ENCORE_RELEASE_NOTES!=='undefined'?ENCORE_RELEASE_NOTES.items:null;
@@ -58,18 +62,48 @@ betaInfo=function(){
  el.innerHTML=el.innerHTML.replace(/<details><summary>What(?:’|')s new ·[\s\S]*?<\/details>/i,'')
 };
 
-function V088_portraitAtlasPosition(id){
- const m=/^artist-(\d{2})$/.exec(String(id||''));if(!m)return null;
- const index=Number(m[1])-1;if(index<0||index>=V085_CORE_COUNT)return null;
- return {index,col:index%V088_ATLAS_COLUMNS,row:Math.floor(index/V088_ATLAS_COLUMNS)}
+function V088_nameHash(value){let h=2166136261;for(const c of String(value||''))h=Math.imul(h^c.charCodeAt(0),16777619)>>>0;return h}
+function V088_artistNumber(key){const m=/^artist-(\d+)$/.exec(String(key||''));return m?Number(m[1]):null}
+function V088_worldArtistForPhoto(key,name){
+ const world=Array.isArray(s?.world)?s.world:[],n=V088_artistNumber(key),target=String(name||'');
+ if(Number.isInteger(n)){
+  const byId=world.find(a=>a?.id===n&&a?.name===target);if(byId)return byId;
+  const byDirectory=world.find(a=>a?.directoryKey===n&&a?.name===target);if(byDirectory)return byDirectory
+ }
+ return world.find(a=>a?.name===target)||null
 }
-function V088_portraitFallback(img,id){
- const fallback=typeof V085_portraitSource==='function'?V085_portraitSource(id):null;if(!fallback||!img)return;
- img.onerror=null;img.removeAttribute?.('style');img.style.width='100%';img.style.height='100%';img.style.maxWidth='100%';img.style.position='absolute';img.style.inset='0';img.style.objectFit='cover';img.src=fallback
+function V088_portraitSlot(key,name){
+ const artist=V088_worldArtistForPhoto(key,name),n=V088_artistNumber(key);
+ if(artist){
+  const core=/^artist-(\d{2})$/.exec(String(artist.portraitId||''));
+  if(core){const i=Number(core[1])-1;if(i>=0&&i<V085_CORE_COUNT)return i}
+  if(Number.isInteger(artist.directoryKey))return ((artist.directoryKey%V088_PHOTO_POOL_SIZE)+V088_PHOTO_POOL_SIZE)%V088_PHOTO_POOL_SIZE;
+  if(Number.isInteger(artist.id))return ((artist.id%V088_PHOTO_POOL_SIZE)+V088_PHOTO_POOL_SIZE)%V088_PHOTO_POOL_SIZE
+ }
+ if(Number.isInteger(n))return ((n%V088_PHOTO_POOL_SIZE)+V088_PHOTO_POOL_SIZE)%V088_PHOTO_POOL_SIZE;
+ return V088_nameHash(name||key)%V088_PHOTO_POOL_SIZE
 }
+function V088_legacyPosition(index){const i=((Number(index)||0)%V088_LEGACY_COUNT+V088_LEGACY_COUNT)%V088_LEGACY_COUNT;return {index:i,col:i%V088_LEGACY_COLUMNS,row:Math.floor(i/V088_LEGACY_COLUMNS)}}
+function V088_applyLegacyFallback(img,slot){
+ if(!img||typeof CAST_ART==='undefined')return;
+ const p=V088_legacyPosition(slot);img.onerror=null;img.src=CAST_ART;img.style.width=V088_LEGACY_COLUMNS*100+'%';img.style.height=V088_LEGACY_ROWS*100+'%';img.style.maxWidth='none';img.style.position='absolute';img.style.left=-(p.col*100)+'%';img.style.top=-(p.row*100)+'%';img.style.objectFit='fill'
+}
+function V088_portraitMarkup(slot,name,large=false){
+ const label=`Portrait of fictional artist ${esc(name)}`;
+ if(slot<V085_CORE_COUNT){
+  const col=slot%V088_ATLAS_COLUMNS,row=Math.floor(slot/V088_ATLAS_COLUMNS);
+  return `<span class="person-photo v088-core-portrait ${large?'portrait-large':''}" data-portrait-slot="${slot}" role="img" aria-label="${label}"><img class="v088-atlas-image" src="${V088_CORE_ATLAS}" alt="" decoding="async" loading="${large?'eager':'lazy'}" onerror="V088_applyLegacyFallback(this,${slot})" style="width:${V088_ATLAS_COLUMNS*100}%;height:${V088_ATLAS_ROWS*100}%;max-width:none;position:absolute;left:-${col*100}%;top:-${row*100}%"></span>`
+ }
+ const p=V088_legacyPosition(slot-V085_CORE_COUNT);
+ return `<span class="person-photo v088-core-portrait ${large?'portrait-large':''}" data-portrait-slot="${slot}" role="img" aria-label="${label}"><img class="v088-atlas-image" src="${CAST_ART}" alt="" decoding="async" loading="${large?'eager':'lazy'}" style="width:${V088_LEGACY_COLUMNS*100}%;height:${V088_LEGACY_ROWS*100}%;max-width:none;position:absolute;left:-${p.col*100}%;top:-${p.row*100}%;object-fit:fill"></span>`
+}
+
+/* One portrait resolver now powers every artist surface. Existing-world artists keep the
+   18 permanent production identities when available. Directory-only artists are assigned
+   deterministically across a 26-face pool, so a 20-row directory page cannot repeat a face. */
 const V088_personPhotoBase=personPhoto;
 personPhoto=function(key,name,large=false){
- const artist=typeof V085_artistForPhoto==='function'?V085_artistForPhoto(key,name):null,pos=artist?V088_portraitAtlasPosition(artist.portraitId):null;
- if(!artist||!pos)return V088_personPhotoBase(key,name,large);
- return `<span class="person-photo v088-core-portrait ${large?'portrait-large':''}" role="img" aria-label="Portrait of fictional artist ${esc(name)}"><img class="v088-atlas-image" src="${V088_CORE_ATLAS}" alt="" decoding="async" loading="${large?'eager':'lazy'}" onerror="V088_portraitFallback(this,'${artist.portraitId}')" style="width:${V088_ATLAS_COLUMNS*100}%;height:${V088_ATLAS_ROWS*100}%;max-width:none;position:absolute;left:-${pos.col*100}%;top:-${pos.row*100}%"></span>`
+ const artist=V088_worldArtistForPhoto(key,name),artistKey=V088_artistNumber(key);
+ if(!artist&&!Number.isInteger(artistKey))return V088_personPhotoBase(key,name,large);
+ return V088_portraitMarkup(V088_portraitSlot(key,name),name,large)
 };
