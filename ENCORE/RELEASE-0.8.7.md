@@ -7,7 +7,6 @@
 - Re-entries do not repeat the first-chart celebration, and recovered historical chart records do not create false new alerts.
 - The title screen now has one current **What’s new** button generated from the release notes for the version being built.
 - Beta Info is reserved for testing, backup and feedback instead of duplicating update notes.
-- The 18 core artists now use the production portrait artwork created for ENCORE, packed into one optimized WebP atlas with permanent 1:1 artist identities.
-- Core portraits use Safari-safe real `<img>` rendering with the existing generated SVG portrait as an emergency fallback.
-- The portrait atlas is served through the Cloudflare static-assets binding and included in ENCORE’s offline cache.
+- Person portraits are temporarily disabled while ENCORE’s visual cast is reworked; artists, staff, agents and other people use consistent initials tiles in the meantime.
+- Existing portrait source assets remain in the project for future visual development but are not used by the active in-game person resolver.
 - Existing careers, artist identities, chart histories, commercial deals, marketing campaigns and save data remain compatible.
