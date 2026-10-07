@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+const src=readFileSync(new URL('../src/career-world.js',import.meta.url),'utf8');
+const ctx={console,Math};
+ctx.clamp=(v,l=0,h=100)=>Math.max(l,Math.min(h,v));ctx.esc=String;ctx.compact=n=>String(Math.round(n));ctx.profileRows=()=>'';ctx.head=()=>'';
+ctx.tierNames=['Unknown','Emerging','Breakout','Star','Superstar','Global star','Global icon'];ctx.thresholds=[0,1000,25000,250000,2000000,20000000,100000000];ctx.tier=f=>ctx.thresholds.reduce((t,n,i)=>f>=n?i:t,0);
+ctx.s={week:20,fans:12000,loyalty:35,reputation:30,total:500000,genre:'Hip-hop',songs:[],scene:{city:'atlanta'},world:[]};ctx.migrateIndustryLife=()=>{};
+vm.createContext(ctx);vm.runInContext(src,ctx);
+vm.runInContext('migrateCareerWorld()',ctx);assert.equal(ctx.s.careerWorld.hometown,'atlanta');assert.equal(Object.keys(ctx.s.careerWorld.markets).length,12);assert.ok(ctx.s.careerWorld.markets.atlanta.culturalConnection>0);
+vm.runInContext("recordRegionalStreams({genre:'Hip-hop'},100000)",ctx);const assigned=Object.values(ctx.s.careerWorld.markets).reduce((n,m)=>n+m.weeklyStreams,0);assert.equal(assigned,100000);assert.ok(ctx.s.careerWorld.markets.atlanta.weeklyStreams>ctx.s.careerWorld.markets.seattle.weeklyStreams);
+ctx.s.total=900000;ctx.s.fans=14000;ctx.s.songs=[{released:19,genre:'Hip-hop',peak:20}];vm.runInContext('updateCareerWorld()',ctx);assert.ok(Number.isFinite(ctx.s.careerWorld.momentum));assert.ok(ctx.s.careerWorld.momentum>=0&&ctx.s.careerWorld.momentum<=100);assert.ok(ctx.s.careerWorld.tourDemand>=0&&ctx.s.careerWorld.tourDemand<=100);assert.equal(Object.values(ctx.s.careerWorld.markets).reduce((n,m)=>n+m.weeklyStreams,0),0);
+console.log('career-world tests passed');
