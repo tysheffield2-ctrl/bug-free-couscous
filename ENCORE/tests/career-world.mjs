@@ -13,12 +13,12 @@ vm.runInContext("recordRegionalStreams({genre:'Hip-hop'},100000)",ctx);const ass
 ctx.s.total=900000;ctx.s.fans=14000;ctx.s.songs=[{released:19,genre:'Hip-hop',peak:20}];vm.runInContext('updateCareerWorld()',ctx);assert.ok(Number.isFinite(ctx.s.careerWorld.momentum));assert.ok(ctx.s.careerWorld.momentum>=0&&ctx.s.careerWorld.momentum<=100);assert.ok(ctx.s.careerWorld.tourDemand>=0&&ctx.s.careerWorld.tourDemand<=100);assert.equal(Object.values(ctx.s.careerWorld.markets).reduce((n,m)=>n+m.weeklyStreams,0),0);
 ctx.V080_destinations=[['Career Inbox','Career','Inbox','Unread',4],['Artist File','Career','ArtistFile','Profile',4],['Activity','Career','Activity','History',4]];
 vm.runInContext(navSrc,ctx);
-assert.ok(ctx.V080_destinations.some(d=>d[0]==='Career Pulse'&&d[2]==='Audience'));
+assert.ok(ctx.V080_destinations.some(d=>d[0]==='Career Pulse'&&d[2]==='CareerPulse'));
 assert.ok(ctx.V080_destinations.some(d=>d[0]==='Audience & Markets'&&d[2]==='Audience'));
 assert.ok(ctx.V080_destinations.findIndex(d=>d[0]==='Career Pulse')<ctx.V080_destinations.findIndex(d=>d[0]==='Artist File'));
 vm.runInContext('installCareerWorldNavigation()',ctx);
 assert.equal(ctx.V080_destinations.filter(d=>d[0]==='Career Pulse').length,1);
 assert.equal(ctx.V080_destinations.filter(d=>d[0]==='Audience & Markets').length,1);
 const built=readFileSync(new URL('../dist/game.js',import.meta.url),'utf8');
-assert.ok(built.includes("'career-world-navigation'" )||built.includes('installCareerWorldNavigation'));
+assert.ok(built.includes('installCareerWorldNavigation'));
 console.log('career-world tests passed');
