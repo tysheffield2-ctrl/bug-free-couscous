@@ -1,1 +1,118 @@
-.screen-create{background:radial-gradient(circle at 85% 5%,rgba(137,86,255,.12),transparent 30%),linear-gradient(180deg,rgba(10,13,22,.97),rgba(17,14,25,.97))}.studio-creative-brief{border:1px solid rgba(190,164,255,.22);background:linear-gradient(145deg,rgba(29,24,45,.92),rgba(14,17,27,.95));box-shadow:0 18px 50px rgba(0,0,0,.18)}.creative-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}.creative-grid label{display:grid;gap:7px;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.creative-grid select{width:100%}.creative-identity{overflow:hidden;position:relative}.creative-identity:after{content:'STUDIO';position:absolute;right:-8px;top:-18px;font-size:72px;font-weight:900;letter-spacing:-.06em;opacity:.025;pointer-events:none}.identity-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}.identity-grid>div{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center}.identity-grid span{font-size:13px}.identity-grid strong{font-variant-numeric:tabular-nums}.identity-grid i{grid-column:1/-1;height:4px;border-radius:999px;background:linear-gradient(90deg,currentColor var(--score),rgba(255,255,255,.08) var(--score));opacity:.75}@media(max-width:640px){.creative-grid,.identity-grid{grid-template-columns:1fr}.creative-identity:after{font-size:48px}}
+/* ENCORE 0.9 — intentional visual language.
+   Goal: less generic app chrome, more music-world identity. */
+
+:root{
+ --encore-gold:#e7bf7a;
+ --encore-cream:#f3eadb;
+ --encore-ink:#0b0e10;
+ --encore-panel:#12171b;
+ --encore-line:rgba(240,230,211,.15);
+}
+
+/* Shared: flatter, editorial, less template-like */
+#app{border-radius:0!important;padding-top:0!important;background:none!important}
+#app .card{border-radius:4px!important;box-shadow:none!important;border:1px solid var(--encore-line)!important;position:relative;overflow:hidden}
+#app .card:before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--section-accent,#d9b875);opacity:.75}
+#app .primary,#app .secondary,#app .destination,#app .screen-tabs button,#app .social-actions button,#app .ticker-strip button{border-radius:3px!important}
+#app h1,#app h2,#app h3{letter-spacing:-.02em}
+#app .eyebrow{letter-spacing:.18em;font-size:10px;font-weight:800}
+#app .fine{line-height:1.55}
+
+/* Studio: dark control-room / tape-box visual language */
+.theme-studio{--section-accent:#c6a6ff!important;--section-tint:#17121f!important}
+.theme-studio main,.theme-studio .screen-create{background:
+ linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px),
+ #0d1015!important;background-size:28px 28px!important}
+.theme-studio .card{background:#12161d!important;border-color:#35303f!important}
+.studio-creative-brief{padding:22px!important;background:#11151c!important}
+.studio-tape-label{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #403747;padding-bottom:10px;margin-bottom:16px;color:#c9b2ef;font-size:10px;letter-spacing:.16em}
+.studio-tape-label small{color:#81788d}
+.creative-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.creative-grid label{display:grid;gap:7px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#a99db8}
+.creative-grid select{width:100%;min-height:46px;border-radius:2px!important;background:#0b0e13!important;border:1px solid #393341!important;color:#f4edf8!important;padding:0 11px}
+.creative-identity{background:#11151c!important}
+.creative-identity:after{content:'MASTER';position:absolute;right:-8px;top:30px;font:900 68px/1 Arial,sans-serif;letter-spacing:-.06em;opacity:.025;pointer-events:none}
+.identity-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:18px}
+.identity-grid>div{display:grid;grid-template-columns:1fr auto;gap:7px 12px;align-items:center}
+.identity-grid span{font-size:12px;color:#c8bfce}
+.identity-grid strong{font:700 18px Georgia,serif;font-variant-numeric:tabular-nums;color:#f3ebf7}
+.identity-grid i{grid-column:1/-1;height:3px;background:#2b2730;position:relative;overflow:hidden}
+.identity-grid i:after{content:'';display:block;width:var(--score);height:100%;background:currentColor;opacity:.85}
+.theme-studio .studio-stepper{border-top:1px solid #39333f;border-bottom:1px solid #39333f;padding:0}
+.theme-studio .studio-stepper span{border:0!important;border-right:1px solid #39333f;padding:13px 10px;text-transform:uppercase;letter-spacing:.12em;font-size:10px}
+.theme-studio .studio-stepper span:last-child{border-right:0}
+.theme-studio .studio-stepper .complete{background:#1d1825;color:#dec8ff}
+
+/* PULSE: culture magazine / social feed, not a generic dashboard */
+.theme-social{--section-accent:#7ad5de!important;--section-tint:#0f2b31!important}
+.theme-social main{background:#0d171c!important}
+.theme-social .card{background:#101d23!important;border-color:#29424a!important}
+.theme-social .social-profile{padding:20px 0;border-top:1px solid #29424a;border-bottom:1px solid #29424a}
+.theme-social .social-avatar{border-radius:50%!important;border:2px solid #78cfd8;background:#132b31!important;color:#dffbff!important}
+.theme-social .pulse-post,.theme-social .social-entry{background:transparent!important;border:0!important;border-bottom:1px solid #29424a!important;border-radius:0!important;padding:22px 0!important}
+.theme-social .pulse-post>p:first-of-type,.theme-social .social-entry>p{font:18px/1.55 Georgia,serif}
+.theme-social .pulse-counts{display:flex;flex-wrap:wrap;gap:16px;padding-top:10px;color:#89a8b0;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.theme-social blockquote{border-radius:0!important;border-left:2px solid #7ad5de!important;background:#0b1418!important;font-family:Georgia,serif}
+
+/* Charts: publication / rankings board */
+.theme-charts{--section-accent:#e5b96f!important;--section-tint:#2c2115!important}
+.theme-charts main{background:#11100e!important}
+.theme-charts .card{background:#171512!important;border-color:#3b3327!important}
+.theme-charts .row{border-bottom:1px solid #332d24;padding:14px 0}
+.theme-charts .row strong{font-family:Georgia,serif}
+.theme-charts .row .right strong{font-size:18px;color:#f0cd94}
+
+/* Business / contracts: label office, document-like hierarchy */
+.theme-business{--section-accent:#9db8e8!important;--section-tint:#1b2739!important}
+.theme-business main{background:#101722!important}
+.theme-business .card{background:#141d29!important;border-color:#304056!important}
+.theme-business .card h2{font-family:Georgia,serif;font-weight:500}
+.theme-business .row{border-bottom:1px solid #2e3b4b;padding:13px 0}
+.theme-business .primary{text-transform:uppercase;letter-spacing:.1em;font-size:11px}
+
+/* Wealth / assets: private-banking and collector catalog feel */
+.theme-wealth{--section-accent:#9fcfb1!important;--section-tint:#14281f!important}
+.theme-wealth main{background:#0c1712!important}
+.theme-wealth .card,.theme-wealth .asset-tile{background:#112119!important;border-color:#2e4938!important}
+.theme-wealth .asset-tile{border-radius:0!important}
+.theme-wealth .asset-photo{border-radius:0!important;filter:saturate(.88) contrast(1.03)}
+.theme-wealth .wealth-number{font-family:Georgia,serif;letter-spacing:-.04em}
+
+/* Artist file: profile editorial */
+.screen-artistfile .career-profile,.screen-artistfile .profile-body{border-radius:0!important}
+.screen-artistfile .profile-body{position:relative}
+.screen-artistfile .profile-body:after{content:'ARTIST FILE';position:absolute;right:10px;top:6px;font:800 48px/1 Arial,sans-serif;opacity:.03;pointer-events:none}
+.screen-artistfile .profile-facts>div{border-radius:0!important}
+
+/* Home: preserve its strongest identity, remove app-card softness */
+.screen-home .backstage-home{border-radius:0!important}
+.screen-home .career-action{border-radius:0!important}
+.screen-home .backstage-primary{border-radius:2px!important;text-transform:uppercase;letter-spacing:.14em}
+.screen-home .action-art{border-radius:2px!important}
+
+/* Menu / destinations: more like a directory than app tiles */
+.destination-grid{gap:0!important;border-top:1px solid #344453}
+.destination{border:0!important;border-bottom:1px solid #344453!important;background:transparent!important;border-radius:0!important}
+.destination svg{opacity:.72}
+.destination strong{font-size:15px}
+.destination small{font-size:11px!important}
+
+/* Dialogs: printed brief / backstage paperwork */
+dialog .card{border-radius:2px!important}
+.month-dialog{border-radius:0!important}
+.month-issue{position:relative}
+.month-issue:before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.015),rgba(255,255,255,.015) 1px,transparent 1px,transparent 4px)}
+
+/* Mobile first */
+@media(max-width:640px){
+ .creative-grid,.identity-grid{grid-template-columns:1fr}
+ .creative-identity:after{font-size:42px;top:44px}
+ #app .card{padding:16px!important}
+ .theme-social .pulse-post>p:first-of-type,.theme-social .social-entry>p{font-size:17px}
+ .screen-artistfile .profile-body:after{font-size:34px}
+}
+
+@media(prefers-reduced-motion:reduce){
+ #app *{scroll-behavior:auto!important}
+}
