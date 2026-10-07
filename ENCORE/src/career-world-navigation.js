@@ -4,7 +4,7 @@
 function installCareerWorldNavigation(){
  if(typeof V080_destinations==='undefined'||!Array.isArray(V080_destinations))return;
  const additions=[
-  ['Career Pulse','Career','Audience','Momentum, demand and career temperature',2],
+  ['Career Pulse','Career','CareerPulse','Momentum, demand and career temperature',2],
   ['Audience & Markets','Career','Audience','Regional fans, streams and hometown status',3]
  ];
  const existing=new Set(V080_destinations.map(d=>d[0]));
