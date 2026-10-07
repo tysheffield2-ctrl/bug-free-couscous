@@ -7,8 +7,18 @@ const CREATIVE_INTENTS=['Art first','Balanced','Hit-minded'];
 const CREATIVE_TEXTURES=['Raw & intimate','Warm & soulful','Clean & modern','Dark & atmospheric','Live & organic','Left-field'];
 const CREATIVE_HOOKS=['Verse-driven','Big chorus','Melodic refrain','Minimal hook','No obvious hook'];
 
+function ensureStudioIdeaSchema(idea=s.studioIdea){
+ const current=idea&&typeof idea==='object'?idea:{};
+ return {
+  title:typeof current.title==='string'?current.title:'',
+  mood:typeof current.mood==='string'?current.mood:'',
+  package:typeof current.package==='string'?current.package:'',
+  ...current
+ };
+}
+
 function setCreativeDirection(key,value){
- s.studioIdea={...(s.studioIdea||{}),[key]:value};
+ s.studioIdea={...ensureStudioIdeaSchema(),[key]:value};
 }
 
 function creativeProfile(d){
@@ -45,7 +55,7 @@ function creativeIdentityMarkup(d){
 }
 
 function creativeDirectionMarkup(){
- const idea=s.studioIdea||{};
+ const idea=ensureStudioIdeaSchema();
  const options=(items,current)=>items.map(x=>`<option ${x===current?'selected':''}>${x}</option>`).join('');
  return `<section class="card studio-creative-brief"><div class="studio-tape-label"><span>SESSION 01</span><small>CREATIVE BRIEF</small></div><div class="eyebrow">CREATIVE DIRECTION</div><h3>Decide what this record is trying to be.</h3><p class="fine">There is no universally correct combination. Your choices trade depth, originality, accessibility and commercial upside against each other.</p><div class="creative-grid">
  <label>Theme<select onchange="setCreativeDirection('theme',this.value)">${options(CREATIVE_THEMES,idea.theme||'Personal story')}</select></label>
@@ -70,7 +80,7 @@ studio=function(){
 
 const newSongV089=newSong;
 newSong=function(e){
- const idea={...(s.studioIdea||{})};
+ const idea=ensureStudioIdeaSchema();
  newSongV089(e);
  if(s.draft){
    s.draft.creative={
@@ -83,7 +93,7 @@ newSong=function(e){
      brief:idea.brief||s.draft.sessionPlan?.brief||'story'
    };
    s.draft.creativeScores=creativeProfile(s.draft);
-   s.studioIdea={};
+   s.studioIdea=ensureStudioIdeaSchema({});
    queueSave();
  }
 };
