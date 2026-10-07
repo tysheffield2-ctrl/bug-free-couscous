@@ -1,13 +1,6 @@
 /* ENCORE 0.8.7 release experience.
-   First-chart celebrations, build-driven release notes, and unified production artist portraits. */
-
-const V088_CORE_ATLAS='/portraits/core-atlas.webp';
-const V088_ATLAS_COLUMNS=6;
-const V088_ATLAS_ROWS=3;
-const V088_LEGACY_COLUMNS=4;
-const V088_LEGACY_ROWS=2;
-const V088_LEGACY_COUNT=8;
-const V088_PHOTO_POOL_SIZE=V085_CORE_COUNT+V088_LEGACY_COUNT;
+   First-chart celebrations, build-driven release notes, and a temporary initials-only
+   people presentation while the visual cast is reworked. */
 
 function V088_releaseItems(){
  const items=typeof ENCORE_RELEASE_NOTES!=='undefined'?ENCORE_RELEASE_NOTES.items:null;
@@ -62,48 +55,16 @@ betaInfo=function(){
  el.innerHTML=el.innerHTML.replace(/<details><summary>What(?:’|')s new ·[\s\S]*?<\/details>/i,'')
 };
 
-function V088_nameHash(value){let h=2166136261;for(const c of String(value||''))h=Math.imul(h^c.charCodeAt(0),16777619)>>>0;return h}
-function V088_artistNumber(key){const m=/^artist-(\d+)$/.exec(String(key||''));return m?Number(m[1]):null}
-function V088_worldArtistForPhoto(key,name){
- const world=Array.isArray(s?.world)?s.world:[],n=V088_artistNumber(key),target=String(name||'');
- if(Number.isInteger(n)){
-  const byId=world.find(a=>a?.id===n&&a?.name===target);if(byId)return byId;
-  const byDirectory=world.find(a=>a?.directoryKey===n&&a?.name===target);if(byDirectory)return byDirectory
- }
- return world.find(a=>a?.name===target)||null
+/* Portraits are intentionally disabled during the current visual-cast rework. Every
+   fictional person uses the same initials-tile treatment so old portrait layers cannot
+   leak back into artist, staff, agent, catalog, offer, or directory surfaces. The source
+   image assets remain in the repository for future visual work. */
+function V088_initials(name){
+ const parts=String(name||'?').trim().split(/\s+/).filter(Boolean);
+ return (parts.slice(0,2).map(p=>p[0]).join('')||'?').toUpperCase()
 }
-function V088_portraitSlot(key,name){
- const artist=V088_worldArtistForPhoto(key,name),n=V088_artistNumber(key);
- if(artist){
-  const core=/^artist-(\d{2})$/.exec(String(artist.portraitId||''));
-  if(core){const i=Number(core[1])-1;if(i>=0&&i<V085_CORE_COUNT)return i}
-  if(Number.isInteger(artist.directoryKey))return ((artist.directoryKey%V088_PHOTO_POOL_SIZE)+V088_PHOTO_POOL_SIZE)%V088_PHOTO_POOL_SIZE;
-  if(Number.isInteger(artist.id))return ((artist.id%V088_PHOTO_POOL_SIZE)+V088_PHOTO_POOL_SIZE)%V088_PHOTO_POOL_SIZE
- }
- if(Number.isInteger(n))return ((n%V088_PHOTO_POOL_SIZE)+V088_PHOTO_POOL_SIZE)%V088_PHOTO_POOL_SIZE;
- return V088_nameHash(name||key)%V088_PHOTO_POOL_SIZE
+function V088_initialPhoto(name,large=false){
+ const initials=esc(V088_initials(name)),label=esc(`Initials for ${name}`);
+ return `<span class="person-photo v085-initial-portrait ${large?'portrait-large':''}" role="img" aria-label="${label}" style="display:grid;place-items:center;font-weight:900;letter-spacing:.04em;background:linear-gradient(145deg,#172536,#2a4057);color:#f4f7fb;border:1px solid rgba(255,255,255,.12)"><span style="font-size:${large?'2.2rem':'1rem'}">${initials}</span></span>`
 }
-function V088_legacyPosition(index){const i=((Number(index)||0)%V088_LEGACY_COUNT+V088_LEGACY_COUNT)%V088_LEGACY_COUNT;return {index:i,col:i%V088_LEGACY_COLUMNS,row:Math.floor(i/V088_LEGACY_COLUMNS)}}
-function V088_applyLegacyFallback(img,slot){
- if(!img||typeof CAST_ART==='undefined')return;
- const p=V088_legacyPosition(slot);img.onerror=null;img.src=CAST_ART;img.style.width=V088_LEGACY_COLUMNS*100+'%';img.style.height=V088_LEGACY_ROWS*100+'%';img.style.maxWidth='none';img.style.position='absolute';img.style.left=-(p.col*100)+'%';img.style.top=-(p.row*100)+'%';img.style.objectFit='fill'
-}
-function V088_portraitMarkup(slot,name,large=false){
- const label=`Portrait of fictional artist ${esc(name)}`;
- if(slot<V085_CORE_COUNT){
-  const col=slot%V088_ATLAS_COLUMNS,row=Math.floor(slot/V088_ATLAS_COLUMNS);
-  return `<span class="person-photo v088-core-portrait ${large?'portrait-large':''}" data-portrait-slot="${slot}" role="img" aria-label="${label}"><img class="v088-atlas-image" src="${V088_CORE_ATLAS}" alt="" decoding="async" loading="${large?'eager':'lazy'}" onerror="V088_applyLegacyFallback(this,${slot})" style="width:${V088_ATLAS_COLUMNS*100}%;height:${V088_ATLAS_ROWS*100}%;max-width:none;position:absolute;left:-${col*100}%;top:-${row*100}%"></span>`
- }
- const p=V088_legacyPosition(slot-V085_CORE_COUNT);
- return `<span class="person-photo v088-core-portrait ${large?'portrait-large':''}" data-portrait-slot="${slot}" role="img" aria-label="${label}"><img class="v088-atlas-image" src="${CAST_ART}" alt="" decoding="async" loading="${large?'eager':'lazy'}" style="width:${V088_LEGACY_COLUMNS*100}%;height:${V088_LEGACY_ROWS*100}%;max-width:none;position:absolute;left:-${p.col*100}%;top:-${p.row*100}%;object-fit:fill"></span>`
-}
-
-/* One portrait resolver now powers every artist surface. Existing-world artists keep the
-   18 permanent production identities when available. Directory-only artists are assigned
-   deterministically across a 26-face pool, so a 20-row directory page cannot repeat a face. */
-const V088_personPhotoBase=personPhoto;
-personPhoto=function(key,name,large=false){
- const artist=V088_worldArtistForPhoto(key,name),artistKey=V088_artistNumber(key);
- if(!artist&&!Number.isInteger(artistKey))return V088_personPhotoBase(key,name,large);
- return V088_portraitMarkup(V088_portraitSlot(key,name),name,large)
-};
+personPhoto=function(key,name,large=false){return V088_initialPhoto(name,large)};
