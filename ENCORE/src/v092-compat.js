@@ -18,3 +18,17 @@ validatePresentationState=function(){
  try{return V092_validatePresentationCompat()}
  finally{for(const [h,share] of elevated)h.share=share}
 };
+
+/* A posted feature rate affects how often artists approach you, not just the final negotiation.
+   High rates are allowed, but a rate far above your market value or the other artist's budget
+   sharply lowers the chance that a collaboration invitation appears. */
+const V092_addCreativeOfferBase=V081_addCreativeOffer;
+V081_addCreativeOffer=function(type,a){
+ if(type==='featureInvite'&&a){
+  V092_migrateCollabs();
+  const ask=Math.max(1,s.v081.creative.featurePrice||V092_featureMarketValue()),fair=Math.max(1,V092_featureMarketValue()),budget=Math.max(1,V092_featureBudget(a)),relation=a.relation||0,marketFit=Math.min(1.25,fair/ask),budgetFit=Math.min(1.25,budget/ask),careerHeat=clamp(((s.reputation||0)+level('marketability')+(s.careerWorld?.momentum||0))/300,0,1),chance=clamp(.06+marketFit*.34+budgetFit*.28+careerHeat*.18+relation*.0014,.02,.94);
+  if(Math.random()>chance)return false
+ }
+ V092_addCreativeOfferBase(type,a);
+ return true
+};
