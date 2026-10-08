@@ -1,5 +1,11 @@
 # ENCORE readiness review and implementation report
 
+## October 8 finishing pass — 0.9.1-beta.2
+
+Delivered after the first Touring candidate: separate ticket inventories with exact revenue reconciliation; distance-based travel costs; opener eligibility/shared history; show-specific PULSE threads; stricter saved-route/archive/report validation; four frozen historical-build fixtures; canonical label-offer validation and a fix for imported offers with missing review metadata. `tests/historical-saves.mjs` verifies music, money, contracts and tour totals survive import and reload. These fixtures are synthetic careers generated with archived build code, not real player saves.
+
+Deployment is prepared for both existing Cloudflare application types: `build-pages.mjs` emits a Pages `_worker.js` package, `wrangler.jsonc` retains the Worker path, and `server/worker.mjs` exposes `/api/version`. See `DEPLOY.md`. Physical-phone and actual production acceptance remain outstanding. The later 1.0 systems listed below remain future work.
+
 ## October 8 continuation — 0.9.1-beta.1
 
 The current candidate is saved in PR #14, `feature/touring-2-living-world`. It includes the earlier Studio and foundation work plus weekly Touring 2.0 and living-city mechanics. The original foundation review below remains a historical record; this section supersedes its candidate version and touring status. This is not a completed 1.0 release.

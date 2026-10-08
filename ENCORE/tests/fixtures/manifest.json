@@ -1,0 +1,34 @@
+[
+  {
+    "file": "v087-career.json.gz",
+    "commit": "1e7c5fe12edbbbb6cb97a016787fc4d595a25437",
+    "sourceSha256": "6d6031538ad31969bd02d7ecf42845e4222ef7bc2d2ff631b40d3a9a84dbb2b2",
+    "saveSha256": "5325e2aef9648aae6d3583f8ab0e9e0970f6b2f22a4315a1ba18db504aca7123",
+    "mode": "career",
+    "week": 53
+  },
+  {
+    "file": "v087-sandbox.json.gz",
+    "commit": "1e7c5fe12edbbbb6cb97a016787fc4d595a25437",
+    "sourceSha256": "6d6031538ad31969bd02d7ecf42845e4222ef7bc2d2ff631b40d3a9a84dbb2b2",
+    "saveSha256": "4b04a98db047acd2f651f142350fe8df803e1f81352c12500c86f61bfd6c3126",
+    "mode": "sandbox",
+    "week": 53
+  },
+  {
+    "file": "regional-tour-career.json.gz",
+    "commit": "2b9323182ceb91aa3c7cabb9875404896168934b",
+    "sourceSha256": "a5f7d53bfe8a47cadff3da2441c13ffb83cbc6160bd1bad5f8508b7e923dc436",
+    "saveSha256": "9028827b7aebaef406b4f58f9fef4113d52da58934784b14d63800c37f621385",
+    "mode": "career",
+    "week": 13
+  },
+  {
+    "file": "regional-tour-sandbox.json.gz",
+    "commit": "2b9323182ceb91aa3c7cabb9875404896168934b",
+    "sourceSha256": "a5f7d53bfe8a47cadff3da2441c13ffb83cbc6160bd1bad5f8508b7e923dc436",
+    "saveSha256": "b674f21af5d9699fcaa4d166ac28acc2a474c7acabe8722d59859463561ed6a2",
+    "mode": "sandbox",
+    "week": 13
+  }
+]

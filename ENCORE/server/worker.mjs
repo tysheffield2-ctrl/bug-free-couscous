@@ -6,6 +6,7 @@ const text=(value,max)=>String(value??'').trim().slice(0,max);
 export default {
   async fetch(request,env){
     const url=new URL(request.url);
+    if(url.pathname==='/api/version'&&['GET','HEAD'].includes(request.method))return request.method==='HEAD'?new Response(null,{headers:{...headers,'Content-Type':'application/json'}}):json(RELEASE);
     const offlineAsset=offlineAssets(url.pathname);
     if(offlineAsset&&['GET','HEAD'].includes(request.method))return new Response(request.method==='HEAD'?null:offlineAsset.body,{headers:{...headers,'Content-Type':offlineAsset.type,...(url.pathname==='/sw.js'?{'Service-Worker-Allowed':'/'}:{})}});
 

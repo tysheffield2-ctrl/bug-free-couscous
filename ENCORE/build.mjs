@@ -33,7 +33,7 @@ const css=['presentation','v080','v081','v082','v088','v090'].map(name=>readFile
 html=html.replace('</head>','<style id="encore-presentation">'+css+'</style></head>');
 writeFileSync('dist/index.html',html);
 
-let worker=readFileSync('server/worker.mjs','utf8').replaceAll('__STATIC_ART_ASSETS__',JSON.stringify([...new Set(staticArt)])).replace('// __ASSETS__',()=> 'const HTML='+JSON.stringify(html)+';\nconst SCRIPT='+JSON.stringify(js)+';');
+let worker=readFileSync('server/worker.mjs','utf8').replaceAll('__STATIC_ART_ASSETS__',JSON.stringify([...new Set(staticArt)])).replace('// __ASSETS__',()=> 'const RELEASE='+JSON.stringify({version:gameVersion})+';\nconst HTML='+JSON.stringify(html)+';\nconst SCRIPT='+JSON.stringify(js)+';');
 worker=worker.replaceAll('__OFFLINE_VERSION__',createHash('sha256').update(html+js+worker).digest('hex').slice(0,12));
 mkdirSync('dist/server',{recursive:true});
 writeFileSync('dist/server/index.js',worker);
