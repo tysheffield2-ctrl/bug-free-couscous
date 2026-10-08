@@ -46,3 +46,21 @@ function reconcileRegionalAudience(w=s.careerWorld){
  w.audienceVersion=1;
 }
 function regionalGrowthLabel(m){return m.growth===null?'NEW · First tracked week':(m.growth>=0?'+':'')+m.growth+'%'}
+
+/* Persistent geographic identities and slow scene cycles. No invented past events. */
+function migrateLivingWorld(){
+ const w=migrateCareerWorld();
+ for(const m of Object.values(w.markets)){m.sceneHeat??=50;m.sentiment??=50;m.tourFatigue??=0}
+ for(const a of s.world){a.hometown??=regionalMarkets[a.id%regionalMarkets.length].id;a.currentCity??=a.hometown}
+ w.sceneLastWeek??=s.week-1;
+ return w;
+}
+function settleLivingWorld(){
+ const w=migrateLivingWorld();if(w.sceneLastWeek===s.week)return;w.sceneLastWeek=s.week;
+ for(const [i,m] of Object.values(w.markets).entries()){
+  const cycle=50+25*Math.sin((s.week+i*19)/52),releases=s.world.filter(a=>a.currentCity===m.id).reduce((n,a)=>n+a.catalog.filter(t=>t.week>=s.week-4).length,0);
+  m.sceneHeat=clamp(m.sceneHeat*.96+(cycle+Math.min(15,releases*2))*.04);
+  m.tourFatigue=Math.max(0,m.tourFatigue-2);
+  m.sentiment=clamp(m.sentiment*.99+(m.loyalty*.6+20)*.01);
+ }
+}

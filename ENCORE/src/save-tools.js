@@ -49,7 +49,7 @@ function practiceNext(){if(!practice)return;const costs=[[0,10],[40,15],[30,15],
 window.addEventListener('pageshow',e=>{if(e.persisted&&saveReady){endTour();$('modal').close();showTitle()}});
 
 
-const CAREER_STATE_SCHEMA=1;
+const CAREER_STATE_SCHEMA=2;
 const CAREER_SAVE_BUDGET=8000000;
 const CAREER_MIGRATIONS=[function legacyToFoundation(){
  migrateCharts();migratePacing();migrateDevelopment();migrateCareerRecords();
@@ -59,7 +59,7 @@ const CAREER_MIGRATIONS=[function legacyToFoundation(){
  s.audienceEngine??={version:1,events:[],sources:{}};
  // Historical singles deliberately carry into album units under the published beta rules.
  for(const a of s.albums)a.certificationPolicy??='lifetime-track-carry-in';
-}];
+},function foundationToTouring(){migrateLivingWorld();migrateTouring();}];
 function migrateSaveState(state){
  const version=state.stateSchemaVersion??0;
  if(!Number.isInteger(version)||version<0||version>CAREER_STATE_SCHEMA)throw Error('This career needs a newer game version.');

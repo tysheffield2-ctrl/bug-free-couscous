@@ -10,7 +10,7 @@ h.run(`applyAudienceEvent('test',-10000)`);assert.equal(h.run('s.fans'),0);asser
 assert.throws(()=>h.run(`applyAudienceEvent('bad',NaN)`));
 h.run(`recordRegionalStreams(null,1);updateRegionalMarkets()`);assert.ok(h.run(`regionalAudiencePage().includes('NEW · First tracked week')`));assert.equal(h.run(`regionalAudiencePage().includes('CAREER PULSE')`),false);
 h.run(`globalThis.legacy=JSON.parse(JSON.stringify(s));delete legacy.stateSchemaVersion;globalThis.old=JSON.stringify(legacy);globalThis.migrated=migrateSaveState(legacy)`);
-assert.equal(h.run('JSON.stringify(legacy)'),h.run('old'));assert.equal(h.run('migrated.stateSchemaVersion'),1);
+assert.equal(h.run('JSON.stringify(legacy)'),h.run('old'));assert.equal(h.run('migrated.stateSchemaVersion'),2);
 assert.equal(h.run('JSON.stringify(migrateSaveState(migrated))'),h.run('JSON.stringify(migrated)'));
 assert.throws(()=>h.run('migrateSaveState({...s,stateSchemaVersion:999})'));
 // Marketing boosts enter the same listener-constrained settlement once.
