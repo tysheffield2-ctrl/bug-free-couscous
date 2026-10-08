@@ -28,7 +28,7 @@ guidePage=function(){return head('Your permanent player handbook','The ENCORE Gu
 
 const V080_GAMEPLAY_TOUR=[
 {page:'Home',target:'.home-dashboard',title:'Your career at a glance',text:'Cash funds choices, true fans drive real demand, and energy limits actions between monthly advances.'},
-{page:'Home',target:'.home-quick',title:'Make your first moves',text:'Work creates runway, open mics build an audience and performance skills, and rest restores energy once per month.'},
+{page:'Home',target:'.home-quick',title:'Make your first moves',text:'Work creates runway, open mics build an audience and performance skills, and rest restores energy once per week.'},
 {page:'Create',target:'.studio-active',title:'Build the record',text:'Write, record and mix one persistent project. Every cost and energy requirement is shown before you commit.'},
 {page:'Stats',target:'.development-stack',title:'Build the artist',text:'Train core skills that affect quality, performance, appeal, negotiation and long-term career ceiling.'},
 {page:'Career',section:'Social',target:'.social-profile',title:'Connect on PULSE',text:'Followers expand reach, but true fans and engagement are much stronger signals for sales, tours and commercial leverage.'},

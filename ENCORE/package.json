@@ -1,13 +1,13 @@
 {
   "name": "encore-artist-sim",
-  "version": "0.9.0-beta.1",
+  "version": "0.9.0-beta.2",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
     "dev": "npm run build && npx wrangler dev",
     "deploy": "npm run build && npx wrangler deploy",
-    "test": "npm run build && node tests/career-world.mjs && node tests/lab-editor.mjs && node tests/label-business.mjs && node tests/negotiations.mjs && node tests/empire.mjs && node tests/living-world.mjs && node tests/guidance-catalog.mjs && node tests/world-tours.mjs && node tests/v080.mjs && node tests/v081.mjs && node tests/v082.mjs && node tests/v083.mjs && node tests/portrait-hotfix.mjs && node tests/roster-weeklabel.mjs && node tests/v085-portraits.mjs && node tests/v086-marketing.mjs && node tests/v087-commercial.mjs && node tests/v088-release-experience.mjs"
+    "test": "npm run build && node tests/career-world.mjs && node tests/lab-editor.mjs && node tests/label-business.mjs && node tests/negotiations.mjs && node tests/empire.mjs && node tests/living-world.mjs && node tests/guidance-catalog.mjs && node tests/world-tours.mjs && node tests/v080.mjs && node tests/v081.mjs && node tests/v082.mjs && node tests/v083.mjs && node tests/portrait-hotfix.mjs && node tests/roster-weeklabel.mjs && node tests/v085-portraits.mjs && node tests/v086-marketing.mjs && node tests/v087-commercial.mjs && node tests/v088-release-experience.mjs && node tests/foundations.mjs && node tests/static-art.mjs && node tests/long-career.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
