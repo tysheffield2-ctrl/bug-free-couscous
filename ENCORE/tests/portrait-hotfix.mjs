@@ -3,12 +3,11 @@ const source=fs.readFileSync(new URL('../dist/game.js',import.meta.url),'utf8').
 function harness(path='/sandbox'){const elements={},storage=new Map(),events={};let stored=null;const bodyChildren=[];const c={console,location:{pathname:path},localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)},document:{documentElement:{dataset:{}},body:{classList:{add(){},remove(){},toggle(){}},appendChild(x){bodyChildren.push(x)}},getElementById(id){return elements[id]??=({innerHTML:'',textContent:'',hidden:false,open:false,className:'',style:{},showModal(){this.open=true},close(){this.open=false},querySelectorAll(){return[]},querySelector(){return null}})},addEventListener(){},querySelectorAll(){return[]},querySelector(){return null},createElement(tag){return {tagName:tag,className:'',dataset:{},textContent:'',children:[],style:{setProperty(){}},appendChild(x){this.children.push(x)},setAttribute(){},before(){},remove(){}}},visibilityState:'visible'},window:{scrollTo(){},addEventListener(k,fn){events[k]=fn}},setTimeout(){return 1},clearTimeout(){},setInterval(){return 1},clearInterval(){},fetch:async(u,o={})=>({ok:true,status:200,json:async()=>o.method==='PUT'?(stored=JSON.parse(o.body),{etag:'test'}):({save:stored,etag:stored?'test':null})}),FormData:class{constructor(v){this.v=v}get(k){return this.v?.[k]??null}getAll(k){return this.v?.[k]||[]}}};vm.createContext(c);vm.runInContext(source,c);return {run:x=>vm.runInContext(x,c),c,elements}}
 const h=harness();await h.run('boot()');h.run('migrateV085();globalThis.miraName=s.world[0].name;globalThis.cairoName=s.world[1].name');
 const mira=h.run("personPhoto('artist-0',miraName,true)");const cairo=h.run("personPhoto('artist-1',cairoName,true)");
-assert.ok(mira.includes('<img class="v088-atlas-image"'));assert.ok(cairo.includes('<img class="v088-atlas-image"'));
-assert.ok(mira.includes('/portraits/core-atlas.webp'));assert.ok(cairo.includes('/portraits/core-atlas.webp'));
+assert.ok(mira.includes('v085-initial-portrait'));assert.ok(cairo.includes('v085-initial-portrait'));
+assert.ok(mira.includes(h.run('V088_initials(miraName)')));assert.ok(cairo.includes(h.run('V088_initials(cairoName)')));
+assert.equal(mira.includes('<img'),false);assert.equal(cairo.includes('<img'),false);
 assert.equal(mira.includes('data:image/svg+xml'),false);assert.equal(cairo.includes('data:image/svg+xml'),false);
-const miraSlot=Number(mira.match(/data-portrait-slot="(\d+)"/)[1]),cairoSlot=Number(cairo.match(/data-portrait-slot="(\d+)"/)[1]);assert.notEqual(miraSlot,cairoSlot);assert.ok(miraSlot<18&&cairoSlot<18);
 assert.equal(mira.includes('background-image'),false);assert.equal(cairo.includes('background-image'),false);
 assert.equal(h.run("personPhoto('artist-0',miraName,true)"),h.run("personPhoto('catalog-0',miraName,true)"));
-const maya=h.run("personPhoto('agent-maya','Maya Ellis')");assert.ok(maya.includes('<img class="v084-person-img"'));assert.ok(maya.includes('data:image/webp;base64,'));
-assert.equal(h.run("V084_portraitIndex('agent-maya','Maya Ellis')"),0);
-console.log('PASS Safari-safe production artist portraits, persisted cross-screen identity consistency, and staff photo fallback.');
+const maya=h.run("personPhoto('agent-maya','Maya Ellis')");assert.ok(maya.includes('v085-initial-portrait'));assert.ok(maya.includes('ME'));assert.equal(maya.includes('<img'),false);
+console.log('PASS current initials-only person presentation and cross-screen identity consistency.');
