@@ -29,5 +29,6 @@ h.run('s.draft=null');
 assert.ok(h.run("studio().includes('studio-creative-brief')"));
 assert.equal(h.run("(studio().match(/>Creative direction<\\/h/g)||[]).length"),0);
 assert.ok(h.run("V080_destinations.some(d=>d[2]==='BusinessHQ')"));
+h.run("s.v081.creative.offers=s.v081.creative.offers.filter(o=>o.id!==999)");
 h.run('validateBundle(saveBundle())');
 console.log('PASS 0.9.2 feature pricing/splits, merch demand, contract UX, sports control, Honors detail, Studio cleanup, Business HQ and save compatibility.');
