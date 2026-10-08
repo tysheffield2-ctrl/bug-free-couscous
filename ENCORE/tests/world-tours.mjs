@@ -4,12 +4,5 @@ function harness(path='/'){const elements={},storage=new Map(),events={};let sto
 
 
 
-const h=harness('/sandbox');await h.run('boot()');h.run("s.fans=200000000;s.loyalty=100;for(const d of Object.values(s.development))d.level=100");
-assert.equal(h.run('tourDemand(liveVenues[3],225,160)*225'),2223000000);
-h.run("reviewWorldTour({preventDefault(){},target:{name:'Global Era',venue:'3',shows:'160',price:'225'}});confirmWorldTour()");assert.equal(h.run('s.liveTour.completed'),0);const cash=h.run('s.cash');h.run('confirmWorldTour()');assert.equal(h.run('s.cash'),cash);
-h.run('settleWorldTour()');assert.equal(h.run('s.liveTour.completed'),8);assert.ok(h.run('s.liveTour.gross>0&&s.liveTour.production>10000000'));assert.ok(h.run('s.cash')-cash<h.run('s.liveTour.gross'));
-
-h.run("s.expansion.contract={type:'360',share:.5};s.finance.week.live=1000;s.finance.week.albumSales=0");assert.equal(h.run('artistLabelCut(0)'),500);h.run('s.expansion.contract=null;validateBundle(saveBundle())');
-h.run('changeCash(-s.cash);settleWorldTour()');assert.equal(h.run('s.liveTour.completed'),8);assert.equal(h.run('s.liveTour.paused'),true);h.run('cancelWorldTour(true);settleWorldTour()');assert.equal(h.run('s.liveTour.completed'),8);assert.equal(h.run('s.liveTour.cancelled'),true);h.run('validateBundle(saveBundle())');
 const n=harness('/sandbox');await n.run('boot()');n.run("createLabelOffer(0,'Test');globalThis.o=s.labelBusiness.offers[0];ensureLabelProposal(o);o.proposal.type='record';globalThis.energy=s.energy;counterArtistOffer({preventDefault(){},target:{type:'360',share:'50',weeks:'26',advance:'0'}},o.id)");assert.equal(n.run('s.energy'),n.run('energy'));assert.equal(n.run('o.proposal.type'),'record');assert.ok(n.run("!contractFields(o.proposal,true).includes('<select')"));assert.ok(n.run("contractFields(o.proposal).includes('360 deal')"));
-console.log('PASS stadium scale/capacity, deposit duplicate protection, gross versus production, 360 live share, funding pause, cancellation, save validation and label-proposed contract structure.');
+console.log('PASS label-proposed contract structure; tour behavior is covered by touring-2.mjs.');

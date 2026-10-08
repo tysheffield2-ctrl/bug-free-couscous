@@ -1,4 +1,12 @@
-# Current build: 0.7.0-beta.1
+# Current build: 0.9.1-beta.2
+
+Read [DEPLOY.md](DEPLOY.md) for the existing Cloudflare Pages or Worker deployment path. Pages uses `npm run build:pages` and `dist/pages`; Workers uses `npm run deploy` and the existing `wrangler.jsonc` bindings. Verify the public version at `/api/version` after publishing.
+
+See [RELEASE-0.9.1.md](RELEASE-0.9.1.md), [READINESS-NEXT-WORK.md](READINESS-NEXT-WORK.md) and [CONTINUE-ROADMAP.md](CONTINUE-ROADMAP.md). Run `npm test` before release. The historical notes below describe older builds and do not supersede the current weekly engine or deployment guide.
+
+---
+
+# Historical build: 0.7.0-beta.1
 
 See [RELEASE-0.7.0.md](RELEASE-0.7.0.md) for the living-world update, editable modules and test limits. Run `npm test` before deployment.
 

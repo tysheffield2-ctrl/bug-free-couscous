@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, encore-0.8-implementation, encore-0.8.1-depth, encore-0.8.2-polish, encore-0.8.3-weekly, encore-0.8.4-portrait-hotfix, encore-0.8.4-portrait-quality, encore-0.8.4-roster-weeklabel, encore-0.8.5-unique-portraits-rebase]
   pull_request:
-    branches: [main]
+    branches: [main, "feature/**"]
 
 jobs:
   test:
