@@ -1,5 +1,41 @@
 # ENCORE readiness review and implementation report
 
+## October 8 continuation — 0.9.1-beta.1
+
+The current candidate is saved in PR #14, `feature/touring-2-living-world`. It includes the earlier Studio and foundation work plus weekly Touring 2.0 and living-city mechanics. The original foundation review below remains a historical record; this section supersedes its candidate version and touring status. This is not a completed 1.0 release.
+
+### Current launch blockers
+
+| Priority | Exact files / systems | Why it blocks launch | Current evidence / work remaining |
+| --- | --- | --- | --- |
+| 1 | Production acceptance: `wrangler.jsonc`, `server/worker.mjs`, `public/art/`, `src/save-tools.js`, `src/navigation.js`, `src/v090.css` | A build passing VM tests does not establish working cloud saves, mobile controls, offline recovery or a live release. | Cloudflare dashboard still reports a sign-in verification error after one reload. No deployment is claimed. Physical-phone acceptance and deployed offline/art checks remain. |
+| 2 | Historical-save compatibility: `src/save-tools.js::migrateSaveState/CAREER_MIGRATIONS`, `src/world-tours.js::migrateTouring`, `tests/foundations.mjs`, `tests/touring-2.mjs` | Career money, rights and history must survive upgrades. | Ordered schema-2 migration, repeatability, portable round trips, prior tour totals and recorded regional routes are covered. Actual historical released-save fixtures remain necessary; simulated legacy objects are not that fixture matrix. |
+| 3 | Canonical subsystem ownership: `build.mjs`, `src/core.js`, `src/weekly-engine.js`, `src/v080*.js` through `src/v090*.js` | Later overrides can silently replace fixes and recreate double settlement. | Audience marketing and calendar ownership consolidated. Touring now has one weekly owner; old monthly settlement and v080/v081 tour overrides are removed. Navigation, finance, contracts and presentation layers still require staged consolidation before 1.0. |
+| 4 | Audience and longevity balance: `src/career-systems.js::applyAudienceEvent/settleAudience`, `src/career-world.js`, `src/core.js::worldWeek`, `tests/long-career.mjs`, `tests/touring-career.mjs` | Progression must remain numerically valid and playable over decades. | Regional conservation, common mutations, AI growth damping and three 20-year baseline scenarios pass locally. A fourth 20-year touring scenario retains all 120 show reports in an approximately 870K-character save. Wider seeds, strategies, listener deduplication and exploit review remain. |
+
+### High-value improvements
+
+| Priority | Exact files / systems | Why this tier | Current status |
+| --- | --- | --- | --- |
+| 1 | Touring 2.0: `src/world-tours.js`, `src/core.js::advanceWeek`, `src/career-systems.js::adjustReleaseStreams`, `tests/touring-2.mjs`, `tests/touring-career.mjs` | Tours should be strategic regional careers with transparent costs and durable consequences. | Implemented editable city routes, two shows per week, pricing/premium mix, production/security/openers, cost forecasts, deposits/upgrades, funding pauses, reports, cancellation, regional aftermath, catalog buzz, opening invitations and archived shows. Remaining: ticket-sales pacing, richer inventory, travel distances, opener negotiation/availability, festivals and deeper incidents. |
+| 2 | Living cities: `src/career-world.js::migrateLivingWorld/settleLivingWorld`, `src/industry-life.js::relocateArtist`, `src/wealth.js::confirmAssetBuy` | Geography should affect decisions and identity. | Implemented city scene cycles, fatigue/sentiment, NPC home/current cities, permanent player hometown and property lodging benefits. Remaining: broader city content and deeper cross-system world events. |
+| 3 | Audience product model: `src/career-systems.js`, `src/career-world.js`, `src/social.js`, `src/v086-marketing.js` | Conserved totals alone do not explain discovery, conversion, loyalty and churn. | Shared mutation infrastructure delivered. Cross-source listener deduplication and conversion calibration remain. |
+| 4 | Generational AI / meaningful charts: `src/core.js::worldWeek/widerIndustry/compileSongs`, `src/v082-polish.js`, `src/directory.js` | The world must develop rivals and successors across long careers. | Existing cooling/hiatus/comeback mechanics and new damping retained. Aging, retirement, replacement generations and persistent identities behind filler chart entries remain. |
+| 5 | Relationships and representation: `src/industry-life.js`, `src/negotiations.js`, `src/label-business.js`, `src/world-tours.js` | Managers, agents and collaborators need shared history and distinct consequences. | Executive gates delivered; touring uses compatible relation scores and paid openers. Multidimensional relationships, inner circle and richer negotiation remain. |
+
+### Later polish
+
+| Work / files | Why it can follow the foundation |
+| --- | --- |
+| More city/venue descriptions, tour report presentation and richer PULSE reply threads: `src/world-tours.js`, `src/social.js`, styles | Adds variety and feedback after route mechanics, saves and finance are reliable. Current aftermath already updates reach/followers and weekly briefings. |
+| Portrait and visual consistency: `src/v08*-portraits*`, `src/v090.css`, `public/art/` | Cosmetic consistency is valuable but cannot substitute for save safety and release acceptance. Static-art extraction already reduces bundles. |
+| Broader awards/legacy storytelling and optional presentation refinements in their owning modules | Extend career texture after the shared history and canonical engine are stable. Any rewards affecting progression still need balance tests before release. |
+
+See `CONTINUE-ROADMAP.md` for supported behaviors, exact source owners, verification commands and remaining implementation work. All source and continuation notes are saved in GitHub. No email was sent.
+
+---
+
+
 Reviewed October 7–8, 2026. This is a beta foundation change, not a declaration of 1.0 readiness or public deployment.
 
 ## Evidence and current state
