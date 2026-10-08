@@ -12,7 +12,7 @@ try{
 if(!releaseItems.length)releaseItems=['Gameplay, presentation and stability improvements for this build.'];
 const releaseMeta={version:gameVersion,items:releaseItems};
 
-const modules=['artwork','name-generator','core','career-systems','save-tools','beta','experience','lab-editor','label-business','negotiations','social','wealth','commerce','empire','directory','presentation','asset-photos','market','conversations','industry-life','navigation','studio-life','guidance','collections','people-products','world-tours','v080','v080-polish','v080-fixes','v081-depth','v081-polish','v082-polish','v083-weekly','v083-fixes','weekly-engine','v084-portraits','v084-roster-weeklabel','v085-unique-portraits','v086-marketing','v086-fixes','v087-commercial-scale','v088-release-experience','career-world','career-world-navigation','career-world-routing','v090-studio','v090-contracts','v091-economy'];
+const modules=['artwork','name-generator','core','career-systems','save-tools','beta','experience','lab-editor','label-business','negotiations','social','wealth','commerce','empire','directory','presentation','asset-photos','market','conversations','industry-life','navigation','studio-life','guidance','collections','people-products','world-tours','v080','v080-polish','v080-fixes','v081-depth','v081-polish','v082-polish','v083-weekly','v083-fixes','weekly-engine','v084-portraits','v084-roster-weeklabel','v085-unique-portraits','v086-marketing','v086-fixes','v087-commercial-scale','v088-release-experience','career-world','career-world-navigation','career-world-routing','v090-studio','v090-contracts','v091-economy','v092-collabs','v092-merch-contracts','v092-awards-sports','v092-business','v092-fixes'];
 const staticArt=[];
 function moduleSource(name){
  let source=readFileSync('src/'+name+'.js','utf8');
@@ -29,7 +29,7 @@ writeFileSync('dist/game.js',js);
 let html=readFileSync('dist/index.html','utf8');
 html=html.replace(/<style id="encore-presentation">[\s\S]*?<\/style>/,'');
 html=html.replace('<button class="primary" onclick="advance()">Advance month</button>','<button class="primary" onclick="advance()">Advance week</button>');
-const css=['presentation','v080','v081','v082','v088','v090'].map(name=>readFileSync('src/'+name+'.css','utf8')).join('\n');
+const css=['presentation','v080','v081','v082','v088','v090','v092'].map(name=>readFileSync('src/'+name+'.css','utf8')).join('\n');
 html=html.replace('</head>','<style id="encore-presentation">'+css+'</style></head>');
 writeFileSync('dist/index.html',html);
 
