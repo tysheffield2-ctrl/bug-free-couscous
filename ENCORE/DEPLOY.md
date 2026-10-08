@@ -5,7 +5,7 @@ This guide is for the existing Cloudflare application serving encoremusicsim.com
 ## Before deploying
 
 1. Export your normal career and sandbox from the current game’s Saves screen. Keep those files.
-2. In GitHub, open PR #14 and confirm ENCORE CI passes on its latest commit. Merge it into `main` when ready to release. Do not merge the older Studio/foundation PRs separately; this branch includes their work.
+2. In GitHub, open PR #14 and confirm ENCORE CI passes on its latest commit. Prepare the hosting settings below before merging into `main`, so an automatic deployment uses the correct output. Do not merge the older Studio/foundation PRs separately; this branch includes their work.
 3. In Cloudflare → Workers & Pages, open the existing ENCORE application attached to your domain. Check whether its type is **Pages** or **Worker**, then use the corresponding instructions below. Do not create a replacement application or change the domain.
 4. Preserve the production R2 binding: variable **BUCKET**, bucket **encore-saves**. Existing saves use this bucket and the existing domain’s guest cookies. Keep existing feedback/email bindings and environment variables.
 
@@ -25,7 +25,7 @@ The output contains `_worker.js` plus art and portrait assets. It serves the gam
 
 Under Settings → Bindings, confirm an R2 binding named `BUCKET` points to the existing `encore-saves` bucket in production. If the binding was changed, redeploy for it to take effect. Preserve existing bindings; do not provision an empty replacement bucket.
 
-Save the build settings and retry/create the production deployment from the merged `main` commit. Check its commit matches this release and wait for Cloudflare to report success. Do not retry an old deployment commit expecting new code.
+Save the build settings first. Then merge PR #14 into `main` and let the Git integration deploy, or create the production deployment from that merged commit. Check its commit matches this release and wait for Cloudflare to report success. Do not retry an old deployment commit expecting new code.
 
 If Cloudflare was already building automatically when you merged, its first attempt may have used the old settings. Redeploy after saving the settings above.
 
