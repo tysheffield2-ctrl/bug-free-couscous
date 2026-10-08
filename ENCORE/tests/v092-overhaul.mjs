@@ -20,7 +20,7 @@ h.run('V081_buySports(0,.30,true)');
 assert.ok(h.run('V092_sportsHeldShare(s.v081.sports.teams[0])>=.55'));
 assert.ok(h.run("V081_sportsPage().includes('Front office')"));
 
-h.run("s.week=52;s.songs.push({id:991,title:'Test Anthem',released:10,quality:100,total:1000000000,streams:10000000,peak:1,feature:null,features:[],genre:s.genre});annualAwards()");
+h.run("s.week=52;s.songs.push({id:991,title:'Test Anthem',mood:'Focused',released:10,quality:100,total:1000000000,streams:10000000,peak:1,feature:null,features:[],genre:s.genre});annualAwards()");
 assert.ok(h.run('s.v080.awards.ceremonies.at(-1).results.every(r=>r.nominees.reduce((n,x)=>n+(x.votes||0),0)===1000)'));
 assert.ok(h.run('s.v080.awards.ceremonies.at(-1).results.every(r=>typeof r.winnerWork==="string"&&r.winnerWork.length>0)'));
 assert.ok(h.run("V080_awardsPage().includes('Your career wins in this category')"));
