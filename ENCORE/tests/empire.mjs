@@ -32,5 +32,5 @@ calendar.run('s.week=53;delete s.empire.calendarVersion;migrateCalendar();render
 assert.equal(calendar.run('careerDate()'),'January 2027');
 assert.ok(calendar.run('home()').includes('backstage-home'));
 assert.ok(calendar.run('wealthPage()').includes('PRIVATE OFFICE'));
-assert.ok(calendar.run('ENCORE_ART.backstage.startsWith("data:image/webp;base64,")'));
+assert.ok(calendar.run('ENCORE_ART.backstage.startsWith("/art/")'));
 console.log('PASS real calendar migration/year rollover, completed-month recap, new screen markup and embedded offline artwork.');

@@ -1,7 +1,7 @@
 /* Portable saves, recovery and isolated practice. */
 const BACKUP_KEY='encore-recovery-v1-'+(SANDBOX?'sandbox':'career')+'-'+(OFFLINE?'offline':'online');
 let pendingImport=null,practice=null;
-function saveBundle(){return {format:'encore-career',schemaVersion:1,exportedAt:new Date().toISOString(),mode:SANDBOX?'sandbox':'career',state:JSON.parse(JSON.stringify(s))}}
+function saveBundle(){s=migrateSaveState(s);return {format:'encore-career',schemaVersion:1,exportedAt:new Date().toISOString(),mode:SANDBOX?'sandbox':'career',state:JSON.parse(JSON.stringify(s))}}
 function downloadBundle(bundle,prefix='ENCORE-save'){const url=URL.createObjectURL(new Blob([JSON.stringify(bundle,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=prefix+'-'+bundle.mode+'-week-'+bundle.state.week+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function exportCareer(){if(saveReady){downloadBundle(saveBundle());noteBetaExport();toast('Save download prepared. Keep a copy in Files.')}}
 function backupCareer(manual=false){if(!saveReady||saveConflict)return false;try{localStorage.setItem(BACKUP_KEY,JSON.stringify(saveBundle()));if(manual)toast('Recovery snapshot saved on this device.');return true}catch{if(manual)toast('Recovery storage unavailable. Export your career before replacing or resetting it.');return false}}
@@ -10,7 +10,7 @@ function savesPage(){const b=readRecovery();return head('Keep your story safe','
 function validateBundle(bundle){
  if(!bundle||bundle.format!=='encore-career'||bundle.schemaVersion!==1||!bundle.state)throw Error('Choose an ENCORE exported save.');
  if(bundle.mode!==(SANDBOX?'sandbox':'career')||!!bundle.state.sandbox!==SANDBOX)throw Error('Wrong game mode. Open '+(bundle.mode==='sandbox'?'sandbox':'normal career')+' to import this file.');
- const state=bundle.state;if(JSON.stringify(bundle).length>8000000)throw Error('Save exceeds the safe import limit.');let nodes=0;
+ const state=bundle.state;if((state.stateSchemaVersion??0)>CAREER_STATE_SCHEMA)throw Error('This career needs a newer game version.');if(JSON.stringify(bundle).length>8000000)throw Error('Save exceeds the safe import limit.');let nodes=0;
  function walk(v,key='',depth=0){if(++nodes>600000||depth>18)throw Error('Save is too complex.');if(typeof v==='number'&&!Number.isFinite(v))throw Error('Invalid number.');if(typeof v==='string'){if(v.length>100000)throw Error('Text is too long.');if(['id','uid','key'].includes(key)&&!/^[-\w:.]+$/.test(v))throw Error('Invalid identifier.')}if(v&&typeof v==='object')for(const [k,x] of Object.entries(v)){if(['__proto__','prototype','constructor'].includes(k))throw Error('Unsafe save structure.');walk(x,k,depth+1)}}walk(state);
  const integer=(v,min,max)=>Number.isInteger(v)&&v>=min&&v<=max,numeric=(o,ks)=>ks.every(k=>Number.isFinite(o?.[k]));
  if(!integer(state.week,1,100000)||!integer(state.energy,0,200)||!numeric(state,['cash','fans','reputation','loyalty','streams','total','boost'])||state.fans<0||typeof state.name!=='string'||state.name.length>100||!genres.includes(state.genre))throw Error('Artist data is invalid.');
@@ -37,7 +37,7 @@ function validateBundle(bundle){
  const candidate=JSON.parse(JSON.stringify(state)),active=s;
  try{s=candidate;migrateCharts();migratePacing();migrateDevelopment();migrateCareerRecords();migrateFinance();migrateChartBook();migrateAchievements();migrateExpansion();migrateLabelBusiness();migrateEmpire();validateLabelBusiness();validateEmpire();validateLiving();validatePresentationState();validateWorldTour();migrateMarket();migrateConversations();migrateIndustryLife();validateLiving();for(const view of [home,studio,careerProfile,catalog,training,financeScreen,achievementsPage,certificationsPage,tourPage,marketingPage,opportunitiesPage,labelPage,legacyPage])view();}
  catch{throw Error('This save has incomplete gameplay data. Your active career was not changed.');}finally{s=active;if(s.market)syncMarketHoldings()}
- return candidate;
+ return migrateSaveState(candidate);
 }
 async function readImport(file){if(!file)return;try{if(file.size>8000000)throw Error('Choose a save smaller than 8 MB.');previewImport(JSON.parse(await file.text()))}catch(e){toast('Import stopped: '+e.message)}}
 function previewImport(bundle){try{pendingImport=validateBundle(bundle);modal(`<h2>Import this career?</h2>${profileRows([['Artist',pendingImport.name],['Week',pendingImport.week],['Mode',SANDBOX?'Sandbox':'Normal career'],['Cash',money(pendingImport.cash)],['Songs',pendingImport.songs.length]])}<p>This replaces the active career in this mode. We first save a recovery snapshot of your current career on this device.</p><button class="secondary" onclick="pendingImport=null;$('modal').close()">Cancel</button><button class="primary" onclick="confirmImport()">Back up and import</button>`)}catch(e){pendingImport=null;toast('Import stopped: '+e.message)}}
@@ -48,3 +48,23 @@ function practiceScreen(){const steps=[['Write a song','Choose a title and direc
 function practiceNext(){if(!practice)return;const costs=[[0,10],[40,15],[30,15],[20,5]];if(practice.step<4){practice.cash-=costs[practice.step][0];practice.energy-=costs[practice.step][1]}else if(practice.step===4){practice.cash+=150;practice.energy=200}else{practice=null;$('modal').close();return}practice.step++;practiceScreen()}
 window.addEventListener('pageshow',e=>{if(e.persisted&&saveReady){endTour();$('modal').close();showTitle()}});
 
+
+const CAREER_STATE_SCHEMA=1;
+const CAREER_SAVE_BUDGET=8000000;
+const CAREER_MIGRATIONS=[function legacyToFoundation(){
+ migrateCharts();migratePacing();migrateDevelopment();migrateCareerRecords();
+ migrateFinance();migrateChartBook();migrateAchievements();migrateExpansion();
+ migrateLabelBusiness();migrateEmpire();migrateMarket();migrateConversations();
+ migrateIndustryLife();migrateV083();migrateCareerWorld();
+ s.audienceEngine??={version:1,events:[],sources:{}};
+ // Historical singles deliberately carry into album units under the published beta rules.
+ for(const a of s.albums)a.certificationPolicy??='lifetime-track-carry-in';
+}];
+function migrateSaveState(state){
+ const version=state.stateSchemaVersion??0;
+ if(!Number.isInteger(version)||version<0||version>CAREER_STATE_SCHEMA)throw Error('This career needs a newer game version.');
+ if(version===CAREER_STATE_SCHEMA)return state;
+ const active=s,candidate=JSON.parse(JSON.stringify(state));
+ try{s=candidate;for(let v=version;v<CAREER_STATE_SCHEMA;v++){CAREER_MIGRATIONS[v]();s.stateSchemaVersion=v+1}return candidate}
+ finally{s=active}
+}
