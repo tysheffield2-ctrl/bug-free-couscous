@@ -30,7 +30,7 @@ h.run("V092_saveTeamPlan({preventDefault(){},target:{strategy:'contend',ticket:'
 assert.equal(h.run('s.v081.sports.teams.find(x=>x.id===team.id).management.strategy'),'contend');
 assert.ok(h.run('s.v081.sports.teams.find(x=>x.id===team.id).management.capital>=1000000'));
 
-h.run("s.songs.push({id:991,title:'Crown Record',released:20,quality:99,total:100000000,peak:1,feature:null,features:[]});migrateV080();s.v080.awards.ceremonies=[{year:1,week:52,wins:1,nominations:1,results:[{category:'Song of the Year',winner:s.name,won:true,nominated:true,score:100,nominees:[{name:s.name,score:100,you:true},{name:s.world[0].name,score:80,you:false}]}]}];V092_backfillAwards();globalThis.aw=s.v080.awards.ceremonies[0].results[0]");
+h.run("s.songs.push({id:991,title:'Crown Record',mood:'story',released:1,quality:99,streams:1000000,total:100000000,peak:1,feature:null,features:[]});migrateV080();s.v080.awards.ceremonies=[{year:1,week:52,wins:1,nominations:1,results:[{category:'Song of the Year',winner:s.name,won:true,nominated:true,score:100,nominees:[{name:s.name,score:100,you:true},{name:s.world[0].name,score:80,you:false}]}]}];V092_backfillAwards();globalThis.aw=s.v080.awards.ceremonies[0].results[0]");
 assert.equal(h.run('aw.winningWork'),'Crown Record');
 assert.equal(h.run('aw.nominees.reduce((n,x)=>n+x.votes,0)'),1000);
 assert.equal(h.run('aw.categoryCareerWin'),1);
