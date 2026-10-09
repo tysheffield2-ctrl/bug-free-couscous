@@ -3,7 +3,7 @@
 const CAREER_WORLD_ROUTE_IDS=new Set(['CareerPulse','Audience']);
 function careerWorldPage(id){
  if(id==='CareerPulse')return head('Know where your career stands','Career Pulse.')+careerPulseCard();
- if(id==='Audience')return regionalAudiencePage();
+ if(id==='Audience')return head('See where the world is listening','Audience & Markets.')+(typeof V093_audienceMap==='function'?V093_audienceMap():regionalAudiencePage())+(typeof V093_routeIntelligence==='function'?V093_routeIntelligence():'');
  return '';
 }
 const careerWorldBaseOpenDestination=openDestination;
