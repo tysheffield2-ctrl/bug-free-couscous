@@ -29,7 +29,7 @@ writeFileSync('dist/game.js',js);
 let html=readFileSync('dist/index.html','utf8');
 html=html.replace(/<style id="encore-presentation">[\s\S]*?<\/style>/,'');
 html=html.replace('<button class="primary" onclick="advance()">Advance month</button>','<button class="primary" onclick="advance()">Advance week</button>');
-const css=['presentation','v080','v081','v082','v088','v090','v092'].map(name=>readFileSync('src/'+name+'.css','utf8')).join('\n');
+const css=['presentation','v080','v081','v082','v088','v090','v092','v093'].map(name=>readFileSync('src/'+name+'.css','utf8')).join('\n');
 html=html.replace('</head>','<style id="encore-presentation">'+css+'</style></head>');
 writeFileSync('dist/index.html',html);
 
