@@ -27,8 +27,8 @@ h.run("s.cash=10000000000000;s.energy=200;migrateV092();globalThis.team=s.v081.s
 assert.ok(Math.abs(h.run('V092_teamShare(team)')-.55)<1e-6);
 assert.ok(h.run('s.v081.sports.holdings.filter(x=>x.team===team.id).every(x=>x.share<=.1)'));
 h.run("V092_saveTeamPlan({preventDefault(){},target:{strategy:'contend',ticket:'premium',capital:'1000000'}},team.id)");
-assert.equal(h.run('team.management.strategy'),'contend');
-assert.ok(h.run('team.management.capital>=1000000'));
+assert.equal(h.run('s.v081.sports.teams.find(x=>x.id===team.id).management.strategy'),'contend');
+assert.ok(h.run('s.v081.sports.teams.find(x=>x.id===team.id).management.capital>=1000000'));
 
 h.run("s.songs.push({id:991,title:'Crown Record',released:20,quality:99,total:100000000,peak:1,feature:null,features:[]});migrateV080();s.v080.awards.ceremonies=[{year:1,week:52,wins:1,nominations:1,results:[{category:'Song of the Year',winner:s.name,won:true,nominated:true,score:100,nominees:[{name:s.name,score:100,you:true},{name:s.world[0].name,score:80,you:false}]}]}];V092_backfillAwards();globalThis.aw=s.v080.awards.ceremonies[0].results[0]");
 assert.equal(h.run('aw.winningWork'),'Crown Record');
