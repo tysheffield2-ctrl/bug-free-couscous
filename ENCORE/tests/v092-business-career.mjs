@@ -13,6 +13,7 @@ h.run("s.cash=1000000000;s.energy=200;s.fans=1000000;s.reputation=100;s.world[0]
 assert.equal(h.run('s.draft.features.length'),1);
 assert.equal(h.run("s.draft.features[0].dealType"),'royalty');
 assert.ok(h.run('s.draft.features[0].royaltyRate>0'));
+h.run('s.draft=null');
 
 h.run("s.cash=1000000000;s.energy=200;createMerch({preventDefault(){},target:{mode:'ondemand',look:'0',qty:'',price:'45'}},'tee');confirmMerch()");
 assert.equal(h.run('s.empire.merch.at(-1).mode'),'ondemand');
