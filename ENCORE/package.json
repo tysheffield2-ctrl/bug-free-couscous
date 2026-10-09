@@ -1,13 +1,13 @@
 {
   "name": "encore-artist-sim",
-  "version": "0.9.1-beta.3",
+  "version": "0.9.2-beta.1",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
     "dev": "npm run build && npx wrangler dev",
     "deploy": "npm run build && npx wrangler deploy",
-    "test": "npm run build && node tests/career-world.mjs && node tests/lab-editor.mjs && node tests/label-business.mjs && node tests/negotiations.mjs && node tests/empire.mjs && node tests/living-world.mjs && node tests/guidance-catalog.mjs && node tests/world-tours.mjs && node tests/v080.mjs && node tests/v081.mjs && node tests/v082.mjs && node tests/v083.mjs && node tests/portrait-hotfix.mjs && node tests/roster-weeklabel.mjs && node tests/v085-portraits.mjs && node tests/v086-marketing.mjs && node tests/v087-commercial.mjs && node tests/v088-release-experience.mjs && node tests/foundations.mjs && node tests/static-art.mjs && node tests/touring-2.mjs && node tests/touring-release.mjs && node tests/historical-saves.mjs && node tests/deployment.mjs && node tests/long-career.mjs && node tests/touring-career.mjs && node tests/v091-economy.mjs",
+    "test": "npm run build && node tests/career-world.mjs && node tests/lab-editor.mjs && node tests/label-business.mjs && node tests/negotiations.mjs && node tests/empire.mjs && node tests/living-world.mjs && node tests/guidance-catalog.mjs && node tests/world-tours.mjs && node tests/v080.mjs && node tests/v081.mjs && node tests/v082.mjs && node tests/v083.mjs && node tests/portrait-hotfix.mjs && node tests/roster-weeklabel.mjs && node tests/v085-portraits.mjs && node tests/v086-marketing.mjs && node tests/v087-commercial.mjs && node tests/v088-release-experience.mjs && node tests/foundations.mjs && node tests/static-art.mjs && node tests/touring-2.mjs && node tests/touring-release.mjs && node tests/historical-saves.mjs && node tests/deployment.mjs && node tests/long-career.mjs && node tests/touring-career.mjs && node tests/v091-economy.mjs && node tests/v092-business-career.mjs",
     "build:pages": "npm run build && node build-pages.mjs"
   },
   "devDependencies": {
