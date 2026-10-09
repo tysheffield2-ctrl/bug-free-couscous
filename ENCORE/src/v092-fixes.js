@@ -32,3 +32,8 @@ const V092_settleSportsTitles=V081_settleSports;
 V081_settleSports=function(){const result=V092_settleSportsTitles();V092_expandSportsUniverse();return result};
 const V092_saveTeamPlanHydrated=V092_saveTeamPlan;
 V092_saveTeamPlan=function(e,id){migrateV092();return V092_saveTeamPlanHydrated(e,id)};
+
+/* v083 recreates its canonical team objects at the end of render. Rehydrate only the
+   lightweight owner fields afterwards so controls never flash back to defaults. */
+const V092_renderSportsState=render;
+render=function(){const result=V092_renderSportsState();if(saveReady&&s.v092)V092_expandSportsUniverse();return result};
