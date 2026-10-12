@@ -8,9 +8,12 @@ assert.equal(h.run('r.wages'),25000);
 assert.equal(h.run('r.investment'),5000);
 assert.equal(h.run('r.revenue'),150000);
 assert.ok(h.run('r.effectiveTaxRate>0'));
-assert.ok(h.run("financeRows(r,true).some(x=>x[0]==='Commercial deals & endorsements'&&x[1].includes('$100,000'))"));
+assert.ok(h.run("financeRows(r,true).some(x=>x[0]==='Media & commercial income'&&x[1].includes('$100,000'))"));
 assert.ok(h.run("financeRows(r,true).some(x=>x[0]==='TAX INFO · Effective rate'&&x[1].includes('%'))"));
-assert.equal(h.run("financeRows(r,true).filter(x=>x[0].startsWith('TAX ·')).length"),1);\nassert.ok(h.run("financeRows(r,true).some(x=>x[0]==='Owned Label · Roster Revenue')")===false);\nassert.equal(h.run('r.overhead'),0);\nassert.ok(h.run('r.operatingCost>=0'));
+assert.equal(h.run("financeRows(r,true).filter(x=>x[0].startsWith('TAX ·')).length"),1);
+assert.ok(h.run("financeRows(r,true).some(x=>x[0]==='Owned Label · Roster Revenue')")===false);
+assert.equal(h.run('r.overhead'),0);
+assert.ok(h.run('r.operatingCost>=0'));
 
 const p=harness('/sandbox',13579);await p.run('boot()');
 p.run("migrateSocial();s.social.followers=10000;s.social.lastWeek=0;s.social.v091OrganicWeek=0;s.streams=2500000;migrateCareerWorld();s.careerWorld.momentum=80;s.development.marketability.level=70;s.development.viralAbility.level=70;globalThis.before=s.social.followers;globalThis.gain=finishSocialWeek()");
