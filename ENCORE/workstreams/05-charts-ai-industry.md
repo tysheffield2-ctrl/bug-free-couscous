@@ -1,54 +1,72 @@
 # ENCORE — Charts & AI Industry
 
 ## Audit score
-**Pre-pass:** Charts 6.2/10 · AI Industry 5.9/10
+**Original audit:** Charts 6.2/10 · AI Industry 5.9/10
 
-**Current implementation target:** Charts ~7.2/10 · AI Industry ~7.0/10, pending CI and long-career validation.
+**0.9.6 validated foundation:** Charts ~7.2/10 · AI Industry ~7.0/10
+
+**0.9.7 implementation target:** Charts ~7.5/10 · AI Industry ~7.8/10, pending full regression validation.
 
 ## Current state
-Charts already track floors, debut, movement, re-entry, peak, weeks, #1 streaks and late entries. NPCs already had momentum, cooling, hiatus, reinvention, collaboration and comeback behavior.
+Charts track floors, debut, movement, re-entry, peak, weeks, #1 streaks and late entries. The original NPC layer already supported momentum, cooling, hiatus, reinvention, collaboration and comeback events.
 
-The first 0.9.6 generations pass adds a persistent long-career layer on top of that foundation:
+### 0.9.6 — persistent generations
 - New artists enter the world on a recurring cadence.
-- Every AI artist now has durable generation, debut, peak-audience, stage and status metadata.
-- Artists can age through newcomer, rising/breakout, prime, rebuild, veteran and legacy stages.
-- Older careers can retire without deleting artist IDs, catalogs, relationships or history.
-- Eligible legacy artists can return as the same persistent identity.
-- Genre climate moves over time and influences which genres produce new entrants.
-- Synthetic Top 100 song entries now shrink as persistent releases become numerous enough to replace them.
-- Synthetic album-chart depth follows the same rule.
-- World Pulse surfaces generation count, active/legacy careers, recent debuts and current genre climate.
+- Every AI artist has durable generation, debut, peak-audience, stage and status metadata.
+- Careers age through newcomer, rising/breakout, prime, rebuild, veteran and legacy stages.
+- Retirement preserves IDs, catalogs, relationships and history.
+- Eligible legacy artists return as the same persistent identity.
+- Genre climate changes over time.
+- Synthetic song and album chart entries shrink as persistent releases replace them.
+- World Pulse surfaces active/legacy careers, debuts and genre climate.
+- Full ENCORE regression and long-career suite passed before merge to main.
+
+### 0.9.7 — career intelligence
+- AI artists receive persistent career strategies: steady builder, prolific, perfectionist, connector or era builder.
+- Strategy changes release cadence and execution instead of every artist using one schedule.
+- Genre climate affects actual AI release performance, not only future artist generation.
+- Artists can build persistent collaboration histories with other AI careers.
+- New generations enter the existing label league and can participate in its budget, renewal and transfer economy.
+- Career-stage changes create visible World Pulse stories instead of silent stat transitions.
+- Retirement captures a legacy record: peak audience, catalog streams, biggest release, chart peak, #1 weeks, release count and career length.
+- AI artist profiles expose generation, strategy, stage, label status, collaborator history and legacy record.
 
 ## Canonical goal
-A persistent music industry that exists independently of the player: artists emerge, develop, peak, slump, retire, return, leave legacies and are replaced by new generations. Chart entries should overwhelmingly belong to persistent careers.
+A persistent music industry that exists independently of the player: artists emerge, develop, peak, slump, tour, collaborate, sign or leave labels, retire, return, leave legacies and are replaced by new generations. Chart entries should overwhelmingly belong to careers the player can actually follow.
 
-## Completed in first generations pass
+## Completed
 - [x] New-artist generation pipeline.
 - [x] Career age/stage metadata.
 - [x] Retirement without destructive roster deletion.
 - [x] Persistent comeback continuity.
 - [x] Genre-climate foundation.
+- [x] Genre climate influencing AI release performance.
+- [x] Distinct AI release strategies and cadences.
+- [x] Persistent AI collaboration history foundation.
+- [x] New-generation integration with existing label league.
+- [x] Retirement legacy summaries.
+- [x] New-generation / stage-transition storytelling.
 - [x] Shrinking synthetic song-chart filler.
 - [x] Shrinking synthetic album-chart filler.
-- [x] Dedicated regression coverage for persistent generations and chart depth.
+- [x] Dedicated persistent-generation regression coverage.
 
 ## Highest-priority next backlog
-- Give AI artists actual release strategy rather than one shared release cadence.
-- Make genre climate affect release reception, label strategy, collaborations and city scenes — not only new-artist generation.
-- Add AI touring careers and feed tour success/failure back into audience, momentum and charts.
-- Add AI label movement: signing, dropping, switching, independent eras and executive priorities.
-- Expand collaboration logic into durable co-signs, feature chains, beef and scene networks.
-- Preserve deeper legacy summaries when careers retire: #1s, awards, biggest release, tours and era history.
-- Add new-generation discovery storytelling instead of silent roster growth.
-- Reduce synthetic chart depth further only when long-career distribution proves the persistent world can support realistic thresholds.
-- Validate #1 thresholds, chart longevity, world audiences, retirement rates and generation size across more 20+ year seeds.
+- Add AI touring careers and feed tour success/failure back into audience, momentum, relationships and charts.
+- Deepen label executive strategy: dropping artists, bidding wars, genre priorities, roster crowding and deliberate independent eras.
+- Expand collaboration history into co-signs, feature chains, rivalry/beef networks and scene politics.
+- Connect genre climate to city scenes, label A&R priorities and touring demand.
+- Integrate AI awards and major tours into legacy records.
+- Make discovery of new artists more interactive through charts, PULSE, labels and city scenes.
+- Measure synthetic chart share by career year and drive it toward a small emergency floor rather than using time alone.
+- Validate #1 thresholds, chart longevity, world audiences, retirement rates, label concentration and generation size across broader 20+ year seeds.
 
 ## Guardrails
 - Never renumber or remove historical artist IDs just to make room for a new generation.
 - Retirement must not erase catalogs, relationships, chart history or shared live history.
 - Do not solve chart realism by generating more anonymous rows.
-- Persistent careers should replace synthetic entries through simulation depth, not through weaker chart standards.
-- New AI systems should eventually share Touring, Audience, Labels, PULSE and Relationship engines rather than invent parallel stat changes.
+- Persistent careers should replace synthetic entries through simulation depth, not weaker chart standards.
+- Use ENCORE's existing Labels, Touring, Audience, PULSE and Relationship systems where possible rather than creating disconnected copies.
+- Every new AI behavior must remain bounded enough for 20+ year saves and the existing save-size budget.
 
 ## Why this remains Tier A
-This is still the largest lever for making ENCORE feel like a world instead of a player-centric career calculator. The first pass establishes generational continuity; the next passes must make those careers strategically intelligent and deeply interconnected.
+This is still the largest lever for making ENCORE feel like a music world rather than a player-centric career calculator. Generational continuity is now real; the remaining work is making those careers interact with the same industry systems the player does.
