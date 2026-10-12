@@ -45,12 +45,13 @@ const V100_editTourStopOld=editTourStop;
 editTourStop=function(id=null){V100_editTourStopOld(id);const route=tourRoute(),r=route.find(x=>x.id===id);if(id!==null&&r&&$('modal')?.open)$('modal').innerHTML+=V100_venueForecast(r,route)};
 const V100_saveTourStopOld=saveTourStop;
 saveTourStop=function(e,id=null){
- const f=new FormData(e.target),r={id:id??s.touring.nextStop,city:String(f.get('city')),week:Number(f.get('week')),venue:Number(f.get('venue')),price:Number(f.get('price')),vip:Number(f.get('vip')),production:Number(f.get('production')),security:Number(f.get('security')),opener:f.get('opener')===''||f.get('opener')===null?null:Number(f.get('opener')),status:'scheduled'},booking=V100_venueAvailable(r);
- if(!booking.available){e.preventDefault();toast(booking.reason);return}return V100_saveTourStopOld(e,id)
+ const f=new FormData(e.target),r={id:id??s.touring.nextStop,city:String(f.get('city')),week:Number(f.get('week')),venue:Number(f.get('venue')),price:Number(f.get('price')),vip:Number(f.get('vip')),production:Number(f.get('production')),security:Number(f.get('security')),opener:f.get('opener')===''||f.get('opener')===null?null:Number(f.get('opener')),status:'scheduled'},booking=V100_venueAvailable(r),activeEdit=id!==null&&s.liveTour&&!s.liveTour.cancelled&&!s.liveTour.finished;
+ /* Active-tour edits must still pass through the legacy upgrade confirmation/payment flow. Promoter gating applies to new draft bookings; it must not silently bypass a paid-tour confirmation path. */
+ if(!booking.available&&!activeEdit){e.preventDefault();toast(booking.reason);return}
+ if(!booking.available&&activeEdit)r.promoterWarning=booking.reason;
+ return V100_saveTourStopOld(e,id)
 };
 const V100_tourRouteCardsOld=tourRouteCards;
-tourRouteCards=function(route){
- return V100_tourRouteCardsOld(route).replace(/<section class="card"><span class="eyebrow">WEEK ([\s\S]*?)<\/section>/g,m=>m);
-};
+tourRouteCards=function(route){return V100_tourRouteCardsOld(route).replace(/<section class="card"><span class="eyebrow">WEEK ([\s\S]*?)<\/section>/g,m=>m)};
 const V100_tourPageOld=tourPage;
 tourPage=function(){return V100_tourPageOld().replace('Regional fans, recent streams, local loyalty, city heat, ticket resistance and repeat visits shape demand.','Regional fans, recent streams, local loyalty, city heat, ticket resistance and repeat visits shape demand. Venue class now also changes promoter confidence, crew, production, security, logistics, prestige and incident exposure.')};
