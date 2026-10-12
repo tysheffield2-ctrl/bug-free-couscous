@@ -1,0 +1,10 @@
+import {readFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const js=readFileSync(new URL('../src/v095-artist-file.js',import.meta.url),'utf8');
+assert.match(js,/THE ARTIST FILE/);
+assert.match(js,/ESTIMATED WEALTH/);
+assert.match(js,/CURRENT CHAPTER/);
+assert.match(js,/THE MUSIC/);
+assert.match(js,/THE WORLD AROUND YOU/);
+assert.match(js,/THE LEGACY BOARD/);
+console.log('v0.9.4 Artist File smoke checks passed');
