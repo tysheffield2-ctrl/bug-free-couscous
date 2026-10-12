@@ -1,0 +1,11 @@
+import vm from 'node:vm';import fs from 'node:fs';import assert from 'node:assert/strict';
+const source=fs.readFileSync(new URL('../dist/game.js',import.meta.url),'utf8').replace(/boot\(\);\s*$/,'');
+const elements={},storage=new Map(),c={console,location:{pathname:'/sandbox'},localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)},document:{getElementById(id){return elements[id]??={innerHTML:'',textContent:'',hidden:false,showModal(){this.open=true},close(){this.open=false}}},querySelector(){return null},querySelectorAll(){return[]},addEventListener(){}},window:{scrollTo(){},addEventListener(){}},setTimeout(){return 1},clearTimeout(){},fetch:async()=>({ok:true,status:200,json:async()=>({save:null,etag:null})}),FormData:class{constructor(v){this.v=v}get(k){return this.v[k]??null}getAll(k){return this.v[k]||[]}}};vm.createContext(c);const run=x=>vm.runInContext(x,c);run(source);await run('boot()');
+assert.ok(run("V100_representationPanel().includes('REPRESENTATION 2.0')"));
+assert.ok(run("V100_playerLabelCard().includes('YOUR COMPANY')"));
+assert.ok(run("labelLeaguePage().includes('No more invisible eligibility')"));
+assert.equal(run("V100_cityEconomics().region"),'Texas');
+assert.ok(run("V100_locationTaxRate(.20)<.20"));
+run("s.scene.city='la'");assert.ok(run("V100_locationTaxRate(.20)>.20"));
+assert.ok(run("V100_taxExplainer().includes('SIMULATED')"));
+console.log('PASS ENCORE 1.0 industry: representation advice, player-visible Label League and location economics.');
