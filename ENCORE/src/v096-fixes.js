@@ -1,8 +1,22 @@
-/* ENCORE 0.9.5 compatibility: notification state should not touch an unstarted career. */
-const V096_migrateStartedCareer=migrateV096;
+/* ENCORE 0.9.5 compatibility: keep the new notification layer passive during boot. */
 migrateV096=function(){
- if(saveReady&&!s.started)return;
- return V096_migrateStartedCareer()
+ if(!s.v096)s.v096={version:V096_SCHEMA,seenPriority:V096_priorityRaw().map(x=>x.key).slice(-200)};
+ s.v096.version=V096_SCHEMA;
+ if(!Array.isArray(s.v096.seenPriority))s.v096.seenPriority=[];
+ s.v096.seenPriority=[...new Set(s.v096.seenPriority.map(String))].slice(-300);
+ V096_consolidateDestinations()
+};
+
+/* Creative/tour migrations may create world state. Only run them once the title layer is gone
+   and the player is actually in the career, never while boot is restoring the save. */
+V096_preparePriority=function(){
+ if(!saveReady||!s.started||titleVisible||monthlyAdvancing)return;
+ migrateV096();
+ migrateV081?.();
+ migrateTouring?.();
+ V081_generateCreativeOffers?.();
+ generateOpeningSlots?.();
+ V096_consolidateDestinations()
 };
 
 /* The game normally runs in browsers with requestAnimationFrame. Tests and stripped-down
