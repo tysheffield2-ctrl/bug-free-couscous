@@ -15,9 +15,10 @@ const V100_VENUE_CLASSES={
 };
 function V100_venueProfile(index){return V100_VENUE_CLASSES[index]||V100_VENUE_CLASSES[0]}
 function V100_promoterConfidence(r){
- const v=liveVenues[r.venue],p=V100_venueProfile(r.venue),m=careerWorldMarket(r.city),w=s.careerWorld||{};
- const regional=Math.min(30,Math.log10(1+Math.max(0,m.fans||0))*5),career=Math.min(28,(w.tourDemand||0)*.22),recognition=Math.min(22,(w.recognition||0)*.22),history=Math.min(14,(s.careerRecords?.tours?.length||0)*2),relation=Math.max(-8,Math.min(8,(m.loyalty-50)*.16));
- return Math.round(clamp(regional+career+recognition+history+relation-p.access,0,100));
+ const p=V100_venueProfile(r.venue),m=careerWorldMarket(r.city),w=s.careerWorld||{};
+ const regional=Math.min(30,Math.log10(1+Math.max(0,m.fans||0))*5),career=Math.min(28,(w.tourDemand||0)*.22),recognition=Math.min(22,(w.recognition||0)*.22),history=Math.min(14,(s.careerRecords?.tours?.length||0)*2),loyalty=Number.isFinite(Number(m.loyalty))?Number(m.loyalty):50,relation=Math.max(-8,Math.min(8,(loyalty-50)*.16)),scalePenalty=p.access*.45;
+ /* Access is a difficulty curve, not a second 0–100 score to subtract outright. The old subtraction made Mega Stadium mathematically impossible even for a maxed global career. */
+ return Math.round(clamp(regional+career+recognition+history+relation-scalePenalty,0,100));
 }
 function V100_venueAvailable(r){
  const p=V100_venueProfile(r.venue),confidence=V100_promoterConfidence(r),m=careerWorldMarket(r.city),heat=(m.sceneHeat??50)/100;
