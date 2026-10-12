@@ -7,6 +7,6 @@ assert.ok(h.run('ops.administration>0&&ops.insurance>0&&ops.accountingLegal>0&&o
 h.run("recordIncome('labelBusiness',25000);globalThis.fin=closeFinances(50000,.18)");
 assert.equal(h.run('fin.overhead'),0);assert.ok(h.run('fin.operatingCost>0'));assert.equal(h.run("financeRows(fin,true).filter(x=>x[0].startsWith('TAX ·')).length"),1);assert.ok(h.run("financeRows(fin,true).some(x=>x[0]==='Owned Label · Roster Revenue')"));
 h.run("createLabelOffer(0,'Contract 2.0 test');globalThis.o=s.labelBusiness.offers.find(x=>!x.used);globalThis.t=ensureLabelProposal(o);globalThis.doc=V100_contractDocument(t,labelDeals[o.label].name)");
-assert.equal(h.run("doc.includes('REVIEW')"),false);assert.ok(h.run("doc.includes('YOU GIVE')"));assert.ok(h.run("doc.includes('YOU KEEP')"));assert.ok(h.run("doc.includes('Execution')"));assert.equal(h.run("V100_contractPages(t,labelDeals[o.label].name).length"),6);
+assert.equal(h.run("doc.includes('REVIEW')"),false);assert.ok(h.run("doc.includes('YOU GIVE')"));assert.ok(h.run("doc.includes('YOU KEEP')"));assert.ok(h.run("doc.includes('Execution')"));assert.equal(h.run("V100_contractPages(t,labelDeals[o.label].name).length"),7);
 h.run("V100_storeContract(t,labelDeals[o.label].name)");assert.equal(h.run('V100_contractVault().length'),1);assert.ok(h.run("V100_contractVaultPage().includes('SIGNED')"));
 console.log('PASS ENCORE 1.0 finance/tax and contract document/vault foundations.');
