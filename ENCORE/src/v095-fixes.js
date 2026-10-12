@@ -38,3 +38,12 @@ applySandboxEdits=function(event){
  migrateSocial();s.social.followers=followers;s.social.sandboxEngagementRate=engagement/100;
  log('Sandbox PULSE followers and engagement rate updated.');queueSave();render();toast('Sandbox PULSE settings applied.')
 };
+
+/* Keep the live dossier comparison that made Artist File useful while presenting it inside
+   the new cohesive layout. fileComparison is intentionally the snapshot from the previous visit. */
+const V095_artistFilePagePremium=artistFilePage;
+artistFilePage=function(){
+ const html=V095_artistFilePagePremium(),now=artistSnapshot(),prev=fileComparison;
+ const comparison=prev?`<section class="af-since-v095 af-visit-v095"><span>SINCE YOU LAST LOOKED</span><div><small>Fan change</small><strong>${now.fans-prev.fans>=0?'+':''}${fmt(now.fans-prev.fans)}</strong></div><div><small>Stream change</small><strong>${now.streams-prev.streams>=0?'+':''}${compact(now.streams-prev.streams)}</strong></div><div><small>Cash change</small><strong>${now.cash-prev.cash>=0?'+':'−'}${money(Math.abs(now.cash-prev.cash))}</strong></div><div><small>Wealth change</small><strong>${now.value-prev.value>=0?'+':'−'}${money(Math.abs(now.value-prev.value))}</strong></div></section>`:`<section class="af-since-v095 af-visit-v095"><span>ARTIST FILE BASELINE</span><div style="grid-column:span 4"><small>This is your first recorded visit. Come back later to compare fans, streams, cash and estimated wealth.</small></div></section>`;
+ return html.replace(/(<section class="af-hero-v095">[\s\S]*?<\/section>)/,'$1'+comparison)
+};
