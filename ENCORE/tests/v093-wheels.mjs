@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {harness} from './harness.mjs';
+const h=harness('/sandbox',9301); await h.run('boot()');
+const names=h.run("Array.from({length:5000},()=>generate('song'))");
+const slash=names.filter(x=>x.includes(' / ')).length;
+assert.ok(slash>10&&slash<100,`Slash titles: ${slash}/5000`);
+assert.equal(new Set(names.slice(0,500)).size,500);
+h.run("V092_unifiedSongForm(); V093_chooseWheel('creative-wheel-intent',2); V093_captureIdea({songtitle:'My own title',intent:'Hit-minded',texture:'Left-field',hook:'Big chorus',theme:'Ambition',tempo:'Up-tempo',brief:'anthem',mood:directions[0].id,package:'0'})");
+assert.equal(h.run('s.studioIdea.intent'),'Hit-minded');
+h.run("$('songtitle').value='My own title';$('songtitle').closest=()=>({songtitle:'My own title',...s.studioIdea});prepareTitleDial('songtitle','song')");
+assert.equal(h.run("$('songtitle').value"),'My own title');
+assert.equal(h.run('titleDials.songtitle.values.length'),80);
+h.run("V093_wheelKey({key:'End',preventDefault(){}},'dial-songtitle')");
+assert.ok(h.run("home().includes('home-v093')"));
+h.run("newSong({preventDefault(){},target:{songtitle:'Wheel record',...s.studioIdea}})");
+assert.equal(h.run('s.draft.creative.intent'),'Hit-minded');
+assert.equal(h.run('s.draft.creative.texture'),'Left-field');
+console.log(`PASS title variety (${slash}/5000 dual titles), custom title preservation, creative state and song creation, Home rendering.`);
