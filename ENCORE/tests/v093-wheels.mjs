@@ -11,8 +11,10 @@ h.run("$('songtitle').value='My own title';$('songtitle').closest=()=>({songtitl
 assert.equal(h.run("$('songtitle').value"),'My own title');
 assert.equal(h.run('titleDials.songtitle.values.length'),80);
 h.run("V093_wheelKey({key:'End',preventDefault(){}},'dial-songtitle')");
-assert.ok(h.run("home().includes('home-v093')"));
+assert.ok(h.run("home().includes('v103-home')"));
+assert.ok(h.run("studio().includes('v103-studio')"));
 h.run("newSong({preventDefault(){},target:{songtitle:'Wheel record',...s.studioIdea}})");
 assert.equal(h.run('s.draft.creative.intent'),'Hit-minded');
 assert.equal(h.run('s.draft.creative.texture'),'Left-field');
-console.log(`PASS title variety (${slash}/5000 dual titles), custom title preservation, creative state and song creation, Home rendering.`);
+assert.ok(h.run("studio().includes('v103-session')"));
+console.log(`PASS title variety (${slash}/5000 dual titles), custom title preservation, creative state and song creation, Visual System 2.0 Home and Studio rendering.`);
