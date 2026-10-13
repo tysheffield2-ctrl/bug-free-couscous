@@ -1,0 +1,32 @@
+/* Wave 2 — artist interaction should read as a dossier scene, not a floating web modal. */
+dialog:has(.artist-profile),dialog:has(.social-profile){--dossier-rule:rgba(255,255,255,.13);--dossier-gold:#c5a46d;--dossier-muted:#8d98a7;background:#09111a;color:#edf0f4}
+.artist-profile,.social-profile{position:relative;overflow:hidden;background:#09111a!important;color:#edf0f4!important}
+.artist-profile:before,.social-profile:before{content:"ARTIST DOSSIER";display:block;padding:0 0 10px;margin:0 0 12px;border-bottom:1px solid var(--dossier-rule);font-size:8px;font-weight:900;letter-spacing:.2em;color:var(--dossier-gold)}
+.artist-profile h2,.social-profile h2{font-family:Georgia,'Times New Roman',serif!important;letter-spacing:-.04em}
+.artist-profile .portrait,.social-profile .portrait{overflow:hidden;border:1px solid var(--dossier-rule)!important;background:#111b26!important;box-shadow:none!important}
+.artist-profile .portrait img,.social-profile .portrait img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.artist-profile .muted,.social-profile .muted,.artist-profile small,.social-profile small{color:var(--dossier-muted)}
+.artist-profile button,.social-profile button{border-radius:2px!important;box-shadow:none!important}
+.artist-profile .row,.social-profile .row{gap:8px}
+.artist-profile .stat,.social-profile .stat{border-radius:0!important;border-top:1px solid var(--dossier-rule);background:transparent!important}
+
+@media (max-width:700px){
+  dialog:has(.artist-profile),dialog:has(.social-profile){inset:0!important;width:100%!important;max-width:none!important;height:100dvh!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;padding:0!important;background:#09111a!important;overflow:auto!important}
+  dialog:has(.artist-profile)::backdrop,dialog:has(.social-profile)::backdrop{background:#05080d}
+  .artist-profile,.social-profile{min-height:100dvh;border-radius:0!important;border:0!important;background:linear-gradient(180deg,#132338 0,#0b151f 42%,#080e14 100%)!important;padding:16px 18px calc(120px + env(safe-area-inset-bottom))!important}
+  .artist-profile:before,.social-profile:before{position:sticky;top:0;z-index:2;margin:-16px -18px 14px;padding:15px 18px 11px;background:rgba(9,17,26,.94);backdrop-filter:blur(10px)}
+  .artist-profile .portrait,.social-profile .portrait{width:calc(100% + 36px)!important;min-height:300px!important;height:min(46vh,390px)!important;border-width:1px 0!important;border-radius:0!important;margin:8px -18px 20px!important}
+  .artist-profile h2,.social-profile h2{font-size:clamp(36px,11vw,52px)!important;line-height:.9!important;margin:12px 0 7px!important}
+  .artist-profile p,.social-profile p{line-height:1.5}
+  .artist-profile button,.social-profile button{min-height:46px}
+  .artist-profile>.row,.social-profile>.row{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px!important}
+  .artist-profile>.row button,.social-profile>.row button{width:100%;margin:0!important}
+}
+
+@media (min-width:701px){
+ dialog:has(.artist-profile),dialog:has(.social-profile){width:min(900px,92vw);max-width:900px;border-radius:2px!important;border:1px solid var(--dossier-rule);padding:0!important}
+ .artist-profile,.social-profile{padding:26px!important}
+ .artist-profile .portrait,.social-profile .portrait{border-radius:1px!important}
+}
+
+@media(prefers-reduced-motion:reduce){.artist-profile *,.social-profile *{transition:none!important;animation:none!important}}
