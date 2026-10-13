@@ -1,0 +1,62 @@
+/* ENCORE Visual System 2.0 — Wave 2 mobile refinement.
+   Tightens the live merged layouts without changing simulation mechanics. */
+@media (max-width:700px){
+  .v103-shellbar{min-height:70px;padding:10px 12px;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"back id guide" "menu id guide";gap:4px 10px;align-items:start}
+  .v103-shell-back{grid-area:back;min-width:42px;padding:6px 4px;text-align:left}
+  .v103-shell-id{grid-area:id;min-width:0;padding-top:3px}
+  .v103-shell-id span{font-size:9px;letter-spacing:.16em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .v103-shell-id small{font-size:10px;margin-top:2px}
+  .v103-shell-guide{grid-area:guide;align-self:start;min-width:44px;padding:6px 7px;line-height:1.15}
+  .v103-shell-menu{grid-area:menu;width:38px;height:34px;margin-top:0}
+  .v103-shell-state{display:none}
+
+  .v103-home{padding-bottom:24px}
+  .v103-home .v103-mast{min-height:64px;padding:12px 18px}
+  .v103-home .v103-hero{min-height:430px}
+  .v103-home .v103-chapter{padding:26px 18px 30px}
+  .v103-home .v103-chapter h1{font-size:46px;line-height:.95;max-width:10ch}
+  .v103-home .v103-scoreboard{grid-template-columns:repeat(3,1fr)}
+  .v103-home .v103-scoreboard button{padding:16px 12px;min-width:0}
+  .v103-home .v103-scoreboard strong{font-size:19px}
+  .v103-home .v103-scoreboard small{font-size:9px;line-height:1.25}
+  .v103-home .v103-release{min-height:94px;padding:14px 16px;align-items:center}
+  .v103-home .v103-release em{display:block;max-width:100%;white-space:normal;overflow-wrap:anywhere;font-size:11px;line-height:1.35}
+  .v103-home .v103-desk{padding:30px 18px 18px}
+  .v103-home .v103-actions{margin:8px 18px 0}
+  .v103-home .v103-utility{margin:16px 18px 0}
+
+  .v103-industry{font-size:14px}
+  .v103-industry-head{padding:22px 16px 18px}
+  .v103-industry-head h1{font-size:35px;line-height:.92;max-width:11ch}
+  .v103-industry-head p{font-size:13px;line-height:1.45;max-width:34ch}
+  .v103-industry-tape{grid-template-columns:repeat(2,1fr)}
+  .v103-industry-tape>div{padding:12px 14px;min-height:66px}
+  .v103-industry-tabs{overflow-x:auto;scrollbar-width:none}
+  .v103-industry-tabs button{flex:0 0 auto;min-width:86px;padding:11px 13px}
+  .v103-industry-filter{padding:10px 12px}
+  .v103-tier-strip{display:flex;overflow-x:auto;scrollbar-width:none;gap:4px;padding-bottom:4px}
+  .v103-tier-strip button{flex:0 0 auto;min-width:64px}
+  .v103-industry-roster{padding:0 12px 16px}
+  .v103-industry-roster>header{padding:11px 10px}
+  .v103-industry-roster>button{grid-template-columns:28px 38px minmax(0,1fr) auto;gap:8px;padding:10px 6px;min-height:64px}
+  .v103-industry-roster .numbers,.v103-industry-roster .relation{display:none}
+  .v103-industry-roster .identity strong{font-size:13px}
+  .v103-industry-roster .identity small,.v103-industry-roster .identity em{font-size:9px;line-height:1.25}
+  .v103-industry-note{margin:8px 12px 16px;padding:18px 12px}
+
+  .v103-business-hq{font-size:13px}
+  .v103-business-hq h1{font-size:34px;line-height:.95}
+  .v103-business-hq p{line-height:1.45}
+
+  .v103-artist-file{font-size:14px}
+  .v103-artist-file h1{font-size:36px;line-height:1}
+  .v103-artist-file .v103-file-ledger{grid-template-columns:repeat(2,1fr)}
+  .v103-artist-file .v103-file-ledger>*{min-height:74px}
+}
+
+@media (max-width:390px){
+  .v103-home .v103-chapter h1{font-size:40px}
+  .v103-home .v103-scoreboard{grid-template-columns:1fr 1fr}
+  .v103-home .v103-scoreboard button:last-child{grid-column:1/-1}
+  .v103-industry-head h1{font-size:32px}
+}
