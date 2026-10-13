@@ -29,7 +29,7 @@ writeFileSync('dist/game.js',js);
 let html=readFileSync('dist/index.html','utf8');
 html=html.replace(/<style id="encore-presentation">[\s\S]*?<\/style>/,'');
 html=html.replace('<button class="primary" onclick="advance()">Advance month</button>','<button class="primary" onclick="advance()">Advance week</button>');
-const css=['presentation','v080','v081','v082','v088','v090','v092','v093','v094','v095','v096','v100','v102','v103','v103-studio','v103-release-charts','v103-world','v103-business-recap','v103-shell-industry','v104-mobile-polish'].map(name=>readFileSync('src/'+name+'.css','utf8')).join('\n');
+const css=['presentation','v080','v081','v082','v088','v090','v092','v093','v094','v095','v096','v100','v102','v103','v103-studio','v103-release-charts','v103-world','v103-business-recap','v103-shell-industry','v104-mobile-polish','v104-artist-dossier'].map(name=>readFileSync('src/'+name+'.css','utf8')).join('\n');
 html=html.replace('</head>','<style id="encore-presentation">'+css+'</style></head>');
 writeFileSync('dist/index.html',html);
 
