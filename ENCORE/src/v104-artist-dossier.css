@@ -1,0 +1,9 @@
+/* Wave 2 — artist interaction should read as a dossier scene, not a floating web modal. */
+@media (max-width:700px){
+  dialog:has(.artist-profile),dialog:has(.social-profile){inset:0!important;width:100%!important;max-width:none!important;height:100dvh!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;padding:0!important;background:#09111a!important}
+  dialog:has(.artist-profile)::backdrop,dialog:has(.social-profile)::backdrop{background:#05080d}
+  .artist-profile,.social-profile{min-height:100%;border-radius:0!important;border:0!important;background:linear-gradient(180deg,#172b42 0,#0b151f 48%,#080e14 100%)!important;padding:18px 18px 110px!important}
+  .artist-profile .portrait,.social-profile .portrait{width:100%!important;min-height:250px!important;border-radius:2px!important;margin:14px 0 18px!important}
+  .artist-profile h2,.social-profile h2{font-family:Georgia,'Times New Roman',serif!important;font-size:34px!important;line-height:.95!important;margin:8px 0!important}
+  .artist-profile button,.social-profile button{min-height:44px}
+}
