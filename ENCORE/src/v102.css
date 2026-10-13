@@ -1,0 +1,40 @@
+/* ENCORE 1.0.2 — dedicated negotiation scene. */
+html.negotiation-reading,body.negotiation-reading{overflow:hidden}
+.negotiation-room-shell{position:fixed;z-index:2147482900;inset:0;overflow:auto;overscroll-behavior:contain;background:#071019;color:#f4f0e8;opacity:0;transform:translateY(18px) scale(.99);transition:opacity .3s ease,transform .38s cubic-bezier(.2,.8,.2,1)}
+.negotiation-room-shell.negotiation-entered{opacity:1;transform:none}
+.negotiation-room-shell.negotiation-exit,.negotiation-room-shell.negotiation-to-contract{opacity:0;transform:translateY(12px) scale(.99);pointer-events:none}
+.negotiation-room-bg{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 72% 8%,rgba(90,143,179,.20),transparent 34%),linear-gradient(180deg,rgba(3,10,17,.16),rgba(3,8,13,.94)),repeating-linear-gradient(90deg,rgba(255,255,255,.016) 0 1px,transparent 1px 72px)}
+.negotiation-room{position:relative;width:min(1050px,100%);min-height:100%;margin:auto;padding:28px 28px 80px}
+.negotiation-room-header{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;padding:10px 4px 22px;border-bottom:1px solid rgba(255,255,255,.12)}
+.negotiation-room-kicker{font:700 .62rem/1 system-ui,sans-serif;letter-spacing:.18em;color:#9ec1d8}
+.negotiation-room-header h1{margin:8px 0 4px;font:500 clamp(1.8rem,5vw,3rem)/1 Georgia,serif}
+.negotiation-room-header p{margin:0;opacity:.65}
+.negotiation-room-close{display:grid;grid-template-columns:34px auto;align-items:center;gap:8px;border:0;background:transparent;color:inherit;padding:4px;cursor:pointer}
+.negotiation-room-close span{display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(255,255,255,.2);border-radius:50%;font-size:1.35rem}
+.negotiation-room-close small{font:700 .52rem/1 system-ui,sans-serif;letter-spacing:.11em}
+.negotiation-table{display:grid;grid-template-columns:minmax(250px,.8fr) minmax(330px,1.2fr);gap:22px;margin-top:24px}
+.negotiation-counterparty{grid-column:1;display:flex;gap:16px;align-items:center;padding:20px;border:1px solid rgba(255,255,255,.12);border-radius:20px;background:rgba(255,255,255,.035)}
+.negotiation-avatar{display:grid;place-items:center;flex:0 0 70px;height:70px;border-radius:50%;background:#182d3b;border:1px solid rgba(255,255,255,.2);font:700 1.2rem Georgia,serif;box-shadow:inset 0 0 28px rgba(255,255,255,.03)}
+.negotiation-counterparty small{letter-spacing:.14em;opacity:.55}
+.negotiation-counterparty h2{margin:5px 0}
+.negotiation-counterparty p{margin:0;line-height:1.5;opacity:.78}
+.negotiation-room-meters{grid-column:1;display:grid;gap:14px;padding:20px;border:1px solid rgba(255,255,255,.1);border-radius:20px;background:rgba(0,0,0,.18)}
+.negotiation-offer-sheet{grid-column:2;grid-row:1/span 2;padding:26px;border:1px solid rgba(255,255,255,.13);border-radius:22px;background:#102231;box-shadow:0 28px 70px rgba(0,0,0,.34)}
+.negotiation-offer-heading{padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid rgba(255,255,255,.1)}
+.negotiation-offer-sheet h2{margin:8px 0;font:500 1.65rem/1.2 Georgia,serif}
+.negotiation-offer-sheet p{line-height:1.5}
+.negotiation-offer-heading p{opacity:.72}
+.negotiation-preview{margin-top:14px;padding:12px 14px;border-left:2px solid rgba(158,193,216,.8);background:rgba(255,255,255,.035);font-size:.85rem;line-height:1.45}
+.negotiation-room-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-top:20px}
+@media(max-width:720px){
+ .negotiation-room{padding:16px 14px 60px}
+ .negotiation-room-header{padding-top:5px}
+ .negotiation-room-close{grid-template-columns:36px}
+ .negotiation-room-close small{display:none}
+ .negotiation-table{grid-template-columns:1fr}
+ .negotiation-counterparty,.negotiation-room-meters,.negotiation-offer-sheet{grid-column:1;grid-row:auto}
+ .negotiation-offer-sheet{padding:20px 16px}
+ .negotiation-avatar{flex-basis:56px;height:56px}
+ .negotiation-room-actions{grid-template-columns:1fr 1.35fr}
+}
+@media(prefers-reduced-motion:reduce){.negotiation-room-shell{transition:none!important}}
