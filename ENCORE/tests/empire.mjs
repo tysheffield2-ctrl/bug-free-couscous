@@ -5,7 +5,7 @@ function harness(path='/'){const elements={},storage=new Map(),events={};let sto
 
 const h=harness('/sandbox');await h.run('boot()');
 for(const view of ['pulsePage','wealthPage','propertiesPage','teamPage','dealsPage','commercePage','artistFilePage'])assert.ok(h.run(view+'()').length>200,view);
-h.run('openArtistFile()');const visit=h.run('s.empire.fileSeen.cash');h.run('changeCash(500);openArtistFile()');assert.equal(h.run('fileComparison.cash'),visit);assert.ok(h.run('artistFilePage()').includes('$500'));
+h.run('openArtistFile()');const visit=h.run('s.empire.fileSeen.cash');h.run('changeCash(500);openArtistFile()');assert.equal(h.run('fileComparison.cash'),visit);assert.ok(h.run('artistFilePage()').includes('EST. WEALTH'));assert.ok(h.run('artistFilePage()').includes('v103-file'));
 h.run(`reviewAssetBuy({preventDefault(){},target:{qty:'1'}},'coupe');globalThis.pre=s.cash;globalThis.expenses=s.finance.week.expenses;confirmAssetBuy()`);assert.equal(h.run('pre-s.cash'),102600);assert.equal(h.run('s.finance.week.expenses'),h.run('expenses'));assert.equal(h.run('s.empire.assets[0].basis'),102600);h.run('confirmAssetBuy()');assert.equal(h.run('s.empire.assets.length'),1);
 h.run(`s.empire.assets[0].value=150000;sellAsset(s.empire.assets[0].id,true)`);assert.equal(h.run('s.finance.week.investment'),44400);
 h.run(`reviewAssetBuy({preventDefault(){},target:{qty:'1'}},'condo');confirmAssetBuy();globalThis.property=s.empire.assets[0];screenTenants({preventDefault(){},target:{rent:'2000',months:'1'}},property.id);signTenant(0)`);assert.equal(h.run('property.rent'),1800);h.run('renovateProperties(true)');assert.equal(h.run('property.rent'),1944);assert.equal(h.run('property.tenant.rent'),2000);h.run('settleAssets()');assert.equal(h.run('property.tenant'),null);h.run('maintainAssets(true)');assert.equal(h.run('property.condition'),100);
@@ -32,6 +32,8 @@ calendar.run('s.week=53;delete s.empire.calendarVersion;migrateCalendar();render
 assert.equal(calendar.run('careerDate()'),'January 2027');
 assert.ok(calendar.run('home()').includes('v103-home'));
 assert.ok(calendar.run('home()').includes('CAREER DESK'));
+assert.ok(calendar.run('artistFilePage()').includes('v103-file'));
+assert.ok(calendar.run('training()').includes('v103-development'));
 assert.ok(calendar.run('wealthPage()').includes('PRIVATE OFFICE'));
 assert.ok(calendar.run('ENCORE_ART.backstage.startsWith("/art/")'));
-console.log('PASS real calendar migration/year rollover, Visual System 2.0 home markup and embedded offline artwork.');
+console.log('PASS real calendar migration/year rollover, Visual System 2.0 home, Artist File and Development markup, and embedded offline artwork.');
