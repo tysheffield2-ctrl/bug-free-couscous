@@ -1,13 +1,25 @@
 /* Wave 2 — make high-stakes deal screens feel like scenes rather than web forms. */
+.v102-negotiation-room{--deal-rule:rgba(255,255,255,.13);--deal-gold:#c5a46d;--deal-paper:#eee8dd;background:#080d16!important;color:#edf0f4}
+.v102-negotiation-room h1,.v102-negotiation-room h2{font-family:Georgia,'Times New Roman',serif;letter-spacing:-.035em}
+.v102-negotiation-room input,.v102-negotiation-room select{border-radius:2px!important;background:#0d1621!important;border-color:var(--deal-rule)!important}
+.v102-negotiation-room button{border-radius:2px!important;box-shadow:none!important}
+.v102-negotiation-room .card,.v102-negotiation-room .panel{border-radius:1px!important;border-color:var(--deal-rule)!important;box-shadow:none!important}
+.v102-negotiation-room label{letter-spacing:.055em}
+.v102-negotiation-room .portrait,.v102-negotiation-room .person-photo{border-radius:1px!important;overflow:hidden;border:1px solid var(--deal-rule)!important;background:#101a25!important}
+.v102-negotiation-room .portrait img,.v102-negotiation-room .person-photo img{width:100%;height:100%;object-fit:cover;object-position:center top}
+
 @media (max-width:700px){
-  .v102-negotiation-room{border-radius:0!important;min-height:100dvh!important}
-  .v102-negotiation-room input,.v102-negotiation-room select{border-radius:2px!important}
-  .v102-negotiation-room button{border-radius:3px!important}
-  .v102-negotiation-room .card,.v102-negotiation-room .panel{border-radius:2px!important}
-  .v102-negotiation-room h1,.v102-negotiation-room h2{font-family:Georgia,'Times New Roman',serif}
-  .v102-negotiation-room label{letter-spacing:.06em}
+  .v102-negotiation-room{border-radius:0!important;min-height:100dvh!important;padding-bottom:calc(90px + env(safe-area-inset-bottom))!important}
+  .v102-negotiation-room>header{border-bottom:1px solid var(--deal-rule);padding-bottom:14px!important;margin-bottom:14px!important}
+  .v102-negotiation-room h1{font-size:clamp(34px,10vw,48px)!important;line-height:.92!important}
+  .v102-negotiation-room input,.v102-negotiation-room select{min-height:46px}
+  .v102-negotiation-room button{min-height:46px}
+  .v102-negotiation-room .card,.v102-negotiation-room .panel{background:rgba(255,255,255,.025)!important}
+  .v102-negotiation-room .portrait,.v102-negotiation-room .person-photo{min-width:72px!important;min-height:72px!important}
 
   .label-business-page form,.label-business-page .card{border-radius:2px!important}
   .label-business-page input,.label-business-page select{border-radius:2px!important;min-height:42px}
   .label-business-page button{border-radius:2px!important;min-height:42px}
 }
+
+@media(prefers-reduced-motion:reduce){.v102-negotiation-room *{transition:none!important;animation:none!important}}
