@@ -1,0 +1,13 @@
+/* Wave 2 — make high-stakes deal screens feel like scenes rather than web forms. */
+@media (max-width:700px){
+  .v102-negotiation-room{border-radius:0!important;min-height:100dvh!important}
+  .v102-negotiation-room input,.v102-negotiation-room select{border-radius:2px!important}
+  .v102-negotiation-room button{border-radius:3px!important}
+  .v102-negotiation-room .card,.v102-negotiation-room .panel{border-radius:2px!important}
+  .v102-negotiation-room h1,.v102-negotiation-room h2{font-family:Georgia,'Times New Roman',serif}
+  .v102-negotiation-room label{letter-spacing:.06em}
+
+  .label-business-page form,.label-business-page .card{border-radius:2px!important}
+  .label-business-page input,.label-business-page select{border-radius:2px!important;min-height:42px}
+  .label-business-page button{border-radius:2px!important;min-height:42px}
+}
