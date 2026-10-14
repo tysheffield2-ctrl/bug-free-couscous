@@ -8,7 +8,8 @@ function V106_portraitHash(value){
   return h>>>0
 }
 function V106_generatedPortrait(name,key='',large=false){
-  const h=V106_portraitHash(name+'|'+key),pick=(list,shift=0)=>list[(h>>>shift)%list.length];
+  /* Identity must be stable across Artist File, catalog, PULSE, negotiation, etc. */
+  const identity=String(name||'artist').trim().toLowerCase(),h=V106_portraitHash(identity),pick=(list,shift=0)=>list[(h>>>shift)%list.length];
   const skins=['#5b3627','#704735','#8a5b43','#a46f51','#bb8565','#d09c7b','#e0b08f'];
   const hairPalette=['#15100e','#201713','#33231b','#4a3022','#120f10'];
   const shirts=['#1d3546','#412829','#243c31','#4b3b24','#302a46','#3c2a36'];
