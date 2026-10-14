@@ -31,7 +31,8 @@ const V106_portraitBase=personPhoto;
 personPhoto=function(key,name,large=false){
   const core=typeof V085_CORE_CAST!=='undefined'&&V085_CORE_CAST.some(x=>x.name===name);
   if(core)return V106_portraitBase(key,name,large);
-  const artist=/^artist-/.test(String(key||''))||s.world?.some?.(x=>x.name===name);
+  const portraitKey=String(key||'');
+  const artist=/^(artist|player)-/.test(portraitKey)||s.world?.some?.(x=>x.name===name);
   if(artist)return V106_generatedPortrait(name,key,large);
   return V106_portraitBase(key,name,large)
 };
