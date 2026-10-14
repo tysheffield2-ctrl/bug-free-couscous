@@ -33,8 +33,8 @@ const css=['presentation','v080','v081','v082','v088','v090','v092','v093','v094
 html=html.replace('</head>','<style id="encore-presentation">'+css+'</style></head>');
 writeFileSync('dist/index.html',html);
 
-const ui2Css=[readFileSync('ui2/ui2.css','utf8'),readFileSync('ui2/phase2.css','utf8')].join('\n');
-const ui2Js=readFileSync('ui2/app-v2.js','utf8');
+const ui2Css=[readFileSync('ui2/ui2.css','utf8'),readFileSync('ui2/phase2.css','utf8'),readFileSync('ui2/phase3.css','utf8')].join('\n');
+const ui2Js=[readFileSync('ui2/app-v2.js','utf8'),readFileSync('ui2/phase3.js','utf8')].join('\n');
 let ui2Html=readFileSync('ui2/index.html','utf8');
 ui2Html=ui2Html.replace('/* __UI2_CSS__ */',ui2Css).replace('/* __UI2_JS__ */',ui2Js);
 writeFileSync('dist/ui2.html',ui2Html);
