@@ -33,7 +33,13 @@ const css=['presentation','v080','v081','v082','v088','v090','v092','v093','v094
 html=html.replace('</head>','<style id="encore-presentation">'+css+'</style></head>');
 writeFileSync('dist/index.html',html);
 
-let worker=readFileSync('server/worker.mjs','utf8').replaceAll('__STATIC_ART_ASSETS__',JSON.stringify([...new Set(staticArt)])).replace('// __ASSETS__',()=> 'const RELEASE='+JSON.stringify({version:gameVersion})+';\nconst HTML='+JSON.stringify(html)+';\nconst SCRIPT='+JSON.stringify(js)+';');
-worker=worker.replaceAll('__OFFLINE_VERSION__',createHash('sha256').update(html+js+worker).digest('hex').slice(0,12));
+const ui2Css=readFileSync('ui2/ui2.css','utf8');
+const ui2Js=readFileSync('ui2/ui2.js','utf8');
+let ui2Html=readFileSync('ui2/index.html','utf8');
+ui2Html=ui2Html.replace('/* __UI2_CSS__ */',ui2Css).replace('/* __UI2_JS__ */',ui2Js);
+writeFileSync('dist/ui2.html',ui2Html);
+
+let worker=readFileSync('server/worker.mjs','utf8').replaceAll('__STATIC_ART_ASSETS__',JSON.stringify([...new Set(staticArt)])).replace('// __ASSETS__',()=> 'const RELEASE='+JSON.stringify({version:gameVersion})+';\nconst HTML='+JSON.stringify(html)+';\nconst SCRIPT='+JSON.stringify(js)+';\nconst UI2_HTML='+JSON.stringify(ui2Html)+';');
+worker=worker.replaceAll('__OFFLINE_VERSION__',createHash('sha256').update(html+js+ui2Html+worker).digest('hex').slice(0,12));
 mkdirSync('dist/server',{recursive:true});
 writeFileSync('dist/server/index.js',worker);
