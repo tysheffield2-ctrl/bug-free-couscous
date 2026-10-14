@@ -14,6 +14,8 @@ for(const label of ['Studio','Charts','Home','Business','More'])assert.ok(nav.in
 assert.equal(nav.includes('ALL ACCESS'),false);
 
 assert.ok(h.run("personPhoto('artist-0','Mira Wells',true).includes('/portraits/artists/artist-01.webp')"));
+assert.ok(h.run("personPhoto('artist-generated','Amara Zephyr',true).includes('v106-generated-portrait')"));
+assert.equal(h.run("personPhoto('artist-generated','Amara Zephyr',true).includes('>AZ</span>')"),false);
 
 h.run("migrateLabelBusiness();s.labelBusiness.company={name:'Coulda Been Records',started:s.week,staff:{manager:false,marketing:false,ar:false},contracts:[],receipts:525430000,last:{week:s.week-1,recording:17690000,other:0,income:17690000,payroll:4000},preparedWeek:0,settledWeek:0}");
 const company=h.run('companyPage()');
@@ -30,4 +32,4 @@ const finances=h.run('financeScreen()');
 assert.ok(finances.includes('Weekly operating costs'));
 assert.equal(finances.includes('Career overhead'),false);
 
-console.log('PASS ENCORE v1.06 mockup navigation, mobile stacking contract, real core portrait, revenue terminology and stale-overhead UI cleanup.');
+console.log('PASS ENCORE v1.06 mockup navigation, mobile stacking, core/generated portraits, revenue terminology and stale-overhead UI cleanup.');
