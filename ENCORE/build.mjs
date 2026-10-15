@@ -37,8 +37,8 @@ const css=['presentation','v080','v081','v082','v088','v090','v092','v093','v094
 html=html.replace('</head>','<style id="encore-presentation">'+css+'</style></head>');
 writeFileSync('dist/index.html',html);
 
-const ui2Css=[readFileSync('ui2/ui2.css','utf8'),readFileSync('ui2/phase2.css','utf8'),readFileSync('ui2/phase3.css','utf8'),readFileSync('ui2/phase4.css','utf8')].join('\n');
-const ui2Raw=[readFileSync('ui2/commands.js','utf8'),readFileSync('ui2/app-v2.js','utf8'),readFileSync('ui2/phase3.js','utf8'),readFileSync('ui2/mode.js','utf8')].join('\n');
+const ui2Css=[readFileSync('ui2/ui2.css','utf8'),readFileSync('ui2/phase2.css','utf8'),readFileSync('ui2/phase3.css','utf8'),readFileSync('ui2/phase4.css','utf8'),readFileSync('ui2/phase5.css','utf8')].join('\n');
+const ui2Raw=[readFileSync('ui2/commands.js','utf8'),readFileSync('ui2/app-v2.js','utf8'),readFileSync('ui2/phase3.js','utf8'),readFileSync('ui2/studio-live.js','utf8'),readFileSync('ui2/mode.js','utf8')].join('\n');
 const ui2Bootstrap="globalThis.ENCORE_UI2_SAVE_URL=/\\/sandbox\\/?$/.test(location.pathname)?'/api/sandbox/save':'/api/save';\n";
 const ui2Js=sharedEngines+'\n'+ui2Bootstrap+ui2Raw.replaceAll("fetch('/api/save'","fetch(globalThis.ENCORE_UI2_SAVE_URL||'/api/save'");
 let ui2Html=readFileSync('ui2/index.html','utf8');
