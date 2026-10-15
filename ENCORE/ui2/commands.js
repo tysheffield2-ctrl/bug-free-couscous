@@ -31,7 +31,6 @@ function xpNeeded(n){n=Number(n)||0;return Math.round(60+n*3+(n>25?(n-25)*3:0)+(
 function ensureStat(s,key){const current=s.development[key];if(!current||typeof current!=='object')s.development[key]={level:0,xp:0};s.development[key].level=clamp(Math.round(Number(s.development[key].level)||0),0,100);s.development[key].xp=Math.max(0,Number(s.development[key].xp)||0);return s.development[key]}
 function gainXP(s,key,amount){const a=ensureStat(s,key);if(a.level>=100)return; a.xp+=amount;while(a.level<100&&a.xp>=xpNeeded(a.level)){a.xp-=xpNeeded(a.level);a.level++}if(a.level===100)a.xp=0}
 function migrateSocial(s){if(!s.social||typeof s.social!=='object')s.social={version:1,sinceWeek:s.week,followers:Math.round(Math.max(60,(Number(s.fans)||0)*.75)),posts:[],feed:[],interactions:[],lastWeek:0,lifetimeViews:0,lifetimeFans:0,weekly:[],nextId:1};s.social.posts=Array.isArray(s.social.posts)?s.social.posts:[];s.social.feed=Array.isArray(s.social.feed)?s.social.feed:[];s.social.interactions=Array.isArray(s.social.interactions)?s.social.interactions:[];return s.social}
-function audiencePulse(s,fans){fans=Math.max(0,Math.round(Number(fans)||0));s.fans=Math.max(0,(Number(s.fans)||0)+fans);return fans}
 
 function applyCommand(input,name,payload={}){
  const s=ensureCoreState(clone(input));
@@ -64,11 +63,6 @@ function applyCommand(input,name,payload={}){
    spendEnergy(s,2);const artist=s.world.find(x=>x.id===id);artist.relation=clamp((Number(artist.relation)||0)+1,-100,100);a.interactions.push({week:s.week,artist:id});log(s,`You supported ${artist.name}. Relationship +1.`);
    return {state:s,message:`Supported ${artist.name} · relationship +1`}
  }
- if(name==='pulse-reply'){
-   const a=migrateSocial(s),id=Number(payload.postId),p=a.posts.find(x=>x.id===id&&x.week===s.week&&!x.replied);if(!p)fail('That post is no longer available for replies.');
-   spendEnergy(s,5);p.replied=true;const fans=Math.min(1000,Math.round((Number(p.comments)||0)*.05));audiencePulse(s,fans);p.fans=(Number(p.fans)||0)+fans;a.lifetimeFans=(Number(a.lifetimeFans)||0)+fans;s.loyalty=clamp((Number(s.loyalty)||0)+1);gainXP(s,'charisma',10);log(s,`PULSE replies: +1 loyalty${fans?' · +'+fans+' true fans':''}.`);
-   return {state:s,message:`Replies complete · +1 loyalty${fans?' · +'+fans+' fans':''}`}
- }
  fail('That UI2 action has not been migrated yet.','unsupported')
 }
 
@@ -97,10 +91,10 @@ function wireStudio(){
 }
 function wirePulse(){
  const industry=[...document.querySelectorAll('.ui2-industry-post')];industry.forEach((row,index)=>{const b=row.querySelector('button');if(!b||b.dataset.ui2Command)return;b.removeAttribute('data-ui2-extra-toast');b.dataset.ui2Command='pulse-support';b.dataset.feedIndex=String(index);b.textContent='Support · 2⚡'});
- const posts=[...document.querySelectorAll('.ui2-pulse-post')];posts.forEach((post,index)=>{if(post.querySelector('[data-ui2-command="pulse-reply"]'))return;const footer=post.querySelector('footer');if(!footer)return;const b=document.createElement('button');b.type='button';b.className='ui2-pulse-reply';b.dataset.ui2Command='pulse-reply';b.dataset.postIndex=String(index);b.textContent='Reply · 5⚡';footer.after(b)})
+ document.querySelectorAll('.ui2-pulse-post').forEach(post=>{if(post.querySelector('.ui2-pulse-reply-disabled'))return;const footer=post.querySelector('footer');if(!footer)return;const note=document.createElement('span');note.className='ui2-pulse-reply-disabled';note.textContent='Replies · audience engine migrating';footer.after(note)})
 }
 function wire(){wireQuickMoves();wireTraining();wireStudio();wirePulse()}
-document.addEventListener('click',async e=>{const b=e.target.closest?.('[data-ui2-command]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();let payload={};if(b.dataset.ui2Command==='train')payload.key=b.dataset.skill;if(b.dataset.ui2Command==='release-shelf'){try{const latest=await loadLatest(),masters=(latest.save.state.songs||[]).filter(x=>!x?.released).slice(-5).reverse(),song=masters[Number(b.dataset.masterIndex)];if(!song)fail('That master is no longer available.');payload.songId=song.id}catch(err){toast(err.message,true);return}}if(b.dataset.ui2Command==='pulse-support'||b.dataset.ui2Command==='pulse-reply'){try{const latest=await loadLatest();if(b.dataset.ui2Command==='pulse-support'){const feed=(latest.save.state.social?.feed||[]).slice().reverse().slice(0,12),p=feed[Number(b.dataset.feedIndex)];if(!p)fail('That industry post is no longer available.');payload.artistId=p.artist}else{const posts=(latest.save.state.social?.posts||[]).slice().reverse().slice(0,14),p=posts[Number(b.dataset.postIndex)];if(!p)fail('That PULSE post is no longer available.');payload.postId=p.id}}catch(err){toast(err.message,true);return}}commit(b.dataset.ui2Command,payload)},true);
+document.addEventListener('click',async e=>{const b=e.target.closest?.('[data-ui2-command]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();let payload={};if(b.dataset.ui2Command==='train')payload.key=b.dataset.skill;if(b.dataset.ui2Command==='release-shelf'){try{const latest=await loadLatest(),masters=(latest.save.state.songs||[]).filter(x=>!x?.released).slice(-5).reverse(),song=masters[Number(b.dataset.masterIndex)];if(!song)fail('That master is no longer available.');payload.songId=song.id}catch(err){toast(err.message,true);return}}if(b.dataset.ui2Command==='pulse-support'){try{const latest=await loadLatest(),feed=(latest.save.state.social?.feed||[]).slice().reverse().slice(0,12),p=feed[Number(b.dataset.feedIndex)];if(!p)fail('That industry post is no longer available.');payload.artistId=p.artist}catch(err){toast(err.message,true);return}}commit(b.dataset.ui2Command,payload)},true);
 new MutationObserver(wire).observe(document.documentElement,{subtree:true,childList:true});wire();
 global.ENCORE_UI2_COMMANDS={execute:commit};
 })(globalThis);
