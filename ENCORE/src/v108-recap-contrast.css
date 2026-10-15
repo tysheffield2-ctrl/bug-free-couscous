@@ -1,0 +1,86 @@
+/* ENCORE v1.08 — Weekly recap contrast guard.
+   Recap surfaces own their foreground colors so global theme rules cannot
+   create light-on-light or dark-on-dark text regressions. */
+
+:root{
+  --recap-dark-heading:#f4f0e8;
+  --recap-dark-body:#d4d1cb;
+  --recap-dark-muted:#9a9da3;
+  --recap-divider:#454a52;
+  --recap-light-surface:#eee9df;
+  --recap-light-heading:#12151b;
+  --recap-light-value:#17191d;
+  --recap-light-body:#5c5a55;
+}
+
+/* Dark report surfaces. */
+.v103-recap{
+  color:var(--recap-dark-heading)!important;
+  border-color:var(--recap-divider)!important;
+}
+.v103-recap .v103-recap-ledger{
+  border-color:var(--recap-divider)!important;
+}
+.v103-recap .v103-recap-ledger>header{
+  color:var(--recap-dark-heading)!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  opacity:1!important;
+}
+.v103-recap .v103-recap-ledger>div{
+  border-bottom-color:rgba(244,240,232,.14)!important;
+}
+.v103-recap .v103-recap-ledger>div span{
+  color:var(--recap-dark-body)!important;
+  opacity:1!important;
+}
+.v103-recap .v103-recap-ledger>div strong{
+  color:var(--recap-dark-heading)!important;
+  opacity:1!important;
+}
+.v103-recap .v103-recap-ledger>p{
+  color:var(--recap-dark-body)!important;
+  opacity:1!important;
+}
+.v103-recap .v103-recap-ledger.tax>header{
+  color:var(--recap-dark-heading)!important;
+}
+
+/* Light summary surface: never inherit the global warm-white text contract. */
+.v103-recap .v103-recap-kept{
+  background:var(--recap-light-surface)!important;
+  color:var(--recap-light-heading)!important;
+}
+.v103-recap .v103-recap-kept>span{
+  color:var(--recap-light-heading)!important;
+  opacity:1!important;
+}
+.v103-recap .v103-recap-kept>strong{
+  color:var(--recap-light-value)!important;
+  font-size:clamp(40px,8vw,88px)!important;
+  line-height:.92!important;
+  letter-spacing:-.045em!important;
+  overflow-wrap:anywhere;
+  opacity:1!important;
+}
+.v103-recap .v103-recap-kept>p{
+  color:var(--recap-light-body)!important;
+  opacity:1!important;
+}
+
+/* Keep report dividers visible without turning them into heavy UI chrome. */
+.v103-recap .v103-recap-grid>main,
+.v103-recap .v103-recap-score,
+.v103-recap .v103-dollar,
+.v103-recap .v103-recap-career,
+.v103-recap>footer{
+  border-color:var(--recap-divider)!important;
+}
+
+@media(max-width:720px){
+  .v103-recap .v103-recap-kept>strong{
+    font-size:clamp(40px,12vw,64px)!important;
+  }
+}
