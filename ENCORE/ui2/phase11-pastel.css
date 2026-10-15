@@ -1,0 +1,197 @@
+/* ENCORE UI2 Phase 11 — Dark Pastel Editorial Theme
+   Shared palette, stronger contrast, and system identities. */
+
+:root{
+  --bg:#151719;
+  --bg-soft:#1a1d20;
+  --surface:#1d2023;
+  --surface-2:#25282c;
+  --surface-3:#2c3034;
+  --line:#45484c;
+  --line-soft:#35383c;
+  --ink:#fff8ec;
+  --muted:#d8d3ca;
+  --faint:#a8a49d;
+  --gold:#e6be72;
+  --peach:#e9ad91;
+  --rose:#dda0ac;
+  --lavender:#bba6d9;
+  --blue:#9fc6dc;
+  --sage:#a9c7ae;
+  --green:#a9d6c4;
+  --sand:#d7bd92;
+  --cream:#f3e3c3;
+  --red:#e79791;
+  --button-ink:#17191b;
+}
+
+html,body{background:var(--bg)!important;color:var(--ink)!important}
+.ui2-root{
+  background:
+    radial-gradient(circle at 82% -8%,rgba(187,166,217,.12),transparent 34rem),
+    radial-gradient(circle at 8% 4%,rgba(233,173,145,.09),transparent 26rem),
+    var(--bg)!important;
+}
+.ui2-app{color:var(--ink)!important}
+.ui2-main,.ui2-screen{color:var(--ink)!important}
+
+/* Readability contract */
+.ui2-main p,.ui2-main small,.ui2-main span,.ui2-screen-head p,.ui2-topmeta,
+.ui2-feed-copy span,.ui2-statement-row span,.ui2-department span,.ui2-inbox-row span,
+.ui2-history-row p,.ui2-artist-fact span,.ui2-business-hero p,
+.ui2-recap-head p,.ui2-recap-copy p,.ui2-week-confirm p{
+  color:var(--muted)!important;
+  opacity:1!important;
+}
+.ui2-main strong,.ui2-main b,.ui2-main h1,.ui2-main h2,.ui2-main h3,
+.ui2-ledger-item strong,.ui2-business-number strong,.ui2-statement-row strong,
+.ui2-recap-numbers strong,.ui2-artist2-numbers strong,.ui2-legacy-strip strong{
+  color:var(--ink)!important;
+}
+.ui2-kicker,.ui2-inline-action,.ui2-primary-link{color:var(--cream)!important}
+.ui2-section-title small{color:var(--faint)!important}
+
+.ui2-topbar{
+  background:rgba(21,23,25,.965)!important;
+  border-bottom-color:var(--line)!important;
+}
+.ui2-status{
+  color:var(--muted)!important;
+  border-color:var(--line)!important;
+  background:rgba(230,190,114,.05)!important;
+}
+.ui2-topmeta strong{color:var(--ink)!important}
+.ui2-brand-mark{color:var(--gold)!important}
+.ui2-bottomnav{
+  background:rgba(16,18,20,.985)!important;
+  border-top-color:var(--line)!important;
+}
+.ui2-bottomnav button{color:#aaa69f!important}
+.ui2-bottomnav button.active{color:var(--ink)!important}
+
+/* Core buttons */
+.ui2-advance-week{
+  background:linear-gradient(180deg,#f0cf91,var(--gold))!important;
+  border-color:#f5dca8!important;
+  color:var(--button-ink)!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.24)!important;
+}
+.ui2-week-actions button{
+  background:var(--surface-2)!important;
+  color:var(--ink)!important;
+  border-color:#5c6065!important;
+}
+.ui2-week-actions button:last-child{
+  background:linear-gradient(180deg,#f0cf91,var(--gold))!important;
+  color:var(--button-ink)!important;
+  border-color:#f5dca8!important;
+}
+button:disabled{opacity:.68!important;color:#c0bdb7!important}
+
+/* HOME — warm gold/rose editorial */
+.ui2-home-visual{
+  background:
+    radial-gradient(circle at 72% 22%,rgba(221,160,172,.16),transparent 22rem),
+    radial-gradient(circle at 12% 30%,rgba(230,190,114,.16),transparent 20rem),
+    linear-gradient(135deg,#282226 0%,#1b1c1f 46%,var(--bg) 100%)!important;
+}
+.ui2-home-visual:before{background:linear-gradient(0deg,var(--bg) 0%,rgba(21,23,25,.82) 22%,rgba(21,23,25,.1) 70%)!important}
+.ui2-home-sub{color:var(--muted)!important}
+.ui2-ledger{background:var(--surface)!important;border-color:var(--line)!important}
+.ui2-ledger-item{border-color:var(--line)!important}
+.ui2-ledger-item small{color:var(--faint)!important}
+.ui2-ledger-item em{color:var(--green)!important}
+.ui2-release-strip{background:linear-gradient(90deg,rgba(233,173,145,.06),var(--surface))!important;border-color:var(--line)!important}
+.ui2-release-strip small{color:var(--faint)!important}.ui2-release-strip span{color:var(--muted)!important}.ui2-release-strip b{color:var(--gold)!important}
+.ui2-feed{border-color:var(--line-soft)!important}.ui2-feed-row{border-color:var(--line-soft)!important}.ui2-feed-row:hover{background:var(--surface)!important}
+.ui2-feed-icon{border-color:#5a5551!important;color:var(--gold)!important}
+.ui2-actions-line{border-color:var(--line)!important}.ui2-actions-line button{background:var(--surface)!important;border-color:var(--line)!important;color:var(--ink)!important}.ui2-actions-line button:hover{background:var(--surface-2)!important}
+
+/* ARTIST FILE / LEGACY — champagne */
+.ui2-artist-hero,.ui2-artist2{background:var(--bg)!important}
+.ui2-portrait-zone,.ui2-artist2-portrait{
+  background:radial-gradient(circle at 55% 24%,rgba(230,190,114,.13),transparent 40%),linear-gradient(160deg,#2a2521,#1c1d20 60%,var(--bg))!important;
+}
+.ui2-artist-sidebar{background:var(--surface)!important;border-color:var(--line)!important}
+.ui2-artist-fact{border-color:var(--line-soft)!important}.ui2-artist-fact span{color:var(--muted)!important}
+.ui2-artist-quote{color:var(--cream)!important;border-color:var(--line)!important}
+.ui2-artist2-hero{background:linear-gradient(135deg,#242122,var(--bg) 72%)!important;border-color:var(--line)!important}
+.ui2-artist2-title>p,.ui2-artist2-feature-main p,.ui2-catalog-row>div span,.ui2-legacy-timeline p{color:var(--muted)!important}
+.ui2-artist2-tabs{background:rgba(21,23,25,.96)!important;border-color:var(--line)!important}.ui2-artist2-tabs button{color:var(--muted)!important;border-color:var(--line)!important}.ui2-artist2-tabs button.active{background:var(--gold)!important;color:var(--button-ink)!important}
+.ui2-artist2-numbers,.ui2-legacy-strip,.ui2-artist2-numbers>div,.ui2-legacy-strip>div,.ui2-artist2-feature,.ui2-catalog-row,.ui2-legacy-timeline>div{border-color:var(--line-soft)!important}
+.ui2-artist2-numbers small,.ui2-legacy-strip small,.ui2-legacy-timeline time{color:var(--faint)!important}
+.ui2-artist2-skills i{background:#3a3740!important}.ui2-artist2-skills i b{background:linear-gradient(90deg,var(--lavender),#d2c1e8)!important}
+
+/* STUDIO — peach creativity */
+.ui2-studio-room,.ui2-studio-shell,[class*="ui2-studio-"]{border-color:var(--line)!important}
+.ui2-studio-room{background:linear-gradient(145deg,#26211f,var(--bg))!important}
+.ui2-studio-room .ui2-kicker,.ui2-studio-room [class*="accent"]{color:var(--peach)!important}
+.ui2-waveform i,.ui2-waveform b{background:var(--peach)!important}
+.ui2-session-choices button,.ui2-live-fields input,.ui2-live-fields select,.ui2-live-fields textarea{background:var(--surface)!important;color:var(--ink)!important;border-color:#5d5a58!important}
+.ui2-session-choices button:hover,.ui2-session-choices button.active{border-color:var(--peach)!important;background:rgba(233,173,145,.09)!important}
+
+/* CHARTS — powder blue publication */
+.ui2-chart-screen,.ui2-chart-list,.ui2-chart-row{border-color:var(--line)!important}
+.ui2-chart-row{background:var(--surface)!important}.ui2-chart-row:nth-child(even){background:var(--surface-2)!important}.ui2-chart-row:hover{background:#2b3035!important}
+.ui2-chart-row [class*="rank"],.ui2-chart-row [class*="peak"],.ui2-chart-screen .ui2-kicker{color:var(--blue)!important}
+.ui2-chart-empty{color:var(--muted)!important}
+
+/* BUSINESS — sage executive */
+.ui2-business-hero,.ui2-biz-area-head{background:linear-gradient(135deg,rgba(169,199,174,.09),var(--bg) 76%)!important;border-color:var(--line)!important}
+.ui2-business-ledger{background:var(--surface)!important;border-color:var(--line)!important}
+.ui2-business-number{border-color:var(--line)!important}.ui2-business-number small{color:var(--faint)!important}.ui2-business-number.profit{background:linear-gradient(180deg,rgba(169,214,196,.08),transparent)!important}.ui2-business-number.profit strong{color:var(--green)!important}
+.ui2-company-prompt,.ui2-biz-area-head button,.ui2-contract-ledger small,.ui2-offer-ledger>div>span{color:var(--sage)!important}
+.ui2-statement-row,.ui2-inbox-row,.ui2-department,.ui2-biz-statement>div,.ui2-biz-roster>div,.ui2-contract-ledger>div,.ui2-offer-ledger>div,.ui2-marketing-list>div{border-color:var(--line-soft)!important}
+.ui2-inbox-row:hover,.ui2-department:hover{background:rgba(169,199,174,.055)!important}
+.ui2-inbox-badge,.ui2-biz-avatar{background:var(--surface-2)!important;border-color:#59645c!important;color:var(--sage)!important}
+.ui2-dept-code,.ui2-inbox-row b{color:var(--sage)!important}
+.ui2-staff-ledger>div{border-color:var(--line)!important}.ui2-staff-ledger .active span{color:var(--green)!important}
+
+/* PULSE — lavender + rose */
+.ui2-pulse-screen,.ui2-pulse-feed,.ui2-pulse-post{border-color:var(--line)!important}
+.ui2-pulse-post{background:linear-gradient(105deg,rgba(221,160,172,.07),rgba(187,166,217,.04),var(--surface))!important}
+.ui2-pulse-screen .ui2-kicker,.ui2-pulse-post [class*="meta"],.ui2-pulse-post [class*="tag"]{color:var(--lavender)!important}
+.ui2-pulse-post button{color:var(--rose)!important}
+
+/* TOURING — sand route */
+.ui2-tour-map-svg,.ui2-tour-map,.ui2-tour-screen{border-color:var(--line)!important}
+.ui2-tour-map-svg{background:linear-gradient(145deg,#282620,var(--bg))!important}
+.ui2-tour-screen .ui2-kicker,[class*="ui2-tour-"] [class*="active"]{color:var(--sand)!important}
+
+/* NEGOTIATION — rose + cream */
+.ui2-neg-room,.ui2-neg-scout{background:var(--bg-deep,#101214)!important;border-color:var(--line)!important}
+.ui2-neg-room [class*="meter"],.ui2-neg-room [class*="track"]{border-color:var(--line)!important}
+.ui2-neg-room .ui2-kicker,.ui2-neg-room [class*="response"],.ui2-neg-room [class*="dialogue"]{color:var(--rose)!important}
+.ui2-neg-room button[data-neg-sign],.ui2-neg-room button[type="submit"]{background:var(--cream)!important;color:var(--button-ink)!important;border-color:#f8e9cb!important}
+
+/* HONORS / WEALTH */
+.ui2-honors{background:linear-gradient(145deg,rgba(230,190,114,.055),var(--bg))!important}.ui2-honors .ui2-kicker,.ui2-honors [class*="winner"],.ui2-honors [class*="award"]{color:var(--gold)!important}
+.ui2-wealth{background:linear-gradient(145deg,rgba(169,199,174,.055),var(--bg))!important}.ui2-wealth .ui2-kicker,.ui2-wealth [class*="gain"],.ui2-wealth [class*="value"]{color:var(--sage)!important}
+
+/* WEEKLY RECAP — explicit high-contrast fix for every important value. */
+.ui2-week-dialog,.ui2-week-recap{
+  background:var(--bg-deep,#101214)!important;
+  color:var(--ink)!important;
+  border-color:#5a5e63!important;
+}
+.ui2-week-confirm{background:var(--bg-deep,#101214)!important}
+.ui2-recap-head{
+  background:radial-gradient(circle at 80% 10%,rgba(230,190,114,.16),transparent 18rem),linear-gradient(140deg,#292422,var(--bg) 72%)!important;
+  border-color:var(--line)!important;
+}
+.ui2-recap-head>small,.ui2-recap-numbers small{color:var(--faint)!important}
+.ui2-recap-head h2,.ui2-recap-numbers strong{color:var(--ink)!important}
+.ui2-recap-numbers{border-color:var(--line)!important;background:var(--surface)!important}
+.ui2-recap-numbers>div{border-color:var(--line)!important}
+.ui2-recap-numbers>div:nth-child(2) strong,.ui2-recap-numbers>div:nth-child(4) strong{color:var(--green)!important}
+.ui2-recap-copy>div{border-color:var(--line-soft)!important}.ui2-recap-copy span{color:var(--gold)!important}.ui2-recap-copy p{color:var(--muted)!important}
+.ui2-week-recap [class*="tax"] strong,.ui2-week-recap [class*="reserve"] strong{color:var(--sand)!important}
+.ui2-week-recap [class*="loss"] strong,.ui2-week-recap [class*="negative"] strong{color:var(--red)!important}
+
+/* Sandbox stays distinct but readable. */
+.ui2-sandbox-mode .ui2-status,.ui2-sandbox-mode .ui2-lab-mark{color:var(--green)!important;border-color:#60736a!important;background:rgba(169,214,196,.06)!important}
+.ui2-sandbox-mode .ui2-topmeta span:first-child{color:var(--green)!important}
+
+@media(max-width:700px){
+  .ui2-main p,.ui2-main small,.ui2-main span{opacity:1!important}
+}
