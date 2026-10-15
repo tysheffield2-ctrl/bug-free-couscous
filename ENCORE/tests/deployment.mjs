@@ -3,9 +3,9 @@ import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import handler from '../dist/server/index.js';
 const version=JSON.parse(readFileSync('package.json')).version;
-const ui2Routes=['/','/sandbox','/ui2','/preview-ui2','/ui2/sandbox','/preview-ui2/sandbox'];
-const legacyRoutes=['/legacy','/legacy/sandbox','/offline','/offline/sandbox'];
-for(const path of [...ui2Routes,...legacyRoutes]){
+const interactiveRoutes=['/','/sandbox','/legacy','/legacy/sandbox','/offline','/offline/sandbox'];
+const ui2Routes=['/ui2','/preview-ui2','/ui2/sandbox','/preview-ui2/sandbox'];
+for(const path of [...interactiveRoutes,...ui2Routes]){
  const r=await handler.fetch(new Request('https://encore.test'+path),{});
  assert.equal(r.status,200);
  assert.ok(r.headers.get('Content-Type').startsWith('text/html'));
@@ -18,7 +18,8 @@ for(const path of [...ui2Routes,...legacyRoutes]){
   assert.ok(body.includes('/api/sandbox/save'));
   assert.equal(body.includes('/game.js'),false);
  }else{
-  assert.ok(body.includes('/game.js')||body.includes('id="app"'),'legacy renderer must remain available only on explicit legacy/offline routes');
+  assert.ok(body.includes('/game.js')||body.includes('id="app"'),'normal, sandbox and fallback routes must keep the fully interactive ENCORE renderer until UI2 interaction parity is proven');
+  assert.equal(body.includes('ui2-bottomnav'),false,'interactive routes must not silently switch to the incomplete UI2 renderer');
  }
 }
 const identity=await handler.fetch(new Request('https://encore.test/api/version'),{});assert.deepEqual(await identity.json(),{version});assert.equal(identity.headers.get('Cache-Control'),'no-store');
@@ -30,4 +31,4 @@ const denied=await handler.fetch(new Request('https://encore.test/api/save',{met
 execFileSync(process.execPath,['build-pages.mjs']);assert.equal(readFileSync('dist/pages/_worker.js','utf8'),readFileSync('dist/server/index.js','utf8'));
 assert.deepEqual(JSON.parse(readFileSync('dist/pages/_routes.json')),{version:1,include:['/*'],exclude:['/art/*','/portraits/*']});
 assert.ok(readFileSync('dist/pages/portraits/core-atlas.webp').length>0);
-console.log('PASS UI2 is the default normal/sandbox web renderer, legacy is isolated behind explicit fallback routes, save continuity is preserved, origin protection remains active, and Pages advanced-mode packaging matches production.');
+console.log('PASS fully interactive ENCORE remains the normal/sandbox default, UI2 stays available on explicit preview routes, save continuity is preserved, origin protection remains active, and Pages advanced-mode packaging matches production.');
