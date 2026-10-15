@@ -82,7 +82,7 @@ export default {
         return json({ok:true,id,emailed});
       }catch(error){
         console.error('Feedback request failed',error);
-        return json({error:'Feedback temporarily unavailable'},503);
+        return json({error:'Feedback temporarily unavailable'},503)
       }
     }
 
@@ -105,7 +105,7 @@ export default {
         if(!request.headers.get('Content-Type')?.includes('application/json'))return json({error:'JSON required'},415);
         const raw=await request.text();
         if(raw.length>8500000)return json({error:'Save too large'},413);
-        let save;try{save=JSON.parse(raw)}catch{return json({error:'Invalid JSON'},400)}
+        let save;try{save=JSON.parse(raw)}catch{return json({error:'Invalid career'},400)}
         if(save.schemaVersion!==1||!save.state||!Number.isInteger(save.state.week)||!Array.isArray(save.state.songs)||!Array.isArray(save.state.world))return json({error:'Invalid career'},400);
         if(!!save.state.sandbox!==lab)return json({error:'Wrong game mode'},400);
         const conditions=new Headers();
@@ -124,8 +124,12 @@ export default {
 
     if(request.method!=='GET'&&request.method!=='HEAD')return new Response('Method not allowed',{status:405});
     if(['/week-engine.js','/sandbox/week-engine.js'].includes(url.pathname)&&['GET','HEAD'].includes(request.method))return new Response(request.method==='HEAD'?null:WEEK_WORKER,{headers:{...headers,'Content-Type':'text/javascript; charset=utf-8'}});
-    const ui2Paths=['/ui2','/ui2/','/preview-ui2','/preview-ui2/','/ui2/sandbox','/ui2/sandbox/','/preview-ui2/sandbox','/preview-ui2/sandbox/'];
-    const asset=ui2Paths.includes(url.pathname)?UI2_HTML:url.pathname==='/game.js'?SCRIPT:url.pathname==='/'||url.pathname==='/index.html'||url.pathname==='/sandbox'||url.pathname==='/sandbox/'||['/offline','/offline/','/offline/sandbox','/offline/sandbox/'].includes(url.pathname)?HTML:null;
+
+    // UI2 is ENCORE's primary web presentation. Keep the old renderer available only
+    // behind explicit legacy routes so normal navigation cannot switch visual systems.
+    const ui2Paths=['/','/index.html','/sandbox','/sandbox/','/ui2','/ui2/','/preview-ui2','/preview-ui2/','/ui2/sandbox','/ui2/sandbox/','/preview-ui2/sandbox','/preview-ui2/sandbox/'];
+    const legacyPaths=['/legacy','/legacy/','/legacy/sandbox','/legacy/sandbox/','/offline','/offline/','/offline/sandbox','/offline/sandbox/'];
+    const asset=ui2Paths.includes(url.pathname)?UI2_HTML:url.pathname==='/game.js'?SCRIPT:legacyPaths.includes(url.pathname)?HTML:null;
     if(asset===null)return new Response('Not found',{status:404});
     return new Response(request.method==='HEAD'?null:asset,{headers:{...headers,'Content-Type':url.pathname==='/game.js'?'text/javascript; charset=utf-8':'text/html; charset=utf-8'}})
   }
