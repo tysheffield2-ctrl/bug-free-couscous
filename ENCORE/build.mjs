@@ -11,8 +11,9 @@ try{
 }catch{}
 if(!releaseItems.length)releaseItems=['Gameplay, presentation and stability improvements for this build.'];
 const releaseMeta={version:gameVersion,items:releaseItems};
+const audienceEngine=readFileSync('engine/audience.js','utf8');
 
-const modules=['artwork','name-generator','core','career-systems','save-tools','beta','experience','lab-editor','label-business','negotiations','social','wealth','commerce','empire','directory','presentation','asset-photos','market','conversations','industry-life','navigation','studio-life','guidance','collections','people-products','world-tours','v080','v080-polish','v080-fixes','v081-depth','v081-polish','v082-polish','industry-generations','v083-weekly','v083-fixes','weekly-engine','v084-portraits','v084-roster-weeklabel','v085-unique-portraits','v086-marketing','v086-fixes','v087-commercial-scale','v088-release-experience','career-world','career-world-navigation','career-world-routing','v090-studio','v090-contracts','v091-economy','v092-business-career','v092-fixes','v093-visual','v094-career-ui','v095-release-hype','v095-artist-file','v095-fixes','v096-business-hq-notifications','v096-fixes','v100-industry','v100-representation','v100-finance-contracts','v100-deals-labels','v100-label-competition','v100-touring','v100-career-parity','v100-sandbox-entry','v101-contract-document','v102-roster-contract-gate','v102-negotiation-room','v103-home-shell','v103-artist-stats','v103-studio','v103-release-charts','v103-world','v103-business-recap','v103-shell-industry','v104-mobile-polish','v105-ui-compat','v106-showcase-fidelity','v106-portraits','v106-economy-ui'];
+const modules=['artwork','name-generator','core','career-systems','save-tools','beta','experience','lab-editor','label-business','negotiations','social','wealth','commerce','empire','directory','presentation','asset-photos','market','conversations','industry-life','navigation','studio-life','guidance','collections','people-products','world-tours','v080','v080-polish','v080-fixes','v081-depth','v081-polish','v082-polish','industry-generations','v083-weekly','v083-fixes','weekly-engine','v084-portraits','v084-roster-weeklabel','v085-unique-portraits','v086-marketing','v086-fixes','v087-commercial-scale','v088-release-experience','career-world','audience-engine-bridge','career-world-navigation','career-world-routing','v090-studio','v090-contracts','v091-economy','v092-business-career','v092-fixes','v093-visual','v094-career-ui','v095-release-hype','v095-artist-file','v095-fixes','v096-business-hq-notifications','v096-fixes','v100-industry','v100-representation','v100-finance-contracts','v100-deals-labels','v100-label-competition','v100-touring','v100-career-parity','v100-sandbox-entry','v101-contract-document','v102-roster-contract-gate','v102-negotiation-room','v103-home-shell','v103-artist-stats','v103-studio','v103-release-charts','v103-world','v103-business-recap','v103-shell-industry','v104-mobile-polish','v105-ui-compat','v106-showcase-fidelity','v106-portraits','v106-economy-ui'];
 const staticArt=[];
 function moduleSource(name){
  let source=readFileSync('src/'+name+'.js','utf8');
@@ -22,7 +23,7 @@ function moduleSource(name){
  });
  return source;
 }
-let js='const ENCORE_RELEASE_NOTES='+JSON.stringify(releaseMeta)+';\n'+modules.map(moduleSource).join('\n')+'\nboot();\n';
+let js='const ENCORE_RELEASE_NOTES='+JSON.stringify(releaseMeta)+';\n'+audienceEngine+'\n'+modules.map(moduleSource).join('\n')+'\nboot();\n';
 js=js.replace("const GAME_VERSION='0.7.1-beta.1'",'const GAME_VERSION='+JSON.stringify(gameVersion));
 writeFileSync('dist/game.js',js);
 
@@ -36,7 +37,7 @@ writeFileSync('dist/index.html',html);
 const ui2Css=[readFileSync('ui2/ui2.css','utf8'),readFileSync('ui2/phase2.css','utf8'),readFileSync('ui2/phase3.css','utf8'),readFileSync('ui2/phase4.css','utf8')].join('\n');
 const ui2Raw=[readFileSync('ui2/commands.js','utf8'),readFileSync('ui2/app-v2.js','utf8'),readFileSync('ui2/phase3.js','utf8'),readFileSync('ui2/mode.js','utf8')].join('\n');
 const ui2Bootstrap="globalThis.ENCORE_UI2_SAVE_URL=/\\/sandbox\\/?$/.test(location.pathname)?'/api/sandbox/save':'/api/save';\n";
-const ui2Js=ui2Bootstrap+ui2Raw.replaceAll("fetch('/api/save'","fetch(globalThis.ENCORE_UI2_SAVE_URL||'/api/save'");
+const ui2Js=audienceEngine+'\n'+ui2Bootstrap+ui2Raw.replaceAll("fetch('/api/save'","fetch(globalThis.ENCORE_UI2_SAVE_URL||'/api/save'");
 let ui2Html=readFileSync('ui2/index.html','utf8');
 ui2Html=ui2Html.replace('/* __UI2_CSS__ */',ui2Css).replace('/* __UI2_JS__ */',ui2Js);
 writeFileSync('dist/ui2.html',ui2Html);
