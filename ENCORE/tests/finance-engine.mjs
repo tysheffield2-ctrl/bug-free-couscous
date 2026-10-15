@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const source=fs.readFileSync(new URL('../engine/finance.js',import.meta.url),'utf8'),bridge=fs.readFileSync(new URL('../src/finance-engine-bridge.js',import.meta.url),'utf8'),build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
+const ctx={console,BigInt,Math,Number,String,Object,Array,Error};ctx.globalThis=ctx;vm.createContext(ctx);vm.runInContext(source,ctx);const E=ctx.ENCORE_FINANCE;
+function state(){return {week:8,cash:1000,walletCents:'100000',finance:{year:1,weeks:0,revenue:0,expenses:0,reserve:0,taxesPaid:0,week:{wages:180,live:25,expenses:50}},expansion:{contract:{recovered:0}}}}
+{
+ const s=state(),income={wages:180,live:25,albumSales:10,media:0,publishing:0,sync:0,endorsement:0,merch:0,sponsorship:0,labelBusiness:0,investment:0,other:0},r=E.settle(s,{royalties:100,income,incomeTotal:215,labelCut:20,labelPayroll:0,representation:[{name:'Agent',rate:10,eligible:100,fee:10}],agentFee:10,operations:{administration:10,insurance:5,accountingLegal:5,workspaceTravel:10},operatingCost:30,actionExpenses:50,yearEnd:false,taxQuote:()=>({total:52,marginal:.2,city:{taxAdj:.01}})});
+ assert.equal(r.revenue,315);assert.equal(r.expenses,110);assert.equal(r.taxReserve,1);assert.equal(r.net,204);assert.equal(s.cash,1039);assert.equal(s.walletCents,'103900');assert.equal(s.finance.reserve,1);assert.equal(s.finance.weeks,1);assert.equal(s.finance.revenue,315);assert.equal(s.finance.expenses,110);assert.equal(s.expansion.contract.recovered,20);assert.equal(s.finance.week.wages,0);assert.equal(s.finance.last,r)
+}
+{
+ const s=state();s.finance.year=3;s.finance.weeks=51;s.finance.revenue=50000;s.finance.expenses=10000;s.finance.reserve=8000;const r=E.settle(s,{royalties:1000,income:{},incomeTotal:0,labelCut:0,labelPayroll:0,representation:[],agentFee:0,operations:{},operatingCost:0,actionExpenses:0,yearEnd:true,taxQuote:()=>({total:10000,marginal:.3,city:{taxAdj:.02}})});assert.equal(r.yearEnd,true);assert.equal(r.taxReserve,2000);assert.equal(r.settlement,10000);assert.equal(s.cash,0);assert.equal(s.walletCents,'0');assert.equal(s.finance.lastSettlement.year,3);assert.equal(s.finance.lastSettlement.tax,10000);assert.equal(s.finance.taxesPaid,10000);assert.equal(s.finance.reserve,0);assert.equal(s.finance.year,4);assert.equal(s.finance.weeks,0);assert.equal(s.finance.revenue,0);assert.equal(s.finance.expenses,0)
+}
+assert.ok(bridge.includes('ENCORE_FINANCE.settle'));assert.ok(bridge.includes('V100_taxQuote'));assert.ok(build.includes("readFileSync('engine/finance.js'"));
+console.log('PASS shared Finance Ledger owns week-close revenue/expense totals, exact-cent cash, tax reserve, annual settlement/reset and contract recovery for legacy ENCORE and UI2.');
