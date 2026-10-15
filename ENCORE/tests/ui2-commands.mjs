@@ -2,10 +2,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 
+const audienceSource=fs.readFileSync(new URL('../engine/audience.js',import.meta.url),'utf8');
 const source=fs.readFileSync(new URL('../ui2/commands.js',import.meta.url),'utf8');
+const bridge=fs.readFileSync(new URL('../src/audience-engine-bridge.js',import.meta.url),'utf8');
 const context={console,structuredClone,BigInt,Math,JSON,Number,String,Array,Object,Error,RegExp};
 context.globalThis=context;
 vm.createContext(context);
+vm.runInContext(audienceSource,context);
 vm.runInContext(source,context);
 const {applyCommand,applyAudienceEvent,reconcileRegionalAudience}=context.ENCORE_UI2_COMMAND_CORE;
 
@@ -51,7 +54,10 @@ function base(){return {week:8,started:true,cash:650,walletCents:'65000',energy:
 }
 assert.equal(source.includes('/game.js'),false,'UI2 command bridge must not import the legacy renderer');
 assert.equal(source.includes('advance('),false,'week advancement stays outside the bridge until the weekly engine is extracted');
+assert.ok(source.includes('global.ENCORE_AUDIENCE.apply'),'UI2 audience mutations must call the shared engine');
+assert.equal(source.includes('function ensureCareerWorld'),false,'UI2 must not own a duplicate Audience Engine');
+assert.ok(bridge.includes('ENCORE_AUDIENCE.apply'),'legacy ENCORE must also call the shared engine');
 assert.ok(source.includes("dataset.ui2Command='open-mic'"),'Open Mic should use the extracted Audience Engine');
 assert.ok(source.includes("dataset.ui2Command='pulse-reply'"),'PULSE replies should use the extracted Audience Engine');
 assert.ok(source.includes("addEventListener('click'"));assert.ok(source.includes(',true);'),'live command interception must run in capture phase before stale preview handlers');
-console.log('PASS UI2 command bridge: canonical Audience Engine, Work/Rest/Open Mic/training, Studio releases, PULSE support/replies, regional conservation, exact-cent wallet sync, immutable inputs and no legacy renderer dependency.');
+console.log('PASS shared Audience Engine is the single mutation source for legacy + UI2; Work/Rest/Open Mic/training, Studio releases, PULSE support/replies, regional conservation and exact-cent saving remain covered.');
