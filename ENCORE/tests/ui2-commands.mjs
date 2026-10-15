@@ -38,9 +38,11 @@ function base(){return {week:8,started:true,cash:650,walletCents:'65000',energy:
  const s=base();const {state}=applyCommand(s,'pulse-support',{artistId:4});assert.equal(state.energy,98);assert.equal(state.world[0].relation,1);assert.deepEqual(JSON.parse(JSON.stringify(state.social.interactions)),[{week:8,artist:4}]);assert.throws(()=>applyCommand(state,'pulse-support',{artistId:4}),/already supported/i)
 }
 {
- const s=base();const {state}=applyCommand(s,'pulse-reply',{postId:3});assert.equal(state.energy,95);assert.equal(state.social.posts[0].replied,true);assert.equal(state.fans,101);assert.equal(state.loyalty,21);assert.equal(state.development.charisma.xp,10);assert.equal(state.social.lifetimeFans,1)
+ const s=base();assert.throws(()=>applyCommand(s,'pulse-reply',{postId:3}),/not been migrated/i);assert.equal(s.social.posts[0].replied,false);assert.equal(s.fans,100)
 }
 assert.equal(source.includes('/game.js'),false,'UI2 command bridge must not import the legacy renderer');
 assert.equal(source.includes('advance('),false,'week advancement stays outside the bridge until the weekly engine is extracted');
+assert.equal(source.includes("dataset.ui2Command='pulse-reply'"),false,'PULSE replies stay gated until audience attribution is extracted');
+assert.ok(source.includes('Replies · audience engine migrating'));
 assert.ok(source.includes("addEventListener('click'"));assert.ok(source.includes(',true);'),'live command interception must run in capture phase before stale preview handlers');
-console.log('PASS UI2 command bridge: work/rest/training, Studio release flow, PULSE interactions, exact-cent wallet sync, immutable inputs and no legacy renderer dependency.');
+console.log('PASS UI2 command bridge: work/rest/training, Studio release flow, safe PULSE support, gated audience-dependent replies, exact-cent wallet sync, immutable inputs and no legacy renderer dependency.');
