@@ -1,7 +1,7 @@
 /* Canonical week-close owner. Phase order is part of the save/economy contract.
    Monthly hooks close the outgoing month before weekly royalties, preserving beta accounting.
-   Weekly release/chart/audience/finance order still lives in core.advanceWeek while those
-   phases are extracted. Atomic ordering + rollback now live in engine/week-transaction.js.
+   Weekly phase order lives in engine/weekly.js; player stream settlement in engine/releases.js.
+   Stateful subsystem hooks remain in the compatibility runtime. Atomic rollback lives in engine/week-transaction.js.
 */
 let V083_transitionAdvancing=false;
 const MONTH_END_HOOKS=[

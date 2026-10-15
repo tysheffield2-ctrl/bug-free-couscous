@@ -6,8 +6,8 @@ if(!sandbox)return;
 document.documentElement.classList.add('ui2-sandbox-mode');
 function mark(){
  const brand=document.querySelector('.ui2-brand');if(brand&&!brand.querySelector('.ui2-lab-mark'))brand.insertAdjacentHTML('beforeend','<small class="ui2-lab-mark">LAB</small>');
- const status=document.querySelector('.ui2-status');if(status)status.textContent=status.textContent.includes('loaded')?'Sandbox loaded ✓':'UI2 sandbox';
- const meta=document.querySelector('.ui2-topmeta span:first-child');if(meta)meta.innerHTML='<strong>UI2 LAB</strong> · separate sandbox save';
+ const status=document.querySelector('.ui2-status');if(status){const text=status.textContent.includes('loaded')?'Sandbox loaded ✓':'UI2 sandbox';if(status.textContent!==text)status.textContent=text;}
+ const meta=document.querySelector('.ui2-topmeta span:first-child');if(meta&&!meta.querySelector('[data-ui2-mode-mark]'))meta.innerHTML='<strong data-ui2-mode-mark>UI2 LAB</strong> · separate sandbox save';
 }
 new MutationObserver(mark).observe(document.documentElement,{subtree:true,childList:true});mark();
 })();

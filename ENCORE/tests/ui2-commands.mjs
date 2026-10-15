@@ -9,6 +9,7 @@ const context={console,structuredClone,BigInt,Math,JSON,Number,String,Array,Obje
 context.globalThis=context;
 vm.createContext(context);
 vm.runInContext(audienceSource,context);
+vm.runInContext(fs.readFileSync(new URL('../engine/studio.js',import.meta.url),'utf8'),context);
 vm.runInContext(source,context);
 const {applyCommand,applyAudienceEvent,reconcileRegionalAudience}=context.ENCORE_UI2_COMMAND_CORE;
 
@@ -20,7 +21,7 @@ function base(){return {week:8,started:true,cash:650,walletCents:'65000',energy:
  assert.equal(state.energy,85);assert.equal(state.cash,830);assert.equal(state.walletCents,'83000');assert.equal(state.finance.week.wages,180);assert.match(state.history[0].text,/shift paid \$180/i);assert.match(message,/\+\$180/)
 }
 {
- const s=base();s.energy=170;const {state}=applyCommand(s,'rest');assert.equal(state.energy,200);assert.equal(state.restWeek,8);assert.throws(()=>applyCommand(state,'rest'),/already rested/i)
+ const s=base();s.energy=170;const {state}=applyCommand(s,'rest');assert.equal(state.energy,200);assert.equal(state.restWeek,8);assert.throws(()=>applyCommand(state,'rest'),/fully rested/i);state.energy=100;assert.throws(()=>applyCommand(state,'rest'),/already rested/i)
 }
 {
  const s=base();s.energy=4;assert.throws(()=>applyCommand(s,'work'),/recover energy/i);assert.equal(s.cash,650);assert.equal(s.energy,4)
@@ -53,8 +54,8 @@ function base(){return {week:8,started:true,cash:650,walletCents:'65000',energy:
  const s=base();s.fans=11;applyAudienceEvent(s,'seed',0);s.careerWorld.markets.austin.fans=11;for(const [id,m] of Object.entries(s.careerWorld.markets))if(id!=='austin')m.fans=0;reconcileRegionalAudience(s);assert.equal(Object.values(s.careerWorld.markets).reduce((n,m)=>n+m.fans,0),11)
 }
 assert.equal(source.includes('/game.js'),false,'UI2 command bridge must not import the legacy renderer');
-assert.equal(source.includes('advance('),false,'week advancement stays outside the bridge until the weekly engine is extracted');
-assert.ok(source.includes('global.ENCORE_AUDIENCE.apply'),'UI2 audience mutations must call the shared engine');
+assert.ok(source.includes("type:'advance-week'"),'UI2 delegates week advancement to its isolated worker');
+assert.ok(source.includes('return audience().apply(s,source,delta,options)'),'UI2 audience mutations must call the shared engine');
 assert.equal(source.includes('function ensureCareerWorld'),false,'UI2 must not own a duplicate Audience Engine');
 assert.ok(bridge.includes('ENCORE_AUDIENCE.apply'),'legacy ENCORE must also call the shared engine');
 assert.ok(source.includes("dataset.ui2Command='open-mic'"),'Open Mic should use the extracted Audience Engine');

@@ -224,3 +224,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offse
   .ui2-statement,.ui2-home-copy{padding-left:14px;padding-right:14px}
   .ui2-feed-row,.ui2-inbox-row,.ui2-department,.ui2-history-row{padding-left:14px;padding-right:14px}
 }
+
+.ui2-advance-week{display:block;width:100%;margin:26px 0 8px;padding:19px 24px;border:1px solid #d9f58b;background:#d9f58b;color:#101610;font:700 16px inherit;cursor:pointer;border-radius:3px}.ui2-command-busy .ui2-advance-week{opacity:.5;pointer-events:none}.ui2-week-dialog{box-sizing:border-box;width:min(92vw,520px);max-height:85dvh;overflow:auto;padding:28px;background:#111820;color:#f1f4ee;border:1px solid #59654b;border-radius:10px;font-family:inherit}.ui2-week-dialog::backdrop{background:#000b}.ui2-week-dialog h2{font-size:26px;margin:0 0 20px}.ui2-week-dialog p{line-height:1.55;color:#c6cec4}.ui2-week-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}.ui2-week-actions button{padding:14px 18px;cursor:pointer;background:#d9f58b;color:#101610;border:0;border-radius:4px;font-weight:700}.ui2-week-actions button:first-child:not(:last-child){background:#28312d;color:#fff}
+
+.ui2-setup-notice{padding:22px;background:#20261a;color:#eff5dd;line-height:1.5}.ui2-setup-notice a{color:#d9f58b;text-decoration:underline}
