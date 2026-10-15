@@ -1,0 +1,272 @@
+/* ENCORE v1.07 — Dark Pastel Editorial Design System
+   Global readability + system identity layer for the fully interactive renderer.
+   Pastels are accents; important information stays warm-white and high contrast. */
+
+:root{
+  --encore-bg:#151719;
+  --encore-bg-deep:#101214;
+  --encore-surface:#1d2023;
+  --encore-surface-raised:#25282c;
+  --encore-surface-soft:#2c3034;
+  --encore-text:#fff8ec;
+  --encore-text-soft:#d8d3ca;
+  --encore-text-muted:#b2afa9;
+  --encore-text-faint:#96938e;
+  --encore-divider:#45484c;
+  --encore-divider-soft:#35383c;
+  --encore-gold:#e6be72;
+  --encore-peach:#e9ad91;
+  --encore-rose:#dda0ac;
+  --encore-lavender:#bba6d9;
+  --encore-blue:#9fc6dc;
+  --encore-sage:#a9c7ae;
+  --encore-mint:#a9d6c4;
+  --encore-sand:#d7bd92;
+  --encore-cream:#f3e3c3;
+  --encore-coral:#d98f86;
+  --encore-red:#e79791;
+  --encore-button-text:#17191b;
+
+  /* Re-map the v1.06 palette so older selectors inherit the new system. */
+  --v106-bg:var(--encore-bg);
+  --v106-panel:var(--encore-surface);
+  --v106-panel-2:var(--encore-surface-raised);
+  --v106-line:var(--encore-divider);
+  --v106-line-soft:var(--encore-divider-soft);
+  --v106-ink:var(--encore-text);
+  --v106-muted:var(--encore-text-muted);
+  --v106-gold:var(--encore-gold);
+  --v106-gold-2:#f0cf91;
+  --v106-green:var(--encore-mint);
+  --v106-red:var(--encore-red);
+  --v106-blue:var(--encore-blue);
+  --v106-purple:var(--encore-lavender);
+}
+
+html{background:var(--encore-bg)!important}
+body{
+  background:
+    radial-gradient(circle at 76% -8%,rgba(187,166,217,.12),transparent 34rem),
+    radial-gradient(circle at 12% 4%,rgba(233,173,145,.09),transparent 28rem),
+    var(--encore-bg)!important;
+  color:var(--encore-text)!important;
+}
+
+/* Global readability contract. */
+body,body main,body section,body article{color:var(--encore-text)}
+body p,body .fine,body .muted,body small,
+body .subtle,body .meta,body .caption{
+  color:var(--encore-text-soft)!important;
+  opacity:1!important;
+}
+body strong,body b,body h1,body h2,body h3,body h4,
+body dd,body output,body .value,body .number{
+  color:var(--encore-text)!important;
+}
+body a,body .text-button{color:var(--encore-cream)!important}
+body hr{border-color:var(--encore-divider)!important}
+
+body header{
+  background:rgba(21,23,25,.965)!important;
+  border-bottom-color:var(--encore-divider)!important;
+}
+body .brand span{color:var(--encore-gold)!important}
+body .save-status,body #week{
+  color:var(--encore-text-soft)!important;
+  border-color:var(--encore-divider)!important;
+}
+body .beta-header{
+  background:var(--encore-surface)!important;
+  color:var(--encore-text-soft)!important;
+  border-color:var(--encore-divider)!important;
+}
+
+body .card,body .panel,body .asset-tile,body .action,
+body .stat-card,body .metric-card,body .offer-card,body .notification-card{
+  background:var(--encore-surface)!important;
+  color:var(--encore-text)!important;
+  border-color:var(--encore-divider)!important;
+}
+body .card:hover,body .asset-tile:hover,body .action:hover{border-color:#666a6e!important}
+
+body .primary{
+  background:linear-gradient(180deg,#f0cf91,var(--encore-gold))!important;
+  color:var(--encore-button-text)!important;
+  border-color:#f5dca8!important;
+}
+body .secondary{
+  background:var(--encore-surface-raised)!important;
+  color:var(--encore-text)!important;
+  border-color:#5a5e63!important;
+}
+body button:disabled,body .disabled{
+  opacity:.68!important;
+  color:#c0bdb7!important;
+}
+body input,body select,body textarea{
+  background:var(--encore-bg-deep)!important;
+  color:var(--encore-text)!important;
+  border-color:#60646a!important;
+}
+body input::placeholder,body textarea::placeholder{color:#aaa7a2!important;opacity:1!important}
+body input:focus,body select:focus,body textarea:focus{outline-color:var(--encore-gold)!important}
+
+body .eyebrow{color:var(--encore-cream)!important}
+body .chips button,body .career-groups button,body .career-subnav button{
+  background:var(--encore-surface)!important;
+  color:var(--encore-text-soft)!important;
+  border-color:var(--encore-divider)!important;
+}
+body .chips .selected,body .career-groups .selected,body .career-subnav .selected,
+body .chips button.selected{
+  background:var(--encore-gold)!important;
+  color:var(--encore-button-text)!important;
+  border-color:#efd49b!important;
+}
+
+/* Persistent shell. */
+body nav{
+  background:rgba(16,18,20,.985)!important;
+  border-top-color:var(--encore-divider)!important;
+}
+body nav button{color:#a7a39d!important}
+body nav button.active{color:var(--encore-text)!important}
+body nav .nav-home svg,body nav .nav-home.active svg{
+  background:var(--encore-gold)!important;
+  color:var(--encore-button-text)!important;
+  border-color:#f1d597!important;
+}
+body .weekbar{
+  background:rgba(29,32,35,.98)!important;
+  border-top-color:var(--encore-divider)!important;
+  border-bottom-color:var(--encore-divider-soft)!important;
+}
+body .weekinner strong{color:var(--encore-text)!important}
+body .weekinner p{color:var(--encore-text-soft)!important}
+.v103-shellbar{
+  background:var(--encore-bg-deep)!important;
+  border-color:var(--encore-divider)!important;
+}
+.v103-shell-back,.v103-shell-guide,.v103-shell-menu{color:var(--encore-text)!important}
+.v103-shell-guide:after{color:var(--encore-gold)!important}
+
+/* Home — warm gold / rose editorial. */
+.v103-home,.screen-home .backstage-home{background:var(--encore-bg-deep)!important;border-color:var(--encore-divider)!important}
+.v103-home .v103-mast,.v103-home .v103-scoreboard,.v103-home .v103-actions{background:var(--encore-bg-deep)!important}
+.v103-home .v103-hero-shade{
+  background:linear-gradient(0deg,rgba(16,18,20,.97) 0%,rgba(16,18,20,.2) 68%),linear-gradient(90deg,rgba(221,160,172,.12),transparent 68%)!important;
+}
+.v103-home .v103-chapter>span,.v103-home .v103-release strong{color:var(--encore-gold)!important}
+.v103-home .v103-chapter p{color:var(--encore-text-soft)!important}
+.v103-home .v103-release{background:linear-gradient(90deg,rgba(233,173,145,.08),var(--encore-surface))!important;border-left-color:var(--encore-peach)!important}
+
+/* Artist File — champagne / archival. */
+.v103-file,.v103-artist-file{background:var(--encore-bg-deep)!important;border-color:var(--encore-divider)!important}
+.v103-file-id>span,.v103-file-heading>span,.v103-file-note>span,.v103-board-label>span{color:var(--encore-cream)!important}
+.v103-file-ledger,.v103-file-note{background:var(--encore-surface)!important}
+.v103-file-note p{color:var(--encore-text-soft)!important}
+
+/* Stats / Development — lavender growth system. */
+.v103-development{background:var(--encore-bg-deep)!important;border-color:var(--encore-divider)!important}
+.v103-stat-row{background:linear-gradient(90deg,rgba(187,166,217,.055),var(--encore-surface))!important}
+.v103-stat-row.specialty{background:linear-gradient(90deg,rgba(187,166,217,.11),var(--encore-surface-raised))!important}
+.v103-stat-track>i{background:#38343f!important}
+.v103-stat-track>i b{background:var(--encore-lavender)!important}
+.v103-stat-row:nth-child(2) .v103-stat-track>i b{background:var(--encore-blue)!important}
+.v103-stat-row:nth-child(3) .v103-stat-track>i b{background:var(--encore-peach)!important}
+.v103-stat-row:nth-child(4) .v103-stat-track>i b{background:var(--encore-rose)!important}
+.v103-stat-row:nth-child(5) .v103-stat-track>i b{background:var(--encore-mint)!important}
+
+/* Studio — peach creativity. */
+.v103-studio{background:var(--encore-bg-deep)!important;border-color:var(--encore-divider)!important}
+.v103-studio-head{background:linear-gradient(90deg,rgba(233,173,145,.09),var(--encore-bg-deep))!important}
+.v103-console-right,.v103-session-sheet{background:var(--encore-surface)!important;color:var(--encore-text)!important}
+.v103-studio-form .studio-v093-heading h2,.v103-session-sheet dd{color:var(--encore-text)!important}
+.v103-studio-form .studio-v093-heading p,.v103-studio-form .creative-choice summary span,
+.v103-session-sheet dt,.v103-session-sheet small,.v103-session-sheet>p{color:var(--encore-text-soft)!important}
+.v103-score-tape i{background:#413936!important}.v103-score-tape i b{background:var(--encore-peach)!important}
+.v103-studio-form .studio-commit .primary{background:linear-gradient(180deg,#f1c6b2,var(--encore-peach))!important;color:var(--encore-button-text)!important}
+
+/* Charts / Industry — powder blue publication. */
+.v103-industry{background:var(--encore-bg-deep)!important;border-color:var(--encore-divider)!important}
+.v103-industry-head{background:linear-gradient(90deg,rgba(159,198,220,.095),var(--encore-bg-deep))!important}
+.v103-industry-tape>div,.v103-industry-tabs,.v103-industry-filter{background:var(--encore-surface)!important;border-color:var(--encore-divider)!important}
+.v103-industry-tabs button{color:var(--encore-text-soft)!important}
+.v103-industry-tabs button.selected{background:var(--encore-blue)!important;color:var(--encore-button-text)!important}
+.chart-entry,.chart-row,.release-row{background:var(--encore-surface)!important;border-color:var(--encore-divider)!important;color:var(--encore-text)!important}
+.chart-entry:nth-child(even){background:var(--encore-surface-raised)!important}
+.chart-you{box-shadow:inset 3px 0 var(--encore-blue)!important}
+.movement-UP,.movement-NEW{color:var(--encore-mint)!important}.movement-DOWN{color:var(--encore-red)!important}
+
+/* Business — sage executive system. */
+.business-command,.v096-business-command,.business-inside,.v106-label-console,.v106-roster{
+  background:var(--encore-bg-deep)!important;
+  border-color:var(--encore-divider)!important;
+}
+.business-command .metric-rail,.business-command .metric-rail>div,.business-priority-desk{background:var(--encore-surface)!important;border-color:var(--encore-divider)!important}
+.business-area-label,.business-area-card small{color:var(--encore-sage)!important}
+.business-area-card{background:var(--encore-surface)!important;border-color:var(--encore-divider)!important}
+.business-area-card b{color:var(--encore-sage)!important}
+.business-inside .selected{background:var(--encore-sage)!important;color:var(--encore-button-text)!important}
+.v106-label-kpis strong,.v106-label-statement .profile-facts dd{color:var(--encore-text)!important}
+.v106-label-kpis small,.v106-label-statement .profile-facts dt{color:var(--encore-text-soft)!important}
+
+/* PULSE — rose/lavender culture. */
+.pulse-post,.pulse-card,[class*="pulse-"]{
+  border-color:var(--encore-divider)!important;
+}
+.pulse-post{background:linear-gradient(110deg,rgba(221,160,172,.065),rgba(187,166,217,.035),var(--encore-surface))!important}
+.pulse-counts{color:var(--encore-text-muted)!important}
+
+/* Touring — sand route system. */
+[class*="tour-"]{border-color:var(--encore-divider)!important}
+.tour-map,.touring-map,.v100-tour-map,[class*="tour-map"]{background:linear-gradient(145deg,#292722,var(--encore-bg-deep))!important}
+[class*="tour-"] .selected,[class*="tour-"] .active{color:var(--encore-sand)!important}
+
+/* Contracts / negotiation — parchment + rose. */
+[class*="contract-"]{border-color:var(--encore-divider)!important}
+.contract-document,.contract-paper,[class*="contract-document"]{
+  --contract-paper:#f3e3c3;
+}
+.v106-negotiation .negotiation-room{background:var(--encore-bg-deep)!important;border-color:var(--encore-divider)!important}
+.v106-negotiation .negotiation-room-header{background:linear-gradient(90deg,rgba(221,160,172,.08),var(--encore-bg-deep))!important}
+.v106-negotiation .negotiation-room-meters,.v106-negotiation .negotiation-offer-sheet{background:var(--encore-surface)!important}
+.v106-negotiation-caption small{color:var(--encore-rose)!important}
+.v106-negotiation-scene blockquote{background:rgba(37,40,44,.94)!important;color:var(--encore-text)!important;border-color:#686165!important}
+
+/* Dialogs and weekly recap — explicit readability fix. */
+body dialog,body .dialog,body .modal,body .month-dialog{
+  background:var(--encore-bg-deep)!important;
+  color:var(--encore-text)!important;
+  border-color:#5b5f64!important;
+}
+body dialog p,body .dialog p,body .modal p,body .month-dialog p,
+.month-dialog small,.month-dialog span,.month-dialog label{
+  color:var(--encore-text-soft)!important;
+  opacity:1!important;
+}
+.month-dialog .issue-masthead>strong,.month-dialog h1,.month-dialog h2,.month-dialog h3,
+.month-dialog .issue-numbers strong,.month-dialog .value,.month-dialog b{
+  color:var(--encore-text)!important;
+}
+.month-dialog .issue-numbers{border-color:var(--encore-divider)!important}
+.month-dialog .issue-numbers strong{color:var(--encore-mint)!important}
+.month-dialog [class*="tax"] strong,.month-dialog [class*="reserve"] strong{color:var(--encore-sand)!important}
+.month-dialog [class*="negative"] strong,.month-dialog [class*="loss"] strong{color:var(--encore-red)!important}
+.month-dialog .issue-hero{border-color:var(--encore-divider)!important;background:var(--encore-surface)!important}
+
+/* Generic finance/status classes. */
+.positive,.gain,.up,.profit,.income{color:var(--encore-mint)!important}
+.negative,.loss,.down,.expense{color:var(--encore-red)!important}
+.warning,.tax,.reserve{color:var(--encore-sand)!important}
+
+.sandbox-banner{
+  background:linear-gradient(90deg,rgba(169,214,196,.09),var(--encore-surface))!important;
+  color:var(--encore-text)!important;
+  border-color:#597065!important;
+}
+.sandbox-banner p{color:var(--encore-text-soft)!important}
+
+@media(max-width:700px){
+  body p,body .fine,body .muted,body small{color:var(--encore-text-soft)!important}
+}
