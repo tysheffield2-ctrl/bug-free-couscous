@@ -1,0 +1,38 @@
+/* ENCORE v1.08 — actionable opportunity controls + unified contract presentation. */
+
+.memo-action-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.memo-action-pair>button{width:100%!important;margin:0!important}
+
+.v108-priority-request{display:grid!important;grid-template-columns:52px minmax(0,1fr)!important;gap:18px!important;align-items:start!important;width:100%!important;text-align:left!important;background:#171717!important;border:1px solid #3c3934!important;border-radius:18px!important;padding:18px!important;color:inherit!important}
+.v108-priority-request>.priority-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:16px;background:#2b281f;color:#efc878;font-size:24px}
+.v108-priority-request>span:nth-child(2){display:grid;gap:6px;min-width:0}
+.v108-priority-request small{font-weight:850;letter-spacing:.09em;color:#d8d0c5}
+.v108-priority-request strong{font-size:19px;color:#fff8ec}
+.v108-priority-request em{font-style:normal;color:#d6d0c7;line-height:1.45}
+.v108-priority-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.v108-priority-actions button{min-height:44px;border-radius:9px;font-weight:800}
+.v108-priority-actions .priority-review{background:linear-gradient(180deg,#f0cf91,#e6be72);border:1px solid #f5dca8;color:#17191b}
+.v108-priority-actions .priority-open{background:#24272b;border:1px solid #555b61;color:#fff8ec}
+
+.v108-role-explainer{display:grid;gap:0;margin:18px 0;border:1px solid #42464b;border-radius:12px;overflow:hidden;background:#141719}
+.v108-role-explainer>.eyebrow,.v108-role-explainer>h3{padding-left:16px;padding-right:16px}
+.v108-role-explainer>.eyebrow{padding-top:16px}
+.v108-role-explainer>h3{margin:6px 0 14px;color:#fff8ec}
+.v108-role-explainer>div{display:grid;grid-template-columns:minmax(115px,.34fr) minmax(0,1fr);gap:16px;padding:13px 16px;border-top:1px solid #34383d}
+.v108-role-explainer>div strong{color:#f3e3c3}
+.v108-role-explainer>div p{margin:0;color:#d8d3ca!important;line-height:1.5}
+.v108-rep-card .v108-rep-headline{font-weight:800;color:#f3e3c3!important}
+.v108-representation-guide{border-left:3px solid #bba6d9!important}
+
+.v108-contract-room .contract-room-advisory{display:grid;gap:10px}
+.v108-contract-room .contract-room-advisory>h3{margin-bottom:0}
+.v108-legal-terms{margin-top:18px}
+.v108-legal-terms>div{min-width:0}
+.v108-legal-terms b{overflow-wrap:anywhere}
+
+@media(max-width:700px){
+ .memo-action-pair,.v108-priority-actions{grid-template-columns:1fr}
+ .v108-priority-request{grid-template-columns:44px minmax(0,1fr)!important;padding:16px!important}
+ .v108-priority-request>.priority-icon{width:42px;height:42px;border-radius:13px}
+ .v108-role-explainer>div{grid-template-columns:1fr;gap:5px}
+}
