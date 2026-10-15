@@ -25,6 +25,7 @@ function ensureWallet(s){
 }
 function changeCash(s,delta){ensureWallet(s);s.walletCents=(BigInt(s.walletCents)+BigInt(Math.round((Number(delta)||0)*100))).toString();s.cash=Number(BigInt(s.walletCents))/100;return s.cash}
 function spendEnergy(s,amount){amount=Math.max(0,Math.round(Number(amount)||0));if((Number(s.energy)||0)<amount)fail('Rest to recover energy first.','energy');s.started=true;s.energy=(Number(s.energy)||0)-amount}
+function spend(s,energy=0,cost=0){cost=roundCents(cost);if(cost>0&&(Number(s.cash)||0)<cost)fail('Not enough cash. Work a shift or save up.','cash');spendEnergy(s,energy);if(cost){changeCash(s,-cost);s.finance.week.expenses=roundCents((Number(s.finance.week.expenses)||0)+cost)}return true}
 function recordIncome(s,kind,value){ensureCoreState(s);s.finance.week[kind]=roundCents((Number(s.finance.week[kind])||0)+(Number(value)||0))}
 function xpNeeded(n){n=Number(n)||0;return Math.round(60+n*3+(n>25?(n-25)*3:0)+(n>50?(n-50)*12:0)+(n>70?(n-70)**2*12:0)+(n>85?(n-85)**3*8:0))}
 function ensureStat(s,key){const current=s.development[key];if(!current||typeof current!=='object')s.development[key]={level:0,xp:0};s.development[key].level=clamp(Math.round(Number(s.development[key].level)||0),0,100);s.development[key].xp=Math.max(0,Number(s.development[key].xp)||0);return s.development[key]}
@@ -48,6 +49,15 @@ function applyCommand(input,name,payload={}){
    const intensity=Math.max(0,Math.min(2,Number(payload.intensity)||0)),cost=[5,10,20][intensity],xp=[20,40,80][intensity],stat=ensureStat(s,key);if(stat.level>=100)fail('That skill has reached maximum mastery.','mastery');
    spendEnergy(s,cost);const before=stat.level;gainXP(s,key,xp);const label=key.replace(/([A-Z])/g,' $1').replace(/^./,c=>c.toUpperCase());log(s,`${label}: +${xp} XP${ensureStat(s,key).level>before?' · Level '+ensureStat(s,key).level:''}.`);
    return {state:s,message:`${label} +${xp} XP · −${cost} energy`}
+ }
+ if(name==='release-shelf'){
+   const id=payload.songId,x=s.songs.find(x=>String(x.id)===String(id));if(!x||x.released)fail('That master is no longer waiting for release.');
+   spend(s,5,20);x.released=s.week;log(s,`“${x.title}” is out.`);return {state:s,message:`“${x.title}” released · −$20 · −5 energy`}
+ }
+ if(name==='release-draft'||name==='finish-draft'){
+   const d=s.draft;if(!d||Number(d.steps)!==3)fail('The master is not ready yet.');const release=name==='release-draft';if(release)spend(s,5,20);
+   const song={...d,released:release?s.week:null,streams:0,total:0,peak:null,album:null};s.songs.push(song);s.draft=null;log(s,`“${song.title}” ${release?'is out. Results arrive at the end of this week.':'is ready for your album.'}`);
+   return {state:s,message:release?`“${song.title}” released · results at week close`:`“${song.title}” saved as a finished master`}
  }
  if(name==='pulse-support'){
    const a=migrateSocial(s),id=Number(payload.artistId);if(!Number.isInteger(id)||!s.world.some(x=>x&&x.id===id))fail('That artist is unavailable.');if(!a.feed.some(p=>p.artist===id))fail('That post is no longer in the feed.');if(a.interactions.some(x=>x.week===s.week&&x.artist===id))fail('You already supported this artist this week.','already');
@@ -73,8 +83,7 @@ async function commit(name,payload={}){
  if(busy)return;setBusy(true);
  try{
    let latest=await loadLatest(),result=applyCommand(latest.save.state,name,payload);
-   const headers={'Content-Type':'application/json',...(latest.etag?{'If-Match':latest.etag}:{'If-None-Match':'*'})};
-   let response=await fetch('/api/save',{method:'PUT',credentials:'same-origin',headers,body:JSON.stringify({schemaVersion:1,state:result.state})});
+   let response=await fetch('/api/save',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json',...(latest.etag?{'If-Match':latest.etag}:{'If-None-Match':'*'})},body:JSON.stringify({schemaVersion:1,state:result.state})});
    if(response.status===409){latest=await loadLatest();result=applyCommand(latest.save.state,name,payload);response=await fetch('/api/save',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json',...(latest.etag?{'If-Match':latest.etag}:{'If-None-Match':'*'})},body:JSON.stringify({schemaVersion:1,state:result.state})})}
    if(!response.ok){let message='Career save failed.';try{message=(await response.json()).error||message}catch{}fail(message,response.status===409?'conflict':'network')}
    toast(result.message);setTimeout(()=>location.reload(),280)
@@ -82,12 +91,16 @@ async function commit(name,payload={}){
 }
 function wireQuickMoves(){const line=document.querySelector('.ui2-actions-line');if(!line)return;const buttons=line.querySelectorAll('button');if(buttons[0]&&!buttons[0].dataset.ui2Command){buttons[0].removeAttribute('data-toast');buttons[0].dataset.ui2Command='work';buttons[0].textContent='Work a shift · +$180'}if(buttons[1]){buttons[1].removeAttribute('data-toast');buttons[1].disabled=true;buttons[1].dataset.commandDisabled='true';buttons[1].title='Open mic reconnects with the audience engine migration.';buttons[1].textContent='Open mic · migrating'}if(buttons[2]&&!buttons[2].dataset.ui2Command){buttons[2].removeAttribute('data-toast');buttons[2].dataset.ui2Command='rest';buttons[2].textContent='Rest · +40 energy'}const small=line.previousElementSibling?.querySelector('small');if(small)small.textContent='Live career actions'}
 function wireTraining(){const rows=document.querySelectorAll('.ui2-stat-list .ui2-stat-line');const keys=['writing','recording','producing','charisma','marketability'];rows.forEach((row,i)=>{if(!keys[i]||row.querySelector('[data-ui2-command="train"]'))return;const b=document.createElement('button');b.type='button';b.className='ui2-train-action';b.dataset.ui2Command='train';b.dataset.skill=keys[i];b.textContent='Practice · 5⚡';row.appendChild(b)})}
+function wireStudio(){
+ document.querySelectorAll('.ui2-master-list .ui2-master-row').forEach((row,index)=>{const b=row.querySelector('button');if(!b||b.dataset.ui2Command)return;b.removeAttribute('data-toast');b.dataset.ui2Command='release-shelf';b.dataset.masterIndex=String(index);b.textContent='Release · $20 · 5⚡'});
+ const active=document.querySelector('.ui2-studio-room.active .ui2-session-command');if(active){const primary=active.querySelector('button');if(primary&&/Plan release/i.test(primary.textContent||'')){primary.removeAttribute('data-toast');primary.dataset.ui2Command='release-draft';primary.textContent='Release single · $20 · 5⚡';if(!active.querySelector('[data-ui2-command="finish-draft"]')){const keep=document.createElement('button');keep.type='button';keep.className='ui2-finish-master';keep.dataset.ui2Command='finish-draft';keep.textContent='Save master for album';active.appendChild(keep)}}}
+}
 function wirePulse(){
  const industry=[...document.querySelectorAll('.ui2-industry-post')];industry.forEach((row,index)=>{const b=row.querySelector('button');if(!b||b.dataset.ui2Command)return;b.removeAttribute('data-ui2-extra-toast');b.dataset.ui2Command='pulse-support';b.dataset.feedIndex=String(index);b.textContent='Support · 2⚡'});
  const posts=[...document.querySelectorAll('.ui2-pulse-post')];posts.forEach((post,index)=>{if(post.querySelector('[data-ui2-command="pulse-reply"]'))return;const footer=post.querySelector('footer');if(!footer)return;const b=document.createElement('button');b.type='button';b.className='ui2-pulse-reply';b.dataset.ui2Command='pulse-reply';b.dataset.postIndex=String(index);b.textContent='Reply · 5⚡';footer.after(b)})
 }
-function wire(){wireQuickMoves();wireTraining();wirePulse()}
-document.addEventListener('click',async e=>{const b=e.target.closest?.('[data-ui2-command]');if(!b)return;e.preventDefault();let payload={};if(b.dataset.ui2Command==='train')payload.key=b.dataset.skill;if(b.dataset.ui2Command==='pulse-support'||b.dataset.ui2Command==='pulse-reply'){try{const latest=await loadLatest();if(b.dataset.ui2Command==='pulse-support'){const feed=(latest.save.state.social?.feed||[]).slice().reverse().slice(0,12),p=feed[Number(b.dataset.feedIndex)];if(!p)fail('That industry post is no longer available.');payload.artistId=p.artist}else{const posts=(latest.save.state.social?.posts||[]).slice().reverse().slice(0,14),p=posts[Number(b.dataset.postIndex)];if(!p)fail('That PULSE post is no longer available.');payload.postId=p.id}}catch(err){toast(err.message,true);return}}commit(b.dataset.ui2Command,payload)});
+function wire(){wireQuickMoves();wireTraining();wireStudio();wirePulse()}
+document.addEventListener('click',async e=>{const b=e.target.closest?.('[data-ui2-command]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();let payload={};if(b.dataset.ui2Command==='train')payload.key=b.dataset.skill;if(b.dataset.ui2Command==='release-shelf'){try{const latest=await loadLatest(),masters=(latest.save.state.songs||[]).filter(x=>!x?.released).slice(-5).reverse(),song=masters[Number(b.dataset.masterIndex)];if(!song)fail('That master is no longer available.');payload.songId=song.id}catch(err){toast(err.message,true);return}}if(b.dataset.ui2Command==='pulse-support'||b.dataset.ui2Command==='pulse-reply'){try{const latest=await loadLatest();if(b.dataset.ui2Command==='pulse-support'){const feed=(latest.save.state.social?.feed||[]).slice().reverse().slice(0,12),p=feed[Number(b.dataset.feedIndex)];if(!p)fail('That industry post is no longer available.');payload.artistId=p.artist}else{const posts=(latest.save.state.social?.posts||[]).slice().reverse().slice(0,14),p=posts[Number(b.dataset.postIndex)];if(!p)fail('That PULSE post is no longer available.');payload.postId=p.id}}catch(err){toast(err.message,true);return}}commit(b.dataset.ui2Command,payload)},true);
 new MutationObserver(wire).observe(document.documentElement,{subtree:true,childList:true});wire();
 global.ENCORE_UI2_COMMANDS={execute:commit};
 })(globalThis);
