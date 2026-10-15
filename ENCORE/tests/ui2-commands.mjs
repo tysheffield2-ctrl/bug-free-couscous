@@ -26,6 +26,15 @@ function base(){return {week:8,started:true,cash:650,walletCents:'65000',energy:
  const s=base();const {state}=applyCommand(s,'train',{key:'writing',intensity:0});assert.equal(state.energy,95);assert.equal(state.development.writing.xp,20);assert.match(state.history[0].text,/Writing: \+20 XP/)
 }
 {
+ const s=base();s.songs.push({id:91,title:'Finished Master',released:null,streams:0,total:0});const {state}=applyCommand(s,'release-shelf',{songId:91});assert.equal(state.songs[0].released,8);assert.equal(state.energy,95);assert.equal(state.cash,630);assert.equal(state.walletCents,'63000');assert.equal(state.finance.week.expenses,20);assert.match(state.history[0].text,/Finished Master/)
+}
+{
+ const s=base();s.draft={id:92,title:'Ready Record',steps:3,quality:81,commercial:76};const {state}=applyCommand(s,'finish-draft');assert.equal(state.draft,null);assert.equal(state.songs.length,1);assert.equal(state.songs[0].released,null);assert.equal(state.energy,100);assert.equal(state.cash,650)
+}
+{
+ const s=base();s.draft={id:93,title:'Release Tonight',steps:3,quality:88,commercial:84};const {state}=applyCommand(s,'release-draft');assert.equal(state.draft,null);assert.equal(state.songs[0].released,8);assert.equal(state.energy,95);assert.equal(state.cash,630);assert.equal(state.finance.week.expenses,20)
+}
+{
  const s=base();const {state}=applyCommand(s,'pulse-support',{artistId:4});assert.equal(state.energy,98);assert.equal(state.world[0].relation,1);assert.deepEqual(JSON.parse(JSON.stringify(state.social.interactions)),[{week:8,artist:4}]);assert.throws(()=>applyCommand(state,'pulse-support',{artistId:4}),/already supported/i)
 }
 {
@@ -33,4 +42,5 @@ function base(){return {week:8,started:true,cash:650,walletCents:'65000',energy:
 }
 assert.equal(source.includes('/game.js'),false,'UI2 command bridge must not import the legacy renderer');
 assert.equal(source.includes('advance('),false,'week advancement stays outside the bridge until the weekly engine is extracted');
-console.log('PASS UI2 command bridge: exact work/rest/training/PULSE mutations, exact-cent wallet sync, immutable inputs and no legacy renderer dependency.');
+assert.ok(source.includes("addEventListener('click'"));assert.ok(source.includes(',true);'),'live command interception must run in capture phase before stale preview handlers');
+console.log('PASS UI2 command bridge: work/rest/training, Studio release flow, PULSE interactions, exact-cent wallet sync, immutable inputs and no legacy renderer dependency.');
