@@ -123,7 +123,7 @@ export default {
     }
 
     if(request.method!=='GET'&&request.method!=='HEAD')return new Response('Method not allowed',{status:405});
-    const ui2Paths=['/ui2','/ui2/','/preview-ui2','/preview-ui2/'];
+    const ui2Paths=['/ui2','/ui2/','/preview-ui2','/preview-ui2/','/ui2/sandbox','/ui2/sandbox/','/preview-ui2/sandbox','/preview-ui2/sandbox/'];
     const asset=ui2Paths.includes(url.pathname)?UI2_HTML:url.pathname==='/game.js'?SCRIPT:url.pathname==='/'||url.pathname==='/index.html'||url.pathname==='/sandbox'||url.pathname==='/sandbox/'||['/offline','/offline/','/offline/sandbox','/offline/sandbox/'].includes(url.pathname)?HTML:null;
     if(asset===null)return new Response('Not found',{status:404});
     return new Response(request.method==='HEAD'?null:asset,{headers:{...headers,'Content-Type':url.pathname==='/game.js'?'text/javascript; charset=utf-8':'text/html; charset=utf-8'}})
