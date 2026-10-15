@@ -5,9 +5,11 @@ const html=fs.readFileSync(new URL('../ui2/index.html',import.meta.url),'utf8');
 const css=[
   fs.readFileSync(new URL('../ui2/ui2.css',import.meta.url),'utf8'),
   fs.readFileSync(new URL('../ui2/phase2.css',import.meta.url),'utf8'),
-  fs.readFileSync(new URL('../ui2/phase3.css',import.meta.url),'utf8')
+  fs.readFileSync(new URL('../ui2/phase3.css',import.meta.url),'utf8'),
+  fs.readFileSync(new URL('../ui2/phase4.css',import.meta.url),'utf8')
 ].join('\n');
 const js=[
+  fs.readFileSync(new URL('../ui2/commands.js',import.meta.url),'utf8'),
   fs.readFileSync(new URL('../ui2/app-v2.js',import.meta.url),'utf8'),
   fs.readFileSync(new URL('../ui2/phase3.js',import.meta.url),'utf8')
 ].join('\n');
@@ -31,11 +33,16 @@ assert.ok(css.includes('.ui2-chart-list'));
 assert.ok(css.includes('.ui2-chart-row'));
 assert.ok(css.includes('.ui2-tour-map-svg'));
 assert.ok(css.includes('.ui2-pulse-feed'));
+assert.ok(css.includes('.ui2-train-action'));
 assert.ok(js.includes('RECORD IDENTITY'));
 assert.ok(js.includes('Global Top 100'));
 assert.ok(js.includes('Global Albums 50'));
 assert.ok(js.includes('TOURING 2.0'));
 assert.ok(js.includes('PULSE · IN-GAME SOCIAL'));
+assert.ok(js.includes('ENCORE_UI2_COMMAND_CORE'));
+assert.ok(js.includes("data.ui2Command='work'")||js.includes("dataset.ui2Command='work'"));
+assert.ok(js.includes("dataset.ui2Command='rest'"));
+assert.ok(js.includes("dataset.ui2Command='train'"));
 assert.equal(js.includes("placeholderScreen('Studio'"),false,'Studio cannot fall back to a placeholder');
 assert.equal(js.includes("placeholderScreen('Charts'"),false,'Charts cannot fall back to a placeholder');
 assert.ok(built.includes('UI2'));
@@ -44,8 +51,9 @@ assert.ok(built.includes('Make the record.'));
 assert.ok(built.includes('Global Top 100'));
 assert.ok(built.includes('TOURING 2.0'));
 assert.ok(built.includes('PULSE · IN-GAME SOCIAL'));
+assert.ok(built.includes('ENCORE_UI2_COMMANDS'));
 assert.ok(worker.includes("'/ui2'"));
 assert.ok(worker.includes("'/preview-ui2'"));
 assert.ok(worker.includes('const UI2_HTML='));
 
-console.log('PASS ENCORE UI2 is an independent non-card renderer with native Home, Artist File, Business HQ, Studio, Charts, Touring and PULSE presentation.');
+console.log('PASS ENCORE UI2 is an independent non-card renderer with native Home, Artist File, Business HQ, Studio, Charts, Touring, PULSE and a playable command bridge.');
