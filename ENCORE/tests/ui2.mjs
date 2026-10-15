@@ -13,7 +13,8 @@ const css=[
   fs.readFileSync(new URL('../ui2/phase7-polish.css',import.meta.url),'utf8'),
   fs.readFileSync(new URL('../ui2/phase8-career.css',import.meta.url),'utf8'),
   fs.readFileSync(new URL('../ui2/phase9-negotiation.css',import.meta.url),'utf8'),
-  fs.readFileSync(new URL('../ui2/phase10-legacy.css',import.meta.url),'utf8')
+  fs.readFileSync(new URL('../ui2/phase10-legacy.css',import.meta.url),'utf8'),
+  fs.readFileSync(new URL('../ui2/phase11-pastel.css',import.meta.url),'utf8')
 ].join('\n');
 const js=[
   fs.readFileSync(new URL('../ui2/commands.js',import.meta.url),'utf8'),
@@ -52,4 +53,4 @@ for(const token of ['UI2','ui2-bottomnav','Make the record.','Global Top 100','T
 for(const path of ["'/ui2'","'/preview-ui2'","'/ui2/sandbox'","'/preview-ui2/sandbox'"])assert.ok(worker.includes(path));
 assert.ok(worker.includes('const UI2_HTML='));
 
-console.log('PASS ENCORE UI2 is an independent non-card renderer with native Home, Artist File 2.0, Business departments, Studio, Charts, Touring, PULSE, Honors, Wealth, More directory, weekly recap, shared playable roster negotiations, shared-engine career actions and isolated normal/sandbox modes.');
+console.log('PASS ENCORE UI2 is an independent non-card renderer with native Home, Artist File 2.0, Business departments, Studio, Charts, Touring, PULSE, Honors, Wealth, More directory, weekly recap, shared playable roster negotiations, shared-engine career actions, dark pastel readability, and isolated normal/sandbox modes.');
