@@ -23,10 +23,12 @@ function V110_commercialRollup(report){
 }
 function V110_commercialDetailTotal(report){return V110_commercialDetails(report).reduce((n,x)=>n+V110_moneyNumber(x.amount),0)}
 function V110_commercialRows(report){
+ const detailed=V110_commercialDetails(report);
+ if(!detailed.length)return [];
  const roll=V110_commercialRollup(report),rows=[];
  /* Older systems already write some endorsement revenue to its own finance
     field. Fold that amount into the same display category instead of showing
-    two separate Endorsements rows. */
+    two separate Endorsements rows once source attribution is available. */
  roll.endorsement=(roll.endorsement||0)+V110_moneyNumber(report?.endorsement);
  for(const key of ['media','endorsement','brand','partnership','lifetime','live'])if(roll[key])rows.push([V110_COMMERCIAL_LABELS[key]||'Commercial income',roll[key]]);
  const residual=Math.max(0,V110_moneyNumber(report?.media)-V110_commercialDetailTotal(report));
