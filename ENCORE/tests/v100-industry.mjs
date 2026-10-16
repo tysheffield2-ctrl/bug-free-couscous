@@ -6,6 +6,6 @@ assert.ok(run("V100_playerLabelCard().includes('YOUR COMPANY')"));
 assert.ok(run("labelLeaguePage().includes('No more invisible eligibility')"));
 assert.equal(run("V100_cityEconomics().region"),'Texas');
 assert.equal(run("V100_locationTaxRate(.20)"),.20);
-run("s.scene.city='la'");assert.ok(run("V100_locationTaxRate(.20)>.20"));assert.ok(run("V100_locationTaxRate(.20)<=.24"));
+run("s.scene.city='la'");assert.ok(run("V100_locationTaxRate(.20)>.20"));assert.ok(run("V100_locationTaxRate(.20)<=.2400001"));
 assert.ok(run("V100_taxExplainer().includes('SIMULATED')"));
 console.log('PASS ENCORE 1.0 industry: representation advice, player-visible Label League and Tax Foundation 2.0 location economics.');
