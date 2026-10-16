@@ -8,6 +8,9 @@ assert.equal(h.run("V114_state().version"),1);
 assert.equal(h.run("V114_PLATFORM_IDS.length"),4);
 assert.equal(h.run("Object.values(V114_state().tracks['114'].services).reduce((n,x)=>n+x.lifetime,0)"),90000);
 assert.ok(h.run("destinations.some(x=>x[2]==='Platforms')"));
+assert.ok(h.run("V080_destinations.some(x=>x[2]==='Platforms')"));
+assert.ok(h.run("V103_menuResults('').includes('Music platforms')"));
+assert.equal(h.run("(()=>{careerTab='Platforms';tab='Career';return screenFamily()})()"),'studio');
 assert.ok(h.run("V114_platformPage().toUpperCase().includes('MUSIC PLATFORM ECOSYSTEM 1.0')"));
 assert.ok(h.run("V114_platformPage().includes('VYBE')&&V114_platformPage().includes('FRAME')"));
 
@@ -39,4 +42,4 @@ const src=fs.readFileSync(new URL('../src/v114-music-platforms.js',import.meta.u
 assert.ok(src.includes('The system never duplicates a stream')||src.includes('never duplicates a stream'));
 assert.ok(src.includes('Placements create future lift'));
 assert.ok(src.includes('FRAME creator revenue'));
-console.log('PASS Music Platform Ecosystem 1.0: separate profiles, exact stream allocation, PULSE discovery, placement lift, video economics and legacy-career migration.');
+console.log('PASS Music Platform Ecosystem 1.0: separate profiles, exact stream allocation, PULSE discovery, placement lift, video economics, directory routing and legacy-career migration.');
