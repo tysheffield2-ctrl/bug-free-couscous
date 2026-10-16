@@ -93,8 +93,12 @@ const V113_closeFinancesBase=closeFinances;
 closeFinances=function(royalties,rate){
  migrateFinance?.();const depreciation=V113_weeklyDepreciation(),admin=V113_entityAdminFee();if(!s.finance.week||typeof s.finance.week!=='object')s.finance.week={wages:0,live:0,expenses:0};
  if(depreciation||admin)s.finance.week.expenses=cents((Number(s.finance.week.expenses)||0)+depreciation+admin);
+ /* Administration is a true cash cost. Charge it before Tax Planning 2.0
+    chooses the reserve target so conservative reserves cannot spend money that
+    is already committed to the business structure. */
+ if(admin){changeCash(-admin);moneyEvent?.(V113_entity().name+' administration',-admin)}
  const report=V113_closeFinancesBase(royalties,rate);
- if(admin){changeCash(-admin);report.entityAdminFee=admin;report.cash=s.cash;moneyEvent?.(V113_entity().name+' administration',-admin)}
+ if(admin){report.entityAdminFee=admin;report.cash=s.cash}
  report.depreciationDeduction=depreciation;report.entityStructure=V113_entity().name;report.businessAssetCount=V113_businessAssets().length;
  if(report.deductibleBreakdown){const cpa=Math.max(0,Number(report.taxAdvisorFee||0));report.deductibleBreakdown.depreciation=depreciation;report.deductibleBreakdown.entityAdministration=admin;report.deductibleBreakdown.taxAdvisor=cpa;report.deductibleBreakdown.actions=Math.max(0,Number(report.deductibleBreakdown.actions||0)-depreciation-admin-cpa)}
  return report
