@@ -24,6 +24,10 @@ function V110_commercialRollup(report){
 function V110_commercialDetailTotal(report){return V110_commercialDetails(report).reduce((n,x)=>n+V110_moneyNumber(x.amount),0)}
 function V110_commercialRows(report){
  const roll=V110_commercialRollup(report),rows=[];
+ /* Older systems already write some endorsement revenue to its own finance
+    field. Fold that amount into the same display category instead of showing
+    two separate Endorsements rows. */
+ roll.endorsement=(roll.endorsement||0)+V110_moneyNumber(report?.endorsement);
  for(const key of ['media','endorsement','brand','partnership','lifetime','live'])if(roll[key])rows.push([V110_COMMERCIAL_LABELS[key]||'Commercial income',roll[key]]);
  const residual=Math.max(0,V110_moneyNumber(report?.media)-V110_commercialDetailTotal(report));
  if(residual)rows.unshift(['Other media & commercial',residual]);
@@ -97,8 +101,10 @@ const V110_recapRowsBase=V103_recapRows;
 V103_recapRows=function(r){
  const out=V110_recapRowsBase(r),split=V110_commercialRows(r);
  if(!split.length)return out;
- const index=Math.max(0,out.income.findIndex(([k])=>k==='Media & commercial'));
- out.income=out.income.filter(([k])=>k!=='Media & commercial');
+ let index=out.income.findIndex(([k])=>k==='Media & commercial');
+ if(index<0)index=out.income.findIndex(([k])=>k==='Endorsements');
+ if(index<0)index=Math.max(0,out.income.findIndex(([k])=>k==='Live & appearances')+1);
+ out.income=out.income.filter(([k])=>!['Media & commercial','Endorsements'].includes(k));
  out.income.splice(index,0,...split);
  return out
 };
@@ -111,8 +117,9 @@ financeRows=function(r,full=false){
  let rows=V110_financeRowsBase(r,full),commercial=V110_commercialRows(r),details=V110_detailList(r);
  if(commercial.length){
   let index=rows.findIndex(([k])=>k==='Media & commercial income');
+  if(index<0)index=rows.findIndex(([k])=>k==='Endorsements');
   if(index<0)index=Math.max(1,rows.findIndex(([k])=>k==='Live & appearance income')+1);
-  rows=rows.filter(([k])=>k!=='Media & commercial income');
+  rows=rows.filter(([k])=>!['Media & commercial income','Endorsements'].includes(k));
   rows.splice(index,0,...commercial.map(([k,v])=>[k,money(v)]));
   if(full){
    let insert=index+commercial.length;
