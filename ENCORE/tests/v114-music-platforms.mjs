@@ -8,7 +8,7 @@ assert.equal(h.run("V114_state().version"),1);
 assert.equal(h.run("V114_PLATFORM_IDS.length"),4);
 assert.equal(h.run("Object.values(V114_state().tracks['114'].services).reduce((n,x)=>n+x.lifetime,0)"),90000);
 assert.ok(h.run("destinations.some(x=>x[2]==='Platforms')"));
-assert.ok(h.run("V114_platformPage().includes('Music Platform Ecosystem 1.0')"));
+assert.ok(h.run("V114_platformPage().toUpperCase().includes('MUSIC PLATFORM ECOSYSTEM 1.0')"));
 assert.ok(h.run("V114_platformPage().includes('VYBE')&&V114_platformPage().includes('FRAME')"));
 
 h.run("globalThis.baseVybe=V114_audioWeights(s.songs[0]).vybe;globalThis.oldSocialSongBoost=socialSongBoost;socialSongBoost=()=>.2;globalThis.boostedVybe=V114_audioWeights(s.songs[0]).vybe;socialSongBoost=oldSocialSongBoost");
