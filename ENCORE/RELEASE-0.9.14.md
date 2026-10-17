@@ -1,0 +1,10 @@
+- Representation Relationships 1.0 gives every active manager, agent and specialist a visible 0–100 working-relationship bar.
+- New hires begin Professional at 50/100; existing saves migrate safely without an immediate relationship penalty.
+- Each representative has one direct relationship action per week: check in, back their plan, show appreciation, challenge their strategy, or clear the air when tension is high.
+- Different working styles respond differently to trust, appreciation and pushback, so chemistry is not identical across candidates.
+- Strong relationships modestly improve relationship-adjusted advisor skill; strained relationships reduce it without changing contract commission or tax law.
+- Business Manager and CPA tax-forecast precision now uses relationship-adjusted skill instead of treating chemistry as cosmetic.
+- Long stretches without contact can slowly reduce chemistry, while a steady working rhythm can strengthen it over time.
+- Representatives warn the player when a relationship reaches a breaking point and can resign if it remains there through another full week.
+- Relationship gains, losses, tension warnings, resignations and final relationship status are retained in team history.
+- Representation screens now expose chemistry directly instead of treating representatives as static bonuses.
