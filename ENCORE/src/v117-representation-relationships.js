@@ -29,14 +29,15 @@ function V117_migrateRepresentative(c){
  if(!Number.isFinite(Number(c.relationship)))c.relationship=V117_RELATIONSHIP_START;
  c.relationship=clamp(Math.round(Number(c.relationship)),V117_RELATIONSHIP_MIN,V117_RELATIONSHIP_MAX);
  if(!Array.isArray(c.relationshipEvents))c.relationshipEvents=[];
- if(!Number.isFinite(Number(c.lastRelationshipInteractionWeek)))c.lastRelationshipInteractionWeek=Number(c.started)||0;
+ if(!Number.isFinite(Number(c.lastRelationshipInteractionWeek)))c.lastRelationshipInteractionWeek=0;
+ if(!Number.isFinite(Number(c.relationshipBaselineWeek)))c.relationshipBaselineWeek=s.week;
  if(!Number.isFinite(Number(c.relationshipTrend)))c.relationshipTrend=0;
  return c
 }
 function V117_relationshipLabel(value){const n=clamp(Number(value)||0,0,100);return n<15?'Fractured':n<35?'Strained':n<55?'Professional':n<75?'Trusted':n<90?'Close':'Inner circle'}
 function V117_relationshipTone(value){const n=clamp(Number(value)||0,0,100);return n<15?'danger':n<35?'warning':n<75?'steady':'strong'}
 function V117_effectiveSkill(c){
- if(!c)return 0;const rel=clamp(Number(c.relationship)||V117_RELATIONSHIP_START,0,100),base=clamp(Number(c.skill)||0,0,100);
+ if(!c)return 0;const raw=Number(c.relationship),rel=clamp(Number.isFinite(raw)?raw:V117_RELATIONSHIP_START,0,100),base=clamp(Number(c.skill)||0,0,100);
  const mod=rel>=90?4:rel>=75?2:rel>=55?1:rel>=35?0:rel>=20?-4:-8;
  return clamp(Math.round(base+mod),0,100)
 }
@@ -88,7 +89,7 @@ function V117_openRepRelationship(role){
 const V117_hireRepBase=V100_hireRep;
 V100_hireRep=function(id){
  const c=V100_REP_CANDIDATES.find(x=>x.id===id),result=V117_hireRepBase(id),hired=c&&V100_repTeam().team?.[c.role];
- if(hired?.id===id&&!Number.isFinite(Number(hired.relationship))){hired.relationship=V117_RELATIONSHIP_START;hired.relationshipTrend=0;hired.lastRelationshipInteractionWeek=Number(hired.started)||s.week;hired.relationshipEvents=[{week:s.week,type:'hire',delta:0,reason:'Working relationship began'}]}
+ if(hired?.id===id){V117_migrateRepresentative(hired);hired.relationshipBaselineWeek=s.week;if(!hired.relationshipEvents.some(x=>x.type==='hire'))V117_addRelationshipEvent(hired,0,'Working relationship began','hire',s.week)}
  return result
 };
 const V117_terminateRepBase=V100_terminateRep;
@@ -100,7 +101,7 @@ V100_terminateRep=function(role,fee){
 function V117_settleRepRelationships(completedWeek=s.week){
  const rep=V100_repTeam();
  for(const [role,c] of Object.entries({...rep.team})){
-  if(!c)continue;V117_migrateRepresentative(c);const last=Number(c.lastRelationshipInteractionWeek||c.started||completedWeek),idle=Math.max(0,completedWeek-last),tenure=Math.max(0,completedWeek-(c.started||completedWeek));
+  if(!c)continue;V117_migrateRepresentative(c);const anchor=Number(c.lastRelationshipInteractionWeek||c.relationshipBaselineWeek||c.started||completedWeek),idle=Math.max(0,completedWeek-anchor),tenure=Math.max(0,completedWeek-(c.started||completedWeek));
   if(idle>=6&&idle%2===0)V117_changeRelationship(role,-1,'Long stretch without a check-in','weekly',completedWeek);
   else if(idle<=2&&tenure>0&&tenure%4===0&&c.relationship<90)V117_changeRelationship(role,1,'A steady working rhythm strengthened the partnership','weekly',completedWeek);
   if(c.relationship<=5){
