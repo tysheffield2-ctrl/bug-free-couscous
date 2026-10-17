@@ -1,0 +1,8 @@
+- Representation Market 2.0 expands every representative role into a larger candidate pool.
+- Open roles now surface four candidates at a time instead of one fixed obvious choice.
+- Refresh search rotates to another set without hiring anyone, spending career cash or changing an agreement.
+- Candidate sets also rotate automatically as career weeks advance.
+- Managers, agents, business managers, attorneys, publicists, creative directors, tour managers, social strategists and CPAs now come with distinct working styles, specialties and trade-offs.
+- Skill, reputation, compensation and term vary independently so the highest-skill candidate is not automatically the best fit.
+- Hired representatives retain their working style and surface it in future role guidance.
+- The main Representation page is shorter: the giant candidate wall is replaced by focused role-by-role searches.
