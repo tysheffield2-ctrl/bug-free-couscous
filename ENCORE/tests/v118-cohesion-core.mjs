@@ -35,7 +35,7 @@ h.run(`s.week+=1;const rr=V118_rosterState(s.labelBusiness.company.contracts[0])
 const reqId=h.run(`V118_createRosterRequest(s.labelBusiness.company.contracts[0],'catalog-buyback','Artist wants control of the covered masters.').id`);
 assert.equal(h.run(`V118_requestForAgreement('${agreement}').id`),reqId);
 assert.equal(h.run(`V118_reviewRosterRequest('${reqId}')`),true);
-assert.ok(h.elements.modal.innerHTML.includes('Catalog / master repurchase'));
+assert.ok(h.elements.modal.innerHTML.includes('CATALOG / MASTER REPURCHASE'));
 h.run(`V118_resolveRosterRequest('${reqId}','refuse')`);
 assert.ok(h.run(`V118_legalCases().length>=1`),'high-leverage refusal should be able to create a legal dispute');
 const caseNo=h.run(`V118_legalCases()[0].number`);
