@@ -15,10 +15,13 @@ const ENCORE_ICON_SHAPES={
  Settings:'<path fill-rule="evenodd" d="m9 1 6 0 .7 3 2 .9 2.6-1.2 3 5-2.3 2.1v2.4l2.3 2.1-3 5-2.6-1.2-2 .9-.7 3H9l-.7-3-2-.9-2.6 1.2-3-5L3 13.2v-2.4L.7 8.7l3-5 2.6 1.2 2-.9zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10"/>',
  More:'<circle cx="4" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="20" cy="12" r="2"/>'
 };
-let encoreIconSequence=0;
+/* Keep the icon paint primitive deliberately simple. The earlier implementation
+   used per-icon SVG gradient references (url(#...)). Those references can fail
+   when dynamic innerHTML is rebuilt in iOS/WebKit, leaving the button shell but
+   no visible symbol. currentColor is stable across dynamic renders and still
+   gives us the approved metallic-gold look through the surrounding CSS/filter. */
 function encoreIcon(name){
- const id='encore-gold-'+(++encoreIconSequence);
- return `<svg class="encore-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff5c2"/><stop offset=".38" stop-color="#f5d77d"/><stop offset=".7" stop-color="#d7a348"/><stop offset="1" stop-color="#ffe8a1"/></linearGradient></defs><g fill="url(#${id})">${ENCORE_ICON_SHAPES[name]||ENCORE_ICON_SHAPES.More}</g></svg>`;
+ return `<svg class="encore-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><g>${ENCORE_ICON_SHAPES[name]||ENCORE_ICON_SHAPES.More}</g></svg>`;
 }
 const ENCORE_ICON_DESTINATIONS=[
  ['Home','Home','Your world','Home'],['Studio','Create','Make music','Studio'],
