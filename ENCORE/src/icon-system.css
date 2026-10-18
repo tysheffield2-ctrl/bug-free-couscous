@@ -1,6 +1,14 @@
 /* The approved black-and-gold shell. Scope structural rules to these controls. */
-:root{--encore-bg:#071119;--encore-bg-deep:#040b10;--encore-surface:#101b22;--encore-surface-raised:#19252d;--encore-gold:#f1cf7a;--encore-divider:#665a40;--encore-divider-soft:#29343b}
+:root{
+ --encore-bg:#071119;--encore-bg-deep:#040b10;--encore-surface:#101b22;--encore-surface-raised:#19252d;--encore-surface-soft:#223039;
+ --encore-text:#fff8e9;--encore-text-soft:#ded8ca;--encore-text-muted:#b9b1a1;--encore-text-faint:#8f897d;
+ --encore-gold:#f1cf7a;--encore-cream:#fff0bf;--encore-peach:#e8c56f;--encore-rose:#d9ae55;--encore-lavender:#f0d98f;--encore-blue:#e2bf68;--encore-sage:#caa45a;--encore-sand:#ddb96c;--encore-coral:#d3a052;
+ --encore-mint:#a9c9ae;--encore-red:#e79791;--encore-button-text:#071119;
+ --encore-divider:#665a40;--encore-divider-soft:#29343b
+}
 body{background:radial-gradient(ellipse at 50% 0,rgba(74,95,105,.14),transparent 55rem),#071119!important}
+body header{background:rgba(7,17,25,.965)!important;border-bottom-color:var(--encore-divider-soft)!important}
+body .weekbar{background:rgba(8,17,24,.985)!important;border-top-color:var(--encore-divider)!important;border-bottom-color:var(--encore-divider-soft)!important}
 .encore-icon{display:block;width:44px;height:44px;flex-shrink:0;color:#f1cf7a;stroke:none;filter:drop-shadow(0 2px 3px #0005)}
 .encore-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
 .encore-wordmark{display:inline-flex;align-items:center;font-weight:950;letter-spacing:-.06em;color:#fff7e5!important}
@@ -14,7 +22,7 @@ body #nav button.active:after{content:'';position:absolute;width:26px;height:3px
 body #nav button.active{color:#fff7e3!important}
 body #nav button:focus-visible,body .encore-destination:focus-visible,body .encore-next-action:focus-visible{outline:2px solid #ffe5a0!important;outline-offset:-3px}
 .encore-next-move{margin:20px 0;padding:24px;border:1px solid #85765777;border-radius:24px;background:radial-gradient(ellipse at 20% 0,#66502b2b,transparent 65%),linear-gradient(145deg,#142028,#060e14);box-shadow:inset 0 1px 0 #ffffff0e}
-.encore-next-move header{margin-bottom:20px}
+.encore-next-move header{margin-bottom:20px;background:transparent!important;border:0!important}
 body .encore-next-move h2{margin:0 0 6px!important;font-size:27px!important;letter-spacing:.04em!important;color:#f6d985!important;font-weight:850!important}
 body .encore-next-move header p{margin:0!important;letter-spacing:.18em;text-transform:uppercase;font-size:11px!important;color:#e0dcd2!important}
 .encore-next-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
@@ -33,6 +41,14 @@ body .encore-destination strong{font-size:15px!important;line-height:1.25}
 body .encore-destination small{font-size:9px!important;letter-spacing:.15em;line-height:1.6;text-transform:uppercase;color:#d5d3ce!important}
 body .encore-destination:hover .encore-medallion{border-color:#f5d788;background:linear-gradient(145deg,#34424a,#111a20)}
 body .encore-next-action:hover{border-color:#f5d788!important}
+.encore-all-screens{grid-column:1/-1;margin:2px 0 28px;border:1px solid #665a4066;border-radius:18px;background:#0b151c;overflow:hidden}
+.encore-all-screens>summary{cursor:pointer;list-style:none;padding:17px 20px;color:#f6e6ba;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.encore-all-screens>summary::-webkit-details-marker{display:none}
+.encore-all-screens>summary:after{content:'+';font-size:20px;color:#f1cf7a}
+.encore-all-screens[open]>summary:after{content:'−'}
+.encore-all-screens[open]>summary{border-bottom:1px solid #665a404d}
+.encore-all-screen-groups{padding:8px 16px 18px}
+.encore-all-screen-groups .v103-menu-group{margin-top:12px}
 @media(max-width:600px){
  .encore-next-move{padding:18px 12px;border-radius:20px;margin:16px 0}
  .encore-next-actions{gap:7px}
@@ -44,5 +60,6 @@ body .encore-next-action:hover{border-color:#f5d788!important}
  .encore-medallion{width:80px}
  body .encore-destination strong{font-size:12px!important}
  body .encore-destination small{font-size:8px!important;letter-spacing:.08em}
+ .encore-all-screen-groups{padding:5px 10px 14px}
 }
 @media(max-width:350px){.encore-next-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.encore-medallion{width:68px}}
