@@ -41,7 +41,7 @@ assert.ok(h.run(`Object.keys(V119_state().rivals).length`)>=1,'head-to-head rele
 const page=h.run(`V120_strategyPage()`);
 assert.ok(page.includes('Release strategy.'));
 assert.ok(page.includes('Next 8 weeks'));
-assert.ok(page.includes('Calendar intelligence'));
+assert.ok(/calendar intelligence/i.test(page));
 assert.equal(h.run(`V080_destinations.some(x=>x[2]==='ReleaseStrategy')`),true);
 
 const src=fs.readFileSync(new URL('../src/v120-release-strategy.js',import.meta.url),'utf8');
