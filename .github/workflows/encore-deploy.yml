@@ -1,10 +1,8 @@
 name: ENCORE Deploy
 
 on:
-  push:
-    branches: [main]
   workflow_run:
-    workflows: ["ENCORE CI"]
+    workflows: ["ENCORE CI", "ENCORE Playtest Gate"]
     types: [completed]
   workflow_dispatch:
 
@@ -13,14 +11,21 @@ permissions:
 
 jobs:
   playtest:
-    if: github.event_name == 'push'
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.name == 'ENCORE Playtest Gate' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.event == 'push'
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ENCORE
     steps:
-      - name: Checkout playtest commit
+      - name: Checkout tested playtest commit
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -30,8 +35,8 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Run critical playtest gate
-        run: npm run build && node tests/v118-cohesion-core.mjs && node tests/v119-living-industry.mjs && node tests/v120-release-strategy.mjs && node tests/charts-engine.mjs && node tests/week-transaction.mjs && node tests/finance-engine.mjs
+      - name: Build ENCORE playtest
+        run: npm run build
 
       - name: Deploy isolated playtest worker
         run: npx wrangler deploy --name encore-playtest
@@ -43,6 +48,7 @@ jobs:
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.name == 'ENCORE CI' &&
        github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_branch == 'main' &&
        github.event.workflow_run.event == 'push')
