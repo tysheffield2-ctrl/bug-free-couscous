@@ -21,18 +21,21 @@ const packages=[
  {name:'Professional studio',fee:1500,quality:5},
  {name:'Premium production',fee:25000,quality:9}
 ];
-/* Kept for save/API compatibility with older builds. New song creation no longer
-   presents these as player choices; direct progression uses baseline stage costs. */
+/* Historical approaches remain readable for old saves/API calls. The final
+   `standard` entries power any compatibility renderer without reintroducing a
+   player-facing decision menu. */
 const sessions={
  record:[
   {id:'intimate',name:'Intimate take',energy:15,cost:40,q:3,a:-2,feedback:'The vocal feels close and human. The record gained character more than polish.'},
   {id:'polished',name:'Polished performance',energy:20,cost:80,q:1,a:4,feedback:'The vocal is clean and accessible. It trades a little edge for a wider lane.'},
-  {id:'live',name:'Live-room performance',energy:25,cost:120,q:5,a:0,feedback:'The room added movement and performance energy without chasing radio polish.'}
+  {id:'live',name:'Live-room performance',energy:25,cost:120,q:5,a:0,feedback:'The room added movement and performance energy without chasing radio polish.'},
+  {id:'standard',name:'Record performance',energy:15,cost:40,q:0,a:0,feedback:'Recording complete. The performance is captured and ready for the mix.'}
  ],
  mix:[
   {id:'warm',name:'Warm analog mix',energy:15,cost:30,q:3,a:0,feedback:'The mix keeps texture and warmth while tightening the record.'},
   {id:'radio',name:'Radio-forward mix',energy:20,cost:75,q:0,a:5,feedback:'The mix pushes clarity and immediate impact, raising accessibility more than craft.'},
-  {id:'leftfield',name:'Left-field mix',energy:25,cost:110,q:5,a:-3,feedback:'The mix made a stronger artistic statement, with more risk and less obvious commercial shape.'}
+  {id:'leftfield',name:'Left-field mix',energy:25,cost:110,q:5,a:-3,feedback:'The mix made a stronger artistic statement, with more risk and less obvious commercial shape.'},
+  {id:'standard',name:'Mix record',energy:15,cost:30,q:0,a:0,feedback:'Mix complete. The record is mastered and ready for release planning.'}
  ]
 };
 const progression={
