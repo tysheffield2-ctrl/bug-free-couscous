@@ -30,12 +30,18 @@ const ENCORE_ICON_DESTINATIONS=[
  ['Settings','Settings','Customize game','Settings']
 ];
 const ENCORE_ICON_COVERED_ROUTE_IDS=new Set(['Create','Releases','Industry','Social','Touring','Agency','BusinessHQ','LegalAffairs','Finances','Awards','Settings']);
+const ENCORE_ICON_BUSINESS_ROUTE_IDS=new Set(['Agency','BusinessHQ','LegalAffairs']);
 function encoreOpenIconDestination(id){
  if(id==='Home'){go('Home');return}
  if(id==='Catalog'){
   if(typeof V109_dealsFocus!=='undefined')V109_dealsFocus='Catalog';
   if(typeof V096_openBusinessArea==='function'){V096_openBusinessArea('Deals');return}
   careerTab='Deals';go('Career');return
+ }
+ /* Business-facing destinations use the Business HQ router so sub-navigation,
+    badges and future area-level hooks stay authoritative rather than bypassed. */
+ if(ENCORE_ICON_BUSINESS_ROUTE_IDS.has(id)&&typeof V096_openBusinessArea==='function'){
+  V096_openBusinessArea(id);return
  }
  openDestination(id)
 }
