@@ -154,9 +154,9 @@ function V118_escalateRosterDispute(c,req){
 function V118_resolveRosterRequest(id,action){
  const req=V118_state().rosterRequests.find(x=>x.id===id&&x.status==='open'),c=req&&(s.labelBusiness?.company?.contracts||[]).find(x=>x.agreementId===req.agreementId);if(!req||!c)return false;const a=s.world?.[req.artist],r=V118_rosterState(c),right=V118_ensureCatalogRight(c);
  if(action==='accept'){
-  if(req.type==='renegotiate'){const bonus=cents(Math.max(1000,(req.value||V118_catalogValue(c))*.02));if(!spend(5,bonus))return false;c.share=Math.max(.05,c.share-.05);if(right)right.share=c.share;V118_rosterChange(c,{satisfaction:18,trust:12,ownershipTension:-8},'You accepted a meaningful renegotiation and improved the artist economics.');}
-  if(req.type==='release'){c.ends=s.week-1;if(right)right.contractEnd=c.ends;V118_rosterChange(c,{satisfaction:12,trust:8,ownershipTension:-4},'You granted an early release. Existing covered-catalog rights remain governed by the executed agreement.');}
-  if(req.type==='catalog-buyback'){V118_applyBuyback(c,1,req.ask);V118_rosterChange(c,{satisfaction:16,trust:12,ownershipTension:-60},'You sold the covered catalog/master participation back to the artist.');}
+  if(req.type==='renegotiate'){const bonus=cents(Math.max(1000,(req.value||V118_catalogValue(c))*.02));if(!spend(5,bonus))return false;c.share=Math.max(.05,c.share-.05);if(right)right.share=c.share;V118_rosterChange(c,{satisfaction:18,trust:10,ownershipTension:-8},'You improved the artist split and paid a renegotiation bonus.');}
+  if(req.type==='release'){c.ends=s.week-1;if(right)right.contractEnd=c.ends;V118_rosterChange(c,{satisfaction:15,trust:8},'You granted an early release while preserving existing catalog terms.');}
+  if(req.type==='catalog-buyback'){if(!V118_applyBuyback(c,1,req.ask))return false;V118_rosterChange(c,{satisfaction:20,trust:12,ownershipTension:-70},'The artist repurchased the covered masters.');}
   req.status='accepted';req.resolvedWeek=s.week;V118_event('roster-request-resolved',(a?.name||'Artist')+' request accepted',req.type,{artistId:req.artist,agreementId:req.agreementId});
  }
  if(action==='counter'){
@@ -207,7 +207,8 @@ screenFamily=function(){if(tab==='Career'&&careerTab==='LegalAffairs')return 'bu
 const V118_accumulateWeekBase=V083_accumulateWeek;
 V083_accumulateWeek=function(completed,beforeCash){V118_advanceLegal(completed);return V118_accumulateWeekBase(completed,beforeCash)};
 
+function V118_artistFileLegalSection(){const cases=V118_legalCases();return `<section class="af-section-v095 v118-file-legal"><div class="af-section-title-v095"><span>05</span><div><small>LEGAL / BUSINESS RECORD</small><h2>The decisions that followed you.</h2></div></div><div class="af-legacy-grid-v095"><div><span>Legal cases</span><strong>${cases.length}</strong></div><div><span>Open matters</span><strong>${V118_openCases().length}</strong></div><div><span>Career events</span><strong>${V118_state().events.length}</strong></div></div><div class="af-inline-actions-v095"><button class="secondary" onclick="careerTab='LegalAffairs';go('Career')">Open legal docket</button><button class="secondary" onclick="V096_openBusinessArea('ContractVault')">Contract Vault</button></div></section>`}
 const V118_artistFileBase=artistFilePage;
-artistFilePage=function(){const html=V118_artistFileBase(),cases=V118_legalCases(),legal=`<section class="af-section-v095 v118-file-legal"><div class="af-section-title-v095"><span>05</span><div><small>LEGAL / BUSINESS RECORD</small><h2>The decisions that followed you.</h2></div></div><div class="af-legacy-grid-v095"><div><span>Legal cases</span><strong>${cases.length}</strong></div><div><span>Open matters</span><strong>${V118_openCases().length}</strong></div><div><span>Career events</span><strong>${V118_state().events.length}</strong></div></div><div class="af-inline-actions-v095"><button class="secondary" onclick="careerTab='LegalAffairs';go('Career')">Open legal docket</button><button class="secondary" onclick="V096_openBusinessArea('ContractVault')">Contract Vault</button></div></section>`;return html.replace('<footer class="af-footer-v095">',legal+'<footer class="af-footer-v095">')};
+artistFilePage=function(){const html=V118_artistFileBase();if(String(html).includes('LEGAL / BUSINESS RECORD'))return html;const legal=V118_artistFileLegalSection(),footer='<footer class="af-footer-v095">',idx=String(html).lastIndexOf(footer);if(idx>=0)return html.slice(0,idx)+legal+html.slice(idx);return html+legal};
 
 V118_state();
