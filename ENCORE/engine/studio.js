@@ -22,8 +22,8 @@ const packages=[
  {name:'Premium production',fee:25000,quality:9}
 ];
 /* Historical approaches remain readable for old saves/API calls. The final
-   `standard` entries power any compatibility renderer without reintroducing a
-   player-facing decision menu. */
+   `standard` entries power compatibility renderers without bringing back a
+   player-facing recording/mix decision menu. */
 const sessions={
  record:[
   {id:'intimate',name:'Intimate take',energy:15,cost:40,q:3,a:-2,feedback:'The vocal feels close and human. The record gained character more than polish.'},
@@ -38,10 +38,19 @@ const sessions={
   {id:'standard',name:'Mix record',energy:15,cost:30,q:0,a:0,feedback:'Mix complete. The record is mastered and ready for release planning.'}
  ]
 };
-const progression={
- record:{energy:15,cost:40,feedback:'Recording complete. The performance is captured and ready for the mix.'},
- mix:{energy:15,cost:30,feedback:'Mix complete. The record is mastered and ready for release planning.'}
-};
+const progression={record:{energy:15,cost:40},mix:{energy:15,cost:30}};
+/* Direct Studio service scales from the artist's revenue run-rate. Successful
+   artists naturally book stronger rooms and engineers, but the ceiling stays
+   deliberately modest so the mechanic never becomes a punishment for success. */
+const studioScaleBands=[
+ {min:0,name:'Independent room',recordCost:40,mixCost:30,qualityBonus:0},
+ {min:25000,name:'Local professional room',recordCost:75,mixCost:50,qualityBonus:.5},
+ {min:100000,name:'Professional room',recordCost:150,mixCost:100,qualityBonus:1},
+ {min:500000,name:'Major-market room',recordCost:350,mixCost:250,qualityBonus:1.5},
+ {min:2000000,name:'Premier room',recordCost:750,mixCost:500,qualityBonus:2},
+ {min:10000000,name:'A-list production room',recordCost:1500,mixCost:1000,qualityBonus:2.5},
+ {min:50000000,name:'Global production room',recordCost:3000,mixCost:2000,qualityBonus:3}
+];
 const creativeDefaults={theme:'Personal story',tempo:'Mid-tempo',intent:'Balanced',texture:'Warm & soulful',hook:'Melodic refrain'};
 const creativeLists={
  themes:['Personal story','Love & relationships','Ambition','Loss & recovery','Nightlife','Social commentary','Victory lap','Escapism'],
@@ -71,6 +80,20 @@ function creativeProfile(d){
 function ensureFinance(state){state.finance=state.finance&&typeof state.finance==='object'?state.finance:{};state.finance.week=state.finance.week&&typeof state.finance.week==='object'?state.finance.week:{expenses:0};return state.finance.week}
 function ensureWallet(state){const cash=Number(state.cash)||0,raw=String(state.walletCents??'');let valid=/^-?\d+$/.test(raw);if(valid){try{valid=Math.abs(Number(BigInt(raw))/100-cash)<.005}catch{valid=false}}if(!valid)state.walletCents=BigInt(Math.round(cash*100)).toString()}
 function spend(state,energy,cost){energy=Math.max(0,Math.round(Number(energy)||0));cost=Math.round((Number(cost)||0)*100)/100;if((Number(state.energy)||0)<energy)throw Error('Rest to recover energy first.');if(cost>0&&(Number(state.cash)||0)<cost)throw Error('Not enough cash. Work a shift or save up.');state.started=true;state.energy=(Number(state.energy)||0)-energy;if(cost){ensureWallet(state);state.walletCents=(BigInt(state.walletCents)-BigInt(Math.round(cost*100))).toString();state.cash=Number(BigInt(state.walletCents))/100;const week=ensureFinance(state);week.expenses=Math.round(((Number(week.expenses)||0)+cost)*100)/100}}
+function revenueRunRate(state){
+ const f=state?.finance||{},weeks=Math.max(0,Number(f.weeks)||0),current=Math.max(0,Number(f.revenue)||0),prior=Math.max(0,Number(f.lastSettlement?.profit)||0);
+ /* Damp the first eight weeks so one viral release does not instantly push the
+    career through several cost brackets. Prior-year profit prevents a star from
+    resetting to beginner rates on January 1. */
+ const currentRun=current>0?current*52/Math.max(8,weeks):0;
+ return Math.max(currentRun,prior)
+}
+function studioScale(state){
+ const revenue=revenueRunRate(state);let band=studioScaleBands[0],index=0;
+ studioScaleBands.forEach((x,i)=>{if(revenue>=x.min){band=x;index=i}});
+ return {...band,index,revenueRunRate:Math.round(revenue)}
+}
+function stageQuote(state,stage){const scale=studioScale(state),key=stage==='mix'?'mixCost':'recordCost';return {stage:stage==='mix'?'mix':'record',energy:15,cost:scale[key],scale}}
 function randomBetween(rng,a,b){return a+(b-a)*rng()}
 function cleanCreative(input={}){const choose=(value,list,fallback)=>list.includes(value)?value:fallback;return {theme:choose(input.theme,creativeLists.themes,creativeDefaults.theme),tempo:choose(input.tempo,creativeLists.tempos,creativeDefaults.tempo),intent:choose(input.intent,creativeLists.intents,creativeDefaults.intent),texture:choose(input.texture,creativeLists.textures,creativeDefaults.texture),hook:choose(input.hook,creativeLists.hooks,creativeDefaults.hook),mood:input.mood}}
 function start(state,input={},options={}){
@@ -81,19 +104,21 @@ function start(state,input={},options={}){
  draft.creative={...cleanCreative({...input.creative,mood}),brief};draft.creativeScores=creativeProfile(draft);score(draft);state.draft=draft;state.studioIdea={title:'',mood,package:String(packageIndex),...draft.creative};return draft
 }
 /* Direct Write → Record → Mix progression. Creative identity is chosen up front;
-   recording and mixing are now production stages rather than extra choice menus. */
+   recording and mixing are production stages whose service level scales with
+   artist revenue. Higher-cost rooms add only a modest craft bonus. */
 function progress(state){
  const d=state.draft;if(!d||![1,2].includes(Number(d.steps)))throw Error('That studio stage is not available.');
- const stage=d.steps===1?'record':'mix',step=progression[stage];spend(state,step.energy,step.cost);d.sessionPlan??={brief:'story',q:0,a:0};d.sessionPlan[stage]='standard';d.sessionPlan.feedback=step.feedback;d.steps++;
- const keys=d.steps===2?['recording','charisma']:['producing','marketability','viralAbility'];for(const k of keys)if(state.development?.[k])d.development[k]=clone(state.development[k]);score(d);d.creativeScores=creativeProfile(d);return {draft:d,stage,energy:step.energy,cost:step.cost}
+ const stage=d.steps===1?'record':'mix',quote=stageQuote(state,stage);spend(state,quote.energy,quote.cost);d.sessionPlan??={brief:'story',q:0,a:0};d.sessionPlan.q=(Number(d.sessionPlan.q)||0)+quote.scale.qualityBonus;d.sessionPlan[stage]='standard';d.sessionPlan[stage+'Room']=quote.scale.name;d.sessionPlan.feedback=(stage==='record'?'Recording':'Mixing')+' complete at '+quote.scale.name+'. The record is '+(stage==='record'?'ready for the mix.':'mastered and ready for release planning.');d.steps++;
+ const keys=d.steps===2?['recording','charisma']:['producing','marketability','viralAbility'];for(const k of keys)if(state.development?.[k])d.development[k]=clone(state.development[k]);score(d);d.creativeScores=creativeProfile(d);return {draft:d,stage,energy:quote.energy,cost:quote.cost,scale:quote.scale}
 }
 /* Compatibility path for old saves/builds that may still submit a historical
-   session option. It is intentionally not exposed by current song creation UI. */
+   session option. Current standard controls route through scaled progression. */
 function perform(state,optionId){
+ if(optionId==='standard')return progress(state);
  const d=state.draft;if(!d||![1,2].includes(Number(d.steps)))throw Error('That recording session is not available.');const stage=d.steps===1?'record':'mix',option=sessions[stage].find(x=>x.id===optionId);if(!option)throw Error('Choose a valid session approach.');spend(state,option.energy,option.cost);d.sessionPlan??={brief:'story',q:0,a:0};d.sessionPlan.q=(Number(d.sessionPlan.q)||0)+option.q;d.sessionPlan.a=(Number(d.sessionPlan.a)||0)+option.a;d.sessionPlan[stage]=option.id;d.sessionPlan.feedback=option.feedback;d.steps++;
  const keys=d.steps===2?['recording','charisma']:['producing','marketability','viralAbility'];for(const k of keys)if(state.development?.[k])d.development[k]=clone(state.development[k]);score(d);d.creativeScores=creativeProfile(d);return {draft:d,stage,option}
 }
 function finish(state,{release=false}={}){const d=state.draft;if(!d||Number(d.steps)!==3)throw Error('The master is not ready yet.');if(release)spend(state,5,20);const song={...clone(d),released:release?state.week:null,streams:0,total:0,peak:null,album:null};state.songs??=[];state.songs.push(song);state.draft=null;return song}
 function releaseShelf(state,id){const x=(state.songs||[]).find(x=>String(x.id)===String(id));if(!x||x.released)throw Error('That master is no longer waiting for release.');spend(state,5,20);x.released=state.week;return x}
-global.ENCORE_STUDIO={version:2,coreStats,directions,packages,sessions,progression,creativeLists,creativeDefaults,directionFor,score,creativeProfile,start,progress,perform,finish,releaseShelf};
+global.ENCORE_STUDIO={version:3,coreStats,directions,packages,sessions,progression,studioScaleBands,creativeLists,creativeDefaults,directionFor,score,creativeProfile,revenueRunRate,studioScale,stageQuote,start,progress,perform,finish,releaseShelf};
 })(globalThis);
