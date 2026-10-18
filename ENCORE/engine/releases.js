@@ -28,7 +28,9 @@
           let featureReach = guest
             ? x.feature.fans * (guest.relation <= -40 ? 0.004 : 0.018)
             : 0;
-          x.base = reach(x);
+          const strategyLift = Number.isFinite(Number(x.releaseStrategyLift))
+            ? clamp(Number(x.releaseStrategyLift), 0.78, 1.22)
+            : 1;
           x.factor =
             reception(x.quality) *
             (x.songRules === 2 ? 0.55 + x.commercial * 0.009 : 1) *
@@ -36,7 +38,9 @@
               ? rand(0.65, 1.4)
               : directionFor(x).reach) *
             (1 + s.boost) *
-            (x.albumBoost === s.week ? 1.15 : 1);
+            (x.albumBoost === s.week ? 1.15 : 1) *
+            strategyLift;
+          x.base = reach(x);
           x.launchFans = s.fans;
           n = Math.round(x.base * x.factor);
           x.debutStreams = n;
@@ -56,7 +60,14 @@
             (guest ? "; guest " + guest.name : "") +
             "; promotion " +
             Math.round(s.boost * 100) +
-            "%. Audience reception helped determine the final " +
+            "%" +
+            (strategyLift !== 1
+              ? "; release strategy " +
+                (strategyLift >= 1 ? "+" : "") +
+                Math.round((strategyLift - 1) * 100) +
+                "%"
+              : "") +
+            ". Audience reception helped determine the final " +
             x.factor.toFixed(2) +
             "× debut. " +
             (x.factor < 0.65
