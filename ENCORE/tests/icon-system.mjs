@@ -24,9 +24,10 @@ for(const id of destinations){
  if(expected==='Career')assert.equal(h.run('careerTab'),id,id+' section');
 }
 /* The three business-facing icon destinations must stay inside the authoritative
-   Business HQ area registry so their sub-navigation and badges remain cohesive. */
+   Business HQ navigation model so their sub-navigation and badges remain cohesive. */
 for(const id of ['Agency','BusinessHQ','LegalAffairs']){
- assert.equal(h.run(`id==='BusinessHQ'||V096_BUSINESS_IDS.has('${id}')`),true,id+' is owned by Business HQ navigation');
+ const registered=id==='BusinessHQ'||h.run(`V096_BUSINESS_IDS.has('${id}')`);
+ assert.equal(registered,true,id+' is owned by Business HQ navigation');
  h.run(`encoreOpenIconDestination('${id}')`);
  assert.equal(h.run('tab'),'Career');
  assert.equal(h.run('careerTab'),id);
