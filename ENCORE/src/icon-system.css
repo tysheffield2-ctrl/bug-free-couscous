@@ -9,7 +9,9 @@
 body{background:radial-gradient(ellipse at 50% 0,rgba(74,95,105,.14),transparent 55rem),#071119!important}
 body header{background:rgba(7,17,25,.965)!important;border-bottom-color:var(--encore-divider-soft)!important}
 body .weekbar{background:rgba(8,17,24,.985)!important;border-top-color:var(--encore-divider)!important;border-bottom-color:var(--encore-divider-soft)!important}
-.encore-icon{display:block;width:44px;height:44px;flex-shrink:0;color:#f1cf7a;stroke:none;filter:drop-shadow(0 2px 3px #0005)}
+/* Icons intentionally paint with currentColor rather than a fragment-linked SVG
+   gradient so iOS/WebKit cannot lose the glyph when dynamic screens are rebuilt. */
+.encore-icon{display:block;width:44px;height:44px;flex-shrink:0;color:#f1cf7a;fill:currentColor;stroke:none;filter:drop-shadow(0 2px 3px #0005)}
 .encore-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
 .encore-wordmark{display:inline-flex;align-items:center;font-weight:950;letter-spacing:-.06em;color:#fff7e5!important}
 .encore-wordmark i{display:inline-block;width:.82em;height:.82em;margin:0 .015em;border-radius:50%;background:radial-gradient(circle,#f5d77d 0 6%,#071119 7% 22%,transparent 23%),conic-gradient(from 20deg,#aa722a,#fff2b3,#d5a242,#ffe7a0,#aa722a);box-shadow:inset 0 0 0 1px #ffe1a177}
@@ -31,12 +33,11 @@ body .encore-next-action strong{font-size:15px!important;line-height:1.2}
 body .encore-next-action small{font-size:9px!important;letter-spacing:.12em;text-transform:uppercase;color:#e3dfd5!important;line-height:1.5}
 body .encore-next-action.encore-next-primary{background:linear-gradient(135deg,#fff0ac,#dfb55f 65%,#f5d381)!important;border-color:#ffe7a6!important;color:#0b1217!important}
 body .encore-next-primary small{color:#172027!important}
-.encore-next-primary .encore-icon{color:#071119;filter:none}
-.encore-next-primary .encore-icon g{fill:#071119}
+.encore-next-primary .encore-icon{color:#071119;fill:currentColor;filter:none}
 .encore-icon-directory{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:25px 14px;grid-column:1/-1;margin:8px 0 32px}
 body .encore-destination{display:flex;flex-direction:column;align-items:center;gap:10px;background:transparent!important;border:0!important;padding:10px 4px;min-width:0;color:#fff9ed!important;text-align:center;box-shadow:none!important}
 .encore-medallion{display:grid;place-items:center;width:clamp(70px,10vw,110px);aspect-ratio:1;border:1px solid #c6b1819c;border-radius:50%;background:linear-gradient(145deg,#26343b,#070f15 72%);box-shadow:inset 0 1px 2px #fff2,0 5px 12px #0002}
-.encore-medallion .encore-icon{width:53%;height:53%}
+.encore-medallion .encore-icon{width:53%;height:53%;color:#f1cf7a;fill:currentColor}
 body .encore-destination strong{font-size:15px!important;line-height:1.25}
 body .encore-destination small{font-size:9px!important;letter-spacing:.15em;line-height:1.6;text-transform:uppercase;color:#d5d3ce!important}
 body .encore-destination:hover .encore-medallion{border-color:#f5d788;background:linear-gradient(145deg,#34424a,#111a20)}
