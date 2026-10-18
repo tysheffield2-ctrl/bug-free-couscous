@@ -1,5 +1,7 @@
-# ENCORE 0.9.17-beta.4 — Release Strategy / Studio Flow
+# ENCORE 0.9.17-beta.5 — Release Strategy / Studio Flow
 
+- Recording and mixing costs now scale gradually with the artist’s revenue run-rate: small careers keep low-budget rooms, while higher-revenue artists naturally use stronger professional rooms and engineers without the prices becoming punitive.
+- Higher Studio brackets provide only a modest craft bonus, so spending more reflects better production resources without turning money into a guaranteed hit.
 - Song creation now moves directly from writing to recording to mixing; the extra recording/mix session-choice menus have been removed while the creative brief, production budget, skills, features and song identity systems remain intact.
 - Finished singles can now be scheduled up to 12 weeks ahead instead of being forced into the current week.
 - A dedicated Release Strategy screen forecasts the next eight weeks using known release timing, artist scale, reputation, label backing and current industry pressure.
