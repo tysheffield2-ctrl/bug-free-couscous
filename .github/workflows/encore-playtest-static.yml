@@ -1,0 +1,47 @@
+name: ENCORE Playtest Static
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: encore-playtest-static
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ENCORE
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run critical playtest gate
+        run: npm run build && node tests/v118-cohesion-core.mjs && node tests/v119-living-industry.mjs && node tests/v120-release-strategy.mjs && node tests/charts-engine.mjs && node tests/week-transaction.mjs && node tests/finance-engine.mjs
+
+      - name: Build host-independent playtest
+        run: node build-raw-playtest.mjs
+
+      - name: Publish playtest-static branch
+        working-directory: .
+        run: |
+          cp -R ENCORE/dist/raw-playtest /tmp/encore-playtest
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan playtest-static
+          git rm -rf .
+          cp -R /tmp/encore-playtest/. .
+          git add -A
+          git commit -m "Publish ENCORE playtest $GITHUB_SHA"
+          git push --force origin HEAD:playtest-static
