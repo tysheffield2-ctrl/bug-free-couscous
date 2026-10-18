@@ -7,6 +7,21 @@ on:
     branches: [main, "feature/**"]
 
 jobs:
+  critical-smoke:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ENCORE
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run critical cohesion / industry / release tests
+        run: npm run build && node tests/v118-cohesion-core.mjs && node tests/v119-living-industry.mjs && node tests/v120-release-strategy.mjs && node tests/charts-engine.mjs && node tests/week-transaction.mjs && node tests/finance-engine.mjs
+
   test:
     runs-on: ubuntu-latest
     defaults:
