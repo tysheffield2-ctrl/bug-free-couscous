@@ -2,6 +2,7 @@ import './build.mjs';
 import {mkdirSync,cpSync,readFileSync,writeFileSync} from 'node:fs';
 
 const out='dist/raw-playtest';
+const version=JSON.parse(readFileSync('package.json','utf8')).version;
 mkdirSync(out,{recursive:true});
 cpSync('public',out,{recursive:true});
 
@@ -52,10 +53,10 @@ game=game.replaceAll('"/portraits/','"./portraits/').replaceAll("'/portraits/","
 writeFileSync(out+'/game.js',game);
 writeFileSync(out+'/.nojekyll','');
 writeFileSync(out+'/PLAYTEST.txt',[
-  'ENCORE 0.9.17 playtest',
+  `ENCORE ${version} playtest`,
   'Career: https://raw.githack.com/tysheffield2-ctrl/bug-free-couscous/playtest-static/index.html',
   'Sandbox: https://raw.githack.com/tysheffield2-ctrl/bug-free-couscous/playtest-static/index.html?sandbox=1',
   'Saves stay in this browser and career/sandbox saves are isolated.',
   ''
 ].join('\n'));
-console.log('Raw playtest ready: '+out);
+console.log('Raw playtest ready: '+out+' · '+version);
