@@ -26,14 +26,7 @@ function V106_navGo(id){
   if(id==='More'){go('Menu');return}
 }
 navigationBar=function(){
-  const items=[
-    ['Studio','M5 19V5h14v14H5zm3-11h8v2H8zm0 4h5v2H8z'],
-    ['Charts','M4 20V11h3v9zm6 0V5h3v15zm6 0V8h3v12z'],
-    ['Home','M3 11 12 3l9 8v10h-6v-6H9v6H3z'],
-    ['Business','M4 7h16v13H4zm4 0V4h8v3'],
-    ['More','M4 7h16M4 12h16M4 17h16']
-  ];
-  return items.map(([id,path])=>`<button class="v106-nav-${id.toLowerCase()} ${V106_navActive(id)?'active':''} ${id==='Home'?'nav-home':''}" onclick="V106_navGo('${id}')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${path}"/></svg><span>${id}</span></button>`).join('')
+  return ['Studio','Charts','Home','Business','More'].map(id=>`<button class="v106-nav-${id.toLowerCase()} ${V106_navActive(id)?'active':''} ${id==='Home'?'nav-home':''}" ${V106_navActive(id)?'aria-current="page"':''} onclick="V106_navGo('${id}')"><span class="encore-nav-icon">${encoreIcon(id)}</span><span>${id}</span></button>`).join('')
 };
 
 /* --------------------------------------------------------------------------
