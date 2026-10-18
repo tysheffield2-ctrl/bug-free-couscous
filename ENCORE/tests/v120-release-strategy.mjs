@@ -28,10 +28,14 @@ assert.equal(h.run('song.released'),120);
 assert.equal(h.run('song.scheduledRelease'),null);
 assert.ok(h.run('song.releaseStrategyLift')>=.78&&h.run('song.releaseStrategyLift')<=1.22);
 
+/* Sandbox careers can legitimately start at the reputation cap. Put the
+   assertion below the cap so it verifies the +2 head-to-head reward rather
+   than failing because clamp(100 + 2) correctly remains 100. */
+h.run('s.reputation=50');
 const repBefore=h.run('s.reputation');
 h.run(`song.releasePlan.actualWeek=s.week;song.releasePlan.approach='challenge';delete song.releasePlan.resultRank;V120_afterChartIssue({published:true,songs:[{key:'you:s:'+song.id,id:song.id,title:song.title,artist:s.name,you:true,rank:1,movement:'NEW',streams:1000000},{key:'npc:s:0:abc',id:'abc',title:'Rival',artist:s.world[0].name,you:false,rank:2,movement:'NEW',streams:900000}],albums:[]})`);
 assert.equal(h.run('song.releasePlan.resultRank'),1);
-assert.ok(h.run('s.reputation')>repBefore,'winning a deliberate head-to-head release should build reputation');
+assert.equal(h.run('s.reputation'),repBefore+2,'winning a deliberate head-to-head release should award +2 reputation below the cap');
 assert.ok(h.run(`Object.keys(V119_state().rivals).length`)>=1,'head-to-head release should deepen rival history');
 
 const page=h.run(`V120_strategyPage()`);
