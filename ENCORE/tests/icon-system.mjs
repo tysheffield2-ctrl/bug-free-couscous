@@ -37,14 +37,15 @@ for(const [id,expected] of [['Studio','Create'],['Charts','Industry'],['Home','H
  h.run(`V106_navGo('${id}')`);assert.equal(h.run('tab'),expected);assert.equal(h.run(`V106_navActive('${id}')`),true);
  assert.ok(String(h.elements.app?.innerHTML||'').length>200,id+' bottom-navigation destination renders');
 }
-assert.match(h.run("V103_menuResults('')"),/encore-all-screens/);
+const fullDirectory=h.run("V103_menuResults('')");
+assert.match(fullDirectory,/encore-all-screens/);
+assert.match(fullDirectory,/data-destination="CatalogMarket"/,'secondary catalog investment screen remains reachable from More');
 assert.match(h.run("V103_menuResults('Stats')"),/data-destination="Stats"/);
 assert.match(h.run("V103_menuResults('Legal Affairs')"),/data-destination="LegalAffairs"/);
 for(const [label,id] of [['Studio','Create'],['Releases','Releases'],['Charts','Industry'],['PULSE','Social'],['Touring','Touring'],['Representation','Agency'],['Business HQ','BusinessHQ'],['Legal Affairs','LegalAffairs'],['Finance','Finances'],['Awards','Awards'],['Settings','Settings']]){
  const html=h.run(`V103_menuResults(${JSON.stringify(label)})`);
  assert.equal((html.match(new RegExp('data-destination="'+id+'"','g'))||[]).length,1,label+' is not duplicated in More');
 }
-assert.match(h.run("V103_menuResults('Catalog Market')"),/data-destination="CatalogMarket"/,'secondary catalog investment screen remains reachable');
 assert.match(h.run("V103_menuResults('not-a-screen-xyz')"),/No matching destination/);
 const icons=h.run("encoreIcon('Home')+encoreIcon('Home')");
 const ids=[...icons.matchAll(/id="(encore-gold-\d+)"/g)].map(x=>x[1]);assert.equal(new Set(ids).size,2);
