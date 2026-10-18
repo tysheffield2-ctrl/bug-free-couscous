@@ -15,10 +15,17 @@ newSong=function(e){
   log('Started writing “'+d.title+'”.');queueSave();render();
  }catch(error){toast(error.message||'The writing session could not start.')}
 };
+progressSong=function(){
+ if(!saveReady||saveConflict)return;
+ try{const result=ENCORE_STUDIO.progress(s);log((result.stage==='record'?'Recording':'Mixing')+' complete for “'+result.draft.title+'”.');queueSave();render()}
+ catch(error){toast(error.message||'That studio stage could not be completed.')}
+};
+/* Historical compatibility for old cached controls only. Current song creation
+   uses progressSong() and does not present selectable recording/mix sessions. */
 performSession=function(id){
  if(!saveReady||saveConflict)return;
- try{const result=ENCORE_STUDIO.perform(s,id);log((result.stage==='record'?'Recording':'Mixing')+' session: '+result.option.name+'.');queueSave();render()}
- catch(error){toast(error.message||'That studio session could not be completed.')}
+ try{const result=id?ENCORE_STUDIO.perform(s,id):ENCORE_STUDIO.progress(s);log((result.stage==='record'?'Recording':'Mixing')+' complete.');queueSave();render()}
+ catch(error){toast(error.message||'That studio stage could not be completed.')}
 };
 finishSong=function(release,confirmed=false){
  const d=s.draft;if(!d||d.steps!==3||!saveReady||saveConflict)return;
