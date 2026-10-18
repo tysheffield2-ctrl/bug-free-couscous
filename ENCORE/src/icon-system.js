@@ -31,6 +31,9 @@ const ENCORE_ICON_DESTINATIONS=[
 ];
 const ENCORE_ICON_COVERED_ROUTE_IDS=new Set(['Create','Releases','Industry','Social','Touring','Agency','BusinessHQ','LegalAffairs','Finances','Awards','Settings']);
 const ENCORE_ICON_BUSINESS_ROUTE_IDS=new Set(['Agency','BusinessHQ','LegalAffairs']);
+/* Catalog means the player's music ownership/rights hub. Catalog Market remains
+   a separate investment screen and is deliberately preserved in More. */
+const ENCORE_ICON_SECONDARY_ROWS=[['Catalog Market','Wealth','CatalogMarket','Buy, hold and sell artist catalogs',2]];
 function encoreOpenIconDestination(id){
  if(id==='Home'){go('Home');return}
  if(id==='Catalog'){
@@ -58,6 +61,9 @@ function encoreClassicDirectory(query=''){
  const rows=typeof V080_destinations!=='undefined'?V080_destinations:destinations;
  const q=String(query).trim().toLowerCase();
  const matches=rows.filter(d=>d.join(' ').toLowerCase().includes(q)&&!ENCORE_ICON_COVERED_ROUTE_IDS.has(d[2]));
+ for(const row of ENCORE_ICON_SECONDARY_ROWS){
+  if(row.join(' ').toLowerCase().includes(q)&&!matches.some(x=>x[2]===row[2]))matches.push(row)
+ }
  const groups=[...new Set(matches.map(x=>x[1]))];
  if(!groups.length)return q?'<section class="v103-menu-empty"><strong>No matching destination.</strong><span>Try a broader term.</span></section>':'';
  return groups.map(group=>`<section class="v103-menu-group"><header><i>${V103_menuGroupIcon(group)}</i><span>${esc(group).toUpperCase()}</span><small>${matches.filter(x=>x[1]===group).length}</small></header>${matches.filter(x=>x[1]===group).map(([name,g,id,desc])=>`<button data-destination="${id}" onclick="openDestination('${id}')"><span><strong>${esc(name)}</strong><small>${esc(desc)}</small></span><b>↗</b></button>`).join('')}</section>`).join('')
