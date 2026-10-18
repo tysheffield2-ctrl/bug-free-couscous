@@ -23,8 +23,6 @@ for(const id of destinations){
  assert.equal(h.run('tab'),expected,id+' route');
  if(expected==='Career')assert.equal(h.run('careerTab'),id,id+' section');
 }
-/* The three business-facing icon destinations must stay inside the authoritative
-   Business HQ navigation model so their sub-navigation and badges remain cohesive. */
 for(const id of ['Agency','BusinessHQ','LegalAffairs']){
  const registered=id==='BusinessHQ'||h.run(`V096_BUSINESS_IDS.has('${id}')`);
  assert.equal(registered,true,id+' is owned by Business HQ navigation');
@@ -47,8 +45,17 @@ for(const [label,id] of [['Studio','Create'],['Releases','Releases'],['Charts','
  assert.equal((html.match(new RegExp('data-destination="'+id+'"','g'))||[]).length,1,label+' is not duplicated in More');
 }
 assert.match(h.run("V103_menuResults('not-a-screen-xyz')"),/No matching destination/);
-const icons=h.run("encoreIcon('Home')+encoreIcon('Home')");
-const ids=[...icons.matchAll(/id="(encore-gold-\d+)"/g)].map(x=>x[1]);assert.equal(new Set(ids).size,2);
+/* Visibility regression: icon glyphs must use direct currentColor paint, not
+   fragment-linked url(#gradient) references that may disappear in iOS/WebKit
+   after dynamic innerHTML replacement. */
+for(const icon of ['Home','Studio','Charts','Pulse','Touring','Representation','Business','Legal','Catalog','Finance','Awards','Settings','More']){
+ const svg=h.run(`encoreIcon('${icon}')`);
+ assert.match(svg,/class="encore-icon"/);
+ assert.match(svg,/fill="currentColor"/);
+ assert.ok(/<(?:path|rect|circle|ellipse)\b/.test(svg),icon+' has a visible vector primitive');
+ assert.ok(!/url\(#encore-gold-/.test(svg),icon+' does not depend on a fragment gradient');
+}
 const css=readFileSync(new URL('../src/icon-system.css',import.meta.url),'utf8');
 for(const token of ['--encore-bg:#071119','--encore-gold:#f1cf7a','--encore-blue:#e2bf68','--encore-sage:#caa45a','--encore-lavender:#f0d98f'])assert.ok(css.includes(token),'missing cohesive palette token '+token);
-console.log('Gold icon system: all 13 destinations render, Business HQ routes stay authoritative, bottom navigation renders, More has no primary duplicates, secondary screens remain reachable, and the cohesive palette passed.');
+assert.match(css,/\.encore-icon\{[^}]*fill:currentColor/,'icon CSS enforces currentColor paint');
+console.log('Gold icon system: all 13 destinations render, icons use iPhone-safe currentColor paint, Business HQ routes stay authoritative, bottom navigation renders, More has no primary duplicates, secondary screens remain reachable, and the cohesive palette passed.');
