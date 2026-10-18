@@ -1,0 +1,36 @@
+name: ENCORE Playtest Deploy
+
+on:
+  push:
+    branches: ["playtest/encore-1.0-preview"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  playtest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ENCORE
+    steps:
+      - name: Checkout playtest build
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run critical playtest gate
+        run: npm run build && node tests/v118-cohesion-core.mjs && node tests/v119-living-industry.mjs && node tests/v120-release-strategy.mjs && node tests/charts-engine.mjs && node tests/week-transaction.mjs && node tests/finance-engine.mjs
+
+      - name: Deploy isolated playtest worker
+        run: npx wrangler deploy --name encore-playtest
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
