@@ -28,7 +28,7 @@ jobs:
           node-version: '20'
 
       - name: Run critical playtest gate
-        run: npm run build && node tests/v118-cohesion-core.mjs && node tests/v119-living-industry.mjs && node tests/v120-release-strategy.mjs && node tests/charts-engine.mjs && node tests/week-transaction.mjs && node tests/finance-engine.mjs
+        run: npm run build && node tests/v118-cohesion-core.mjs && node tests/v119-living-industry.mjs && node tests/v120-release-strategy.mjs && node tests/charts-engine.mjs && node tests/week-transaction.mjs && node tests/finance-engine.mjs && node tests/icon-system.mjs
 
       - name: Build host-independent playtest
         run: node build-raw-playtest.mjs
