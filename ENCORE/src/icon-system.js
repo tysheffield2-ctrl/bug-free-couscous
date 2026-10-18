@@ -25,11 +25,20 @@ const ENCORE_ICON_DESTINATIONS=[
  ['Releases','Releases','Drop music','Releases'],['Charts','Industry','See the impact','Charts'],
  ['PULSE','Social','Fans & culture','Pulse'],['Touring','Touring','Hit the road','Touring'],
  ['Representation','Agency','Your team','Representation'],['Business HQ','BusinessHQ','Expand empire','Business'],
- ['Legal Affairs','LegalAffairs','Protect yourself','Legal'],['Catalog','CatalogMarket','Your legacy','Catalog'],
+ ['Legal Affairs','LegalAffairs','Protect yourself','Legal'],['Catalog','Catalog','Your legacy','Catalog'],
  ['Finance','Finances','Manage wealth','Finance'],['Awards','Awards','Earn recognition','Awards'],
  ['Settings','Settings','Customize game','Settings']
 ];
-function encoreOpenIconDestination(id){if(id==='Home'){go('Home');return}openDestination(id)}
+const ENCORE_ICON_COVERED_ROUTE_IDS=new Set(['Create','Releases','Industry','Social','Touring','Agency','BusinessHQ','LegalAffairs','Finances','Awards','Settings']);
+function encoreOpenIconDestination(id){
+ if(id==='Home'){go('Home');return}
+ if(id==='Catalog'){
+  if(typeof V109_dealsFocus!=='undefined')V109_dealsFocus='Catalog';
+  if(typeof V096_openBusinessArea==='function'){V096_openBusinessArea('Deals');return}
+  careerTab='Deals';go('Career');return
+ }
+ openDestination(id)
+}
 function encoreIconDirectory(query=''){
  const q=String(query).trim().toLowerCase(),items=ENCORE_ICON_DESTINATIONS.filter(row=>row.join(' ').toLowerCase().includes(q));
  return items.length?`<section class="encore-icon-directory" aria-label="Key destinations">${items.map(([name,id,desc,icon])=>`<button class="encore-destination" data-destination="${id}" onclick="encoreOpenIconDestination('${id}')"><span class="encore-medallion">${encoreIcon(icon)}</span><strong>${name}</strong><small>${desc}</small></button>`).join('')}</section>`:'';
@@ -37,3 +46,20 @@ function encoreIconDirectory(query=''){
 function encoreNextMove(){return `<section class="encore-next-move" aria-labelledby="encore-next-title"><header><h2 id="encore-next-title">NEXT MOVE</h2><p>Where do you want to focus?</p></header><div class="encore-next-actions">${[
  ['Studio','Create','Record','Studio'],['Charts','Industry','Track progress','Charts'],['Touring','Touring','Plan a show','Touring'],['Business HQ','BusinessHQ','Grow bigger','Business']
  ].map(([name,id,desc,icon],i)=>`<button class="encore-next-action ${i===0?'encore-next-primary':''}" onclick="encoreOpenIconDestination('${id}')">${encoreIcon(icon)}<strong>${name}</strong><small>${desc}</small></button>`).join('')}</div></section>`}
+
+/* Keep the approved icon destinations primary without losing deep screens. */
+function encoreClassicDirectory(query=''){
+ const rows=typeof V080_destinations!=='undefined'?V080_destinations:destinations;
+ const q=String(query).trim().toLowerCase();
+ const matches=rows.filter(d=>d.join(' ').toLowerCase().includes(q)&&!ENCORE_ICON_COVERED_ROUTE_IDS.has(d[2]));
+ const groups=[...new Set(matches.map(x=>x[1]))];
+ if(!groups.length)return q?'<section class="v103-menu-empty"><strong>No matching destination.</strong><span>Try a broader term.</span></section>':'';
+ return groups.map(group=>`<section class="v103-menu-group"><header><i>${V103_menuGroupIcon(group)}</i><span>${esc(group).toUpperCase()}</span><small>${matches.filter(x=>x[1]===group).length}</small></header>${matches.filter(x=>x[1]===group).map(([name,g,id,desc])=>`<button data-destination="${id}" onclick="openDestination('${id}')"><span><strong>${esc(name)}</strong><small>${esc(desc)}</small></span><b>↗</b></button>`).join('')}</section>`).join('')
+}
+V103_menuResults=function(query=''){
+ const q=String(query).trim();
+ const icons=encoreIconDirectory(q),classic=encoreClassicDirectory(q);
+ if(q)return icons+classic||'<section class="v103-menu-empty"><strong>No matching destination.</strong><span>Try a broader term.</span></section>';
+ return `${icons}<details class="encore-all-screens"><summary>All career screens & utilities</summary><div class="encore-all-screen-groups">${classic}</div></details>`
+};
+menuResults=V103_menuResults;
