@@ -1,6 +1,6 @@
 {
   "name": "encore-artist-sim",
-  "version": "0.9.17-beta.2",
+  "version": "0.9.17-beta.3",
   "private": true,
   "type": "module",
   "scripts": {
