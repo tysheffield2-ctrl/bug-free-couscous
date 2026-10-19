@@ -1,7 +1,11 @@
 /* ENCORE Visual System 2.0 — Wave 2 mobile refinement.
    Tightens the live merged layouts without changing simulation mechanics. */
+html{-webkit-text-size-adjust:100%}
+button,a,[role="button"]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 @media (max-width:700px){
-  .v103-shellbar{min-height:70px;padding:10px 12px;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"back id guide" "menu id guide";gap:4px 10px;align-items:start}
+  body #nav{padding-bottom:max(8px,env(safe-area-inset-bottom,0px))!important}
+  body .weekbar{padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+  .v103-shellbar{min-height:70px;padding:10px max(12px,env(safe-area-inset-right,0px)) 10px max(12px,env(safe-area-inset-left,0px));display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"back id guide" "menu id guide";gap:4px 10px;align-items:start}
   .v103-shell-back{grid-area:back;min-width:42px;padding:6px 4px;text-align:left}
   .v103-shell-id{grid-area:id;min-width:0;padding-top:3px}
   .v103-shell-id span{font-size:9px;letter-spacing:.16em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -10,7 +14,7 @@
   .v103-shell-menu{grid-area:menu;width:38px;height:34px;margin-top:0}
   .v103-shell-state{display:none}
 
-  .v103-home{padding-bottom:24px}
+  .v103-home{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
   .v103-home .v103-mast{min-height:64px;padding:12px 18px}
   .v103-home .v103-hero{min-height:430px}
   .v103-home .v103-chapter{padding:26px 18px 30px}
@@ -31,10 +35,10 @@
   .v103-industry-head p{font-size:13px;line-height:1.45;max-width:34ch}
   .v103-industry-tape{grid-template-columns:repeat(2,1fr)}
   .v103-industry-tape>div{padding:12px 14px;min-height:66px}
-  .v103-industry-tabs{overflow-x:auto;scrollbar-width:none}
+  .v103-industry-tabs{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .v103-industry-tabs button{flex:0 0 auto;min-width:86px;padding:11px 13px}
   .v103-industry-filter{padding:10px 12px}
-  .v103-tier-strip{display:flex;overflow-x:auto;scrollbar-width:none;gap:4px;padding-bottom:4px}
+  .v103-tier-strip{display:flex;overflow-x:auto;scrollbar-width:none;gap:4px;padding-bottom:4px;-webkit-overflow-scrolling:touch}
   .v103-tier-strip button{flex:0 0 auto;min-width:64px}
   .v103-industry-roster{padding:0 12px 16px}
   .v103-industry-roster>header{padding:11px 10px}
@@ -59,4 +63,9 @@
   .v103-home .v103-scoreboard{grid-template-columns:1fr 1fr}
   .v103-home .v103-scoreboard button:last-child{grid-column:1/-1}
   .v103-industry-head h1{font-size:32px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html:focus-within{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
