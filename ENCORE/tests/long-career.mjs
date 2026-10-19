@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import {harness} from './harness.mjs';
-for(const scenario of ['inactive','releasing','legacy-sandbox']){
+const allScenarios=['inactive','releasing','legacy-sandbox'];
+const requested=process.env.ENCORE_LONG_SCENARIO;
+const scenarios=requested?[requested]:allScenarios;
+assert.ok(scenarios.every(x=>allScenarios.includes(x)),`Unknown long-career scenario: ${requested}`);
+for(const scenario of scenarios){
  const h=harness(scenario==='legacy-sandbox'?'/sandbox':'/',94812);await h.run('boot()');
  h.run(`render=()=>{};weekRecap=()=>{};s.started=true;console.error=(...args)=>{throw Error(args.join(' '))}`);
  if(scenario==='legacy-sandbox')h.run(`delete s.stateSchemaVersion;s=migrateSaveState(s)`);
@@ -17,4 +21,4 @@ for(const scenario of ['inactive','releasing','legacy-sandbox']){
   console.log(JSON.stringify({scenario,years:completed/52,...data}));
  }
 }
-console.log('PASS seeded 1/5/10/20-year inactive, releasing and migrated sandbox careers under the 4 MB save-growth budget.');
+console.log(`PASS seeded 1/5/10/20-year ${scenarios.join(', ')} career scenario${scenarios.length===1?'':'s'} under the 4 MB save-growth budget.`);
