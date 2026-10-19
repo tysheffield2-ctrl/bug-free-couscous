@@ -13,10 +13,11 @@ for(const id of destinations){
  assert.doesNotThrow(()=>h.run(`encoreOpenIconDestination('${id}')`),id+' opens and renders');
  if(id==='Settings'){assert.ok(h.elements.modal.open);h.run("$('modal').close()");continue}
  assert.ok(String(h.elements.app?.innerHTML||'').length>200,id+' produced a rendered game screen');
- if(id==='Catalog'){
-  assert.equal(h.run('tab'),'Career','Catalog route');
-  assert.equal(h.run('careerTab'),'Deals','Catalog ownership hub');
-  assert.equal(h.run('V109_dealsFocus'),'Catalog','Catalog intelligence focus');
+ if(id==='CatalogValuation'){
+  assert.equal(h.run('tab'),'Career','Catalog valuation route');
+  assert.equal(h.run('careerTab'),'CatalogValuation','Catalog has its own dedicated screen');
+  assert.match(String(h.elements.app?.innerHTML||''),/ESTIMATED CATALOG VALUE/);
+  assert.doesNotMatch(String(h.elements.app?.innerHTML||''),/Incoming label offers/i);
   continue
  }
  const expected=id==='Home'?'Home':id==='Create'?'Create':id==='Industry'?'Industry':'Career';
@@ -40,7 +41,8 @@ assert.match(fullDirectory,/encore-all-screens/);
 assert.match(fullDirectory,/data-destination="CatalogMarket"/,'secondary catalog investment screen remains reachable from More');
 assert.match(h.run("V103_menuResults('Stats')"),/data-destination="Stats"/);
 assert.match(h.run("V103_menuResults('Legal Affairs')"),/data-destination="LegalAffairs"/);
-for(const [label,id] of [['Studio','Create'],['Releases','Releases'],['Charts','Industry'],['PULSE','Social'],['Touring','Touring'],['Representation','Agency'],['Business HQ','BusinessHQ'],['Legal Affairs','LegalAffairs'],['Finance','Finances'],['Awards','Awards'],['Settings','Settings']]){
+assert.match(h.run("V103_menuResults('Catalog Valuation')"),/data-destination="CatalogValuation"/);
+for(const [label,id] of [['Studio','Create'],['Releases','Releases'],['Charts','Industry'],['PULSE','Social'],['Touring','Touring'],['Representation','Agency'],['Business HQ','BusinessHQ'],['Legal Affairs','LegalAffairs'],['Catalog Valuation','CatalogValuation'],['Finance','Finances'],['Awards','Awards'],['Settings','Settings']]){
  const html=h.run(`V103_menuResults(${JSON.stringify(label)})`);
  assert.equal((html.match(new RegExp('data-destination="'+id+'"','g'))||[]).length,1,label+' is not duplicated in More');
 }
@@ -58,4 +60,4 @@ for(const icon of ['Home','Studio','Charts','Pulse','Touring','Representation','
 const css=readFileSync(new URL('../src/icon-system.css',import.meta.url),'utf8');
 for(const token of ['--encore-bg:#071119','--encore-gold:#f1cf7a','--encore-blue:#e2bf68','--encore-sage:#caa45a','--encore-lavender:#f0d98f'])assert.ok(css.includes(token),'missing cohesive palette token '+token);
 assert.match(css,/\.encore-icon\{[^}]*fill:currentColor/,'icon CSS enforces currentColor paint');
-console.log('Gold icon system: all 13 destinations render, icons use iPhone-safe currentColor paint, Business HQ routes stay authoritative, bottom navigation renders, More has no primary duplicates, secondary screens remain reachable, and the cohesive palette passed.');
+console.log('Gold icon system: all 13 destinations render, Catalog Valuation has its own screen, icons use iPhone-safe currentColor paint, Business HQ routes stay authoritative, bottom navigation renders, More has no primary duplicates, secondary screens remain reachable, and the cohesive palette passed.');
