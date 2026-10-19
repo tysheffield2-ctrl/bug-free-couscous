@@ -25,7 +25,7 @@ const modules=['artwork','name-generator','core','charts-engine-bridge','career-
 const staticArt=[];
 function moduleSource(name){
  let source=readFileSync('src/'+name+'.js','utf8');
- if(['artwork','asset-photos'].includes(name))source=source.replace(/data:image\/(webp|png|jpeg);base64,([A-Za-z0-9+/=]+)/g,(_,type,data)=>{
+ if(['artwork','asset-photos','people-products'].includes(name))source=source.replace(/data:image\/(webp|png|jpeg);base64,([A-Za-z0-9+/=]+)/g,(_,type,data)=>{
   const bytes=Buffer.from(data,'base64'),file='/art/'+createHash('sha256').update(bytes).digest('hex').slice(0,16)+'.'+type;
   mkdirSync('public/art',{recursive:true});mkdirSync('dist/art',{recursive:true});writeFileSync('public'+file,bytes);writeFileSync('dist'+file,bytes);staticArt.push(file);return file;
  });
