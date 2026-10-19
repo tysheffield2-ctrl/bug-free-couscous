@@ -12,6 +12,11 @@ body .weekbar{background:rgba(8,17,24,.985)!important;border-top-color:var(--enc
 /* Icons intentionally paint with currentColor rather than a fragment-linked SVG
    gradient so iOS/WebKit cannot lose the glyph when dynamic screens are rebuilt. */
 .encore-icon{display:block;width:44px;height:44px;flex-shrink:0;color:#f1cf7a;fill:currentColor;stroke:none;filter:drop-shadow(0 2px 3px #0005)}
+/* iPhone/WebKit can fail to propagate an SVG-root fill into dynamically replaced
+   child primitives even while explicit stroke paint survives. Paint every fill-only
+   primitive directly so Home/Charts/More and the filled portions of mixed icons
+   cannot disappear after navigation or an innerHTML rebuild. */
+.encore-icon path:not([fill]):not([stroke]),.encore-icon rect:not([fill]):not([stroke]),.encore-icon circle:not([fill]):not([stroke]),.encore-icon ellipse:not([fill]):not([stroke]){fill:currentColor!important}
 .encore-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
 .encore-wordmark{display:inline-flex;align-items:center;font-weight:950;letter-spacing:-.06em;color:#fff7e5!important}
 .encore-wordmark i{display:inline-block;width:.82em;height:.82em;margin:0 .015em;border-radius:50%;background:radial-gradient(circle,#f5d77d 0 6%,#071119 7% 22%,transparent 23%),conic-gradient(from 20deg,#aa722a,#fff2b3,#d5a242,#ffe7a0,#aa722a);box-shadow:inset 0 0 0 1px #ffe1a177}
