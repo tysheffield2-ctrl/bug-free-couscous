@@ -12,8 +12,8 @@ for(let completed=0;completed<1040;completed++){
   h.run('validateBundle(saveBundle())');
   assert.equal(h.run('s.liveTour.played'),6);assert.equal(h.run('s.touring.archive.length'),Math.floor(completed/52));
   assert.equal(h.run('s.careerRecords.tours.reduce((n,t)=>n+t.tickets,0)'),h.run('s.touring.archive.reduce((n,t)=>n+t.route.reduce((a,r)=>a+r.report.tickets,0),0)+s.liveTour.tickets'));
-  assert.ok(h.run('JSON.stringify(saveBundle()).length<8000000'));
+  assert.ok(h.run('JSON.stringify(saveBundle()).length<4000000'),'20-year touring save exceeded 4 MB budget');
   console.log(JSON.stringify({tourYears:(completed+1)/52,shows:h.run('s.careerRecords.tours.length*6'),saveCharacters:h.run('JSON.stringify(saveBundle()).length')}));
  }
 }
-console.log('PASS 20 annual tours, weekly settlement, preserved show archives and save round trips through 20 years.');
+console.log('PASS 20 annual tours, weekly settlement, preserved show archives and save round trips through 20 years under the 4 MB save-growth budget.');

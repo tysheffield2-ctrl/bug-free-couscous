@@ -25,7 +25,7 @@ const modules=['artwork','name-generator','core','charts-engine-bridge','career-
 const staticArt=[];
 function moduleSource(name){
  let source=readFileSync('src/'+name+'.js','utf8');
- if(['artwork','asset-photos'].includes(name))source=source.replace(/data:image\/(webp|png|jpeg);base64,([A-Za-z0-9+/=]+)/g,(_,type,data)=>{
+ if(['artwork','asset-photos','people-products'].includes(name))source=source.replace(/data:image\/(webp|png|jpeg);base64,([A-Za-z0-9+/=]+)/g,(_,type,data)=>{
   const bytes=Buffer.from(data,'base64'),file='/art/'+createHash('sha256').update(bytes).digest('hex').slice(0,16)+'.'+type;
   mkdirSync('public/art',{recursive:true});mkdirSync('dist/art',{recursive:true});writeFileSync('public'+file,bytes);writeFileSync('dist'+file,bytes);staticArt.push(file);return file;
  });
@@ -33,9 +33,12 @@ function moduleSource(name){
 }
 let js='const ENCORE_RELEASE_NOTES='+JSON.stringify(releaseMeta)+';\n'+sharedEngines+'\n'+modules.map(moduleSource).join('\n')+'\nboot();\n';
 js=js.replace("const GAME_VERSION='0.7.1-beta.1'",'const GAME_VERSION='+JSON.stringify(gameVersion));
+mkdirSync('public',{recursive:true});
 writeFileSync('dist/game.js',js);
+writeFileSync('public/game.js',js);
 const weekWorker='(function(){\n'+readFileSync('engine/worker-host.js','utf8')+'\n'+js.replace(/boot\(\);\s*$/,'')+'\n'+readFileSync('engine/worker-entry.js','utf8')+'\n})();';
 writeFileSync('dist/week-engine.js',weekWorker);
+writeFileSync('public/week-engine.js',weekWorker);
 
 let html=readFileSync('dist/index.html','utf8');
 html=html.replace(/<style id="encore-presentation">[\s\S]*?<\/style>/,'');
@@ -52,11 +55,11 @@ let ui2Html=readFileSync('ui2/index.html','utf8');
 ui2Html=ui2Html.replace('/* __UI2_CSS__ */',()=>ui2Css).replace('/* __UI2_JS__ */',()=>ui2Js);
 writeFileSync('dist/ui2.html',ui2Html);
 
-let worker=readFileSync('server/worker.mjs','utf8').replaceAll('__STATIC_ART_ASSETS__',JSON.stringify([...new Set(staticArt)])).replace('// __ASSETS__',()=> 'const RELEASE='+JSON.stringify({version:gameVersion})+';\nconst HTML='+JSON.stringify(html)+';\nconst WEEK_WORKER='+JSON.stringify(weekWorker)+';\nconst SCRIPT='+JSON.stringify(js)+';\nconst UI2_HTML='+JSON.stringify(ui2Html)+';');
-const routeGate=/\s*\/\/ UI2 is ENCORE's primary web presentation\.[\s\S]*?const asset=ui2Paths\.includes\(url\.pathname\)\?UI2_HTML:url\.pathname==='\/game\.js'\?SCRIPT:legacyPaths\.includes\(url\.pathname\)\?HTML:null;/;
-const routedWorker=worker.replace(routeGate,`\n    // Safety gate: the fully interactive renderer stays on normal routes until UI2\n    // passes interaction parity for week advance, creation, stats and negotiations.\n    const ui2Paths=['/ui2','/ui2/','/preview-ui2','/preview-ui2/','/ui2/sandbox','/ui2/sandbox/','/preview-ui2/sandbox','/preview-ui2/sandbox/'];\n    const legacyPaths=['/','/index.html','/sandbox','/sandbox/','/legacy','/legacy/','/legacy/sandbox','/legacy/sandbox/','/offline','/offline/','/offline/sandbox','/offline/sandbox/'];\n    const asset=ui2Paths.includes(url.pathname)?UI2_HTML:url.pathname==='/game.js'?SCRIPT:legacyPaths.includes(url.pathname)?HTML:null;`);
+let worker=readFileSync('server/worker.mjs','utf8').replaceAll('__STATIC_ART_ASSETS__',JSON.stringify([...new Set(staticArt)])).replace('// __ASSETS__',()=> 'const RELEASE='+JSON.stringify({version:gameVersion})+';\nconst HTML='+JSON.stringify(html)+';\nconst UI2_HTML='+JSON.stringify(ui2Html)+';');
+const routeGate=/\s*\/\/ UI2 is ENCORE's primary web presentation\.[\s\S]*?const asset=ui2Paths\.includes\(url\.pathname\)\?UI2_HTML:legacyPaths\.includes\(url\.pathname\)\?HTML:null;/;
+const routedWorker=worker.replace(routeGate,`\n    // Safety gate: the fully interactive renderer stays on normal routes until UI2\n    // passes interaction parity for week advance, creation, stats and negotiations.\n    const ui2Paths=['/ui2','/ui2/','/preview-ui2','/preview-ui2/','/ui2/sandbox','/ui2/sandbox/','/preview-ui2/sandbox','/preview-ui2/sandbox/'];\n    const legacyPaths=['/','/index.html','/sandbox','/sandbox/','/legacy','/legacy/','/legacy/sandbox','/legacy/sandbox/','/offline','/offline/','/offline/sandbox','/offline/sandbox/'];\n    const asset=ui2Paths.includes(url.pathname)?UI2_HTML:legacyPaths.includes(url.pathname)?HTML:null;`);
 if(routedWorker===worker)throw new Error('Renderer route safety gate failed: refusing to publish a build with unverified UI2 as the default.');
 worker=routedWorker;
-worker=worker.replaceAll('__OFFLINE_VERSION__',createHash('sha256').update(html+js+ui2Html+worker).digest('hex').slice(0,12));
+worker=worker.replaceAll('__OFFLINE_VERSION__',createHash('sha256').update(html+js+weekWorker+ui2Html+worker).digest('hex').slice(0,12));
 mkdirSync('dist/server',{recursive:true});
 writeFileSync('dist/server/index.js',worker);

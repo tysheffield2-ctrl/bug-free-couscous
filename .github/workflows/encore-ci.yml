@@ -18,11 +18,11 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
       - name: Run critical cohesion / industry / release / UI tests
         run: npm run build && node tests/v118-cohesion-core.mjs && node tests/v119-living-industry.mjs && node tests/v120-release-strategy.mjs && node tests/charts-engine.mjs && node tests/week-transaction.mjs && node tests/finance-engine.mjs && node tests/icon-system.mjs
 
-  test:
+  regression:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -33,6 +33,46 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
       - name: Run ENCORE regression suite
-        run: npm test
+        run: npm run build && npm run test:regression
+
+  long-career:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: [inactive, releasing, legacy-sandbox]
+    defaults:
+      run:
+        working-directory: ENCORE
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build ENCORE
+        run: npm run build
+      - name: Run 20-year career scenario
+        env:
+          ENCORE_LONG_SCENARIO: ${{ matrix.scenario }}
+        run: node tests/long-career.mjs
+
+  touring-career:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ENCORE
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build ENCORE
+        run: npm run build
+      - name: Run 20-year touring scenario
+        run: node tests/touring-career.mjs

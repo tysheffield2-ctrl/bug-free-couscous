@@ -3,6 +3,9 @@ import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import handler from '../dist/server/index.js';
 const version=JSON.parse(readFileSync('package.json')).version;
+const gameBytes=readFileSync('dist/game.js').length,workerBytes=readFileSync('dist/server/index.js').length;
+assert.ok(gameBytes<1_300_000,`game.js exceeded 1.3 MB budget: ${gameBytes}`);
+assert.ok(workerBytes<1_500_000,`Worker exceeded 1.5 MB budget: ${workerBytes}`);
 const interactiveRoutes=['/','/sandbox','/legacy','/legacy/sandbox','/offline','/offline/sandbox'];
 const ui2Routes=['/ui2','/preview-ui2','/ui2/sandbox','/preview-ui2/sandbox'];
 for(const path of [...interactiveRoutes,...ui2Routes]){
@@ -22,6 +25,12 @@ for(const path of [...interactiveRoutes,...ui2Routes]){
   assert.equal(body.includes('ui2-bottomnav'),false,'interactive routes must not silently switch to the incomplete UI2 renderer');
  }
 }
+const delegated=[];
+const assetEnv={ASSETS:{fetch:async req=>{delegated.push(new URL(req.url).pathname);return new Response('static-js',{status:200,headers:{'Content-Type':'text/javascript; charset=utf-8'}})}}};
+for(const path of ['/game.js','/week-engine.js','/sandbox/week-engine.js']){
+ const r=await handler.fetch(new Request('https://encore.test'+path),assetEnv);assert.equal(r.status,200);assert.equal(await r.text(),'static-js');
+}
+assert.deepEqual(delegated,['/game.js','/week-engine.js','/week-engine.js']);
 const identity=await handler.fetch(new Request('https://encore.test/api/version'),{});assert.deepEqual(await identity.json(),{version});assert.equal(identity.headers.get('Cache-Control'),'no-store');
 const unavailable=await handler.fetch(new Request('https://encore.test/api/save'),{});assert.equal(unavailable.status,503);
 const established='a'.repeat(64),stored={schemaVersion:1,state:{week:12,sandbox:false,songs:[],world:[]}};
@@ -31,4 +40,5 @@ const denied=await handler.fetch(new Request('https://encore.test/api/save',{met
 execFileSync(process.execPath,['build-pages.mjs']);assert.equal(readFileSync('dist/pages/_worker.js','utf8'),readFileSync('dist/server/index.js','utf8'));
 assert.deepEqual(JSON.parse(readFileSync('dist/pages/_routes.json')),{version:1,include:['/*'],exclude:['/art/*','/portraits/*']});
 assert.ok(readFileSync('dist/pages/portraits/core-atlas.webp').length>0);
-console.log('PASS fully interactive ENCORE remains the normal/sandbox default, UI2 stays available on explicit preview routes, save continuity is preserved, origin protection remains active, and Pages advanced-mode packaging matches production.');
+assert.ok(readFileSync('dist/pages/game.js').length===gameBytes);assert.ok(readFileSync('dist/pages/week-engine.js').length>gameBytes);
+console.log(`PASS fully interactive ENCORE remains the normal/sandbox default, UI2 stays available on explicit preview routes, save continuity is preserved, runtime JavaScript delegates through the static asset binding, origin protection remains active, Pages advanced-mode packaging matches production, and bundle budgets hold at ${gameBytes} B game / ${workerBytes} B worker.`);
