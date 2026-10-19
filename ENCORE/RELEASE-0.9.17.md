@@ -1,5 +1,9 @@
-# ENCORE 0.9.17-beta.5 — Release Strategy / Studio Flow
+# ENCORE 0.9.17-beta.6 — Catalog / Request UX
 
+- Catalog Valuation is now a dedicated first-class screen with its own gold menu icon. It only shows the player’s catalog estimate, economic interest, value drivers, valuation history and ownership/buyout options; label offers no longer share that screen.
+- Business HQ catalog links now hand off to the dedicated Catalog Valuation screen, while Catalog Market remains separate for buying and holding other artists’ catalog interests.
+- Artist-originated requests can now be reviewed where they appear: inbound distribution/publishing/marketing/catalog-service briefings, creative requests and tour invitations open full decision details inside the popup instead of sending the player hunting through another screen.
+- Contract documents now use ENCORE’s black-and-gold visual language instead of bright white paper, including terms, counsel notes, signature lines and legal metadata.
 - Recording and mixing costs now scale gradually with the artist’s revenue run-rate: small careers keep low-budget rooms, while higher-revenue artists naturally use stronger professional rooms and engineers without the prices becoming punitive.
 - Higher Studio brackets provide only a modest craft bonus, so spending more reflects better production resources without turning money into a guaranteed hit.
 - Song creation now moves directly from writing to recording to mixing; the extra recording/mix session-choice menus have been removed while the creative brief, production budget, skills, features and song identity systems remain intact.
