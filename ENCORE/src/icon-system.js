@@ -8,6 +8,7 @@ const ENCORE_ICON_SHAPES={
  Touring:'<path d="M2 10 13 4l7 1q2 0 2 3v11H2z"/><path d="m4 10 3-1.6V13H4zm4-2 3-1.5V13H8zm5-2 6 1v7h-6z" fill="#071119"/><circle cx="6" cy="19" r="2.2" fill="#071119"/><circle cx="18" cy="19" r="2.2" fill="#071119"/><circle cx="6" cy="19" r="1.2"/><circle cx="18" cy="19" r="1.2"/>',
  Representation:'<circle cx="12" cy="6" r="3.2"/><circle cx="4" cy="9" r="2.4"/><circle cx="20" cy="9" r="2.4"/><path d="M7 21v-5a5 5 0 0 1 10 0v5zM1 20v-5a3 3 0 0 1 5-2v7zm17 0v-7a3 3 0 0 1 5 2v5z"/>',
  Business:'<path d="M2 22V12l4-3v13zm6 0V6l4-3 3 2v17zm9 0V9l5 3v10z"/><path d="M12 1v4M19 5v5" stroke="currentColor"/><path d="M10 8h2v3h-2zm0 5h2v3h-2zm0 5h2v4h-2zM3 14h1v3H3z" fill="#071119"/>',
+ Label:'<rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="9" cy="12" r="4" fill="#071119"/><circle cx="9" cy="12" r="1.35"/><path d="M15 8h4M15 11h4M15 14h3M15 17h4" fill="none" stroke="#071119" stroke-width="1.2" stroke-linecap="round"/>',
  Legal:'<path d="M5 2h11l4 4v16H5z"/><path d="M16 2v5h4" fill="#b98636"/><path d="M8 7h6M8 10h9M8 13h7M8 19q3-7 2 0 3-5 3-1l4-1" fill="none" stroke="#071119" stroke-width="1.3" stroke-linecap="round"/>',
  Catalog:'<path d="M8 3h12q2 0 2 2v12h-2V6H8zM5 7h12q2 0 2 2v11h-2V10H5zM2 11h12q2 0 2 2v9H2z"/>',
  Finance:'<path d="M12 6v12c0 5 10 5 10 0V6zM2 14v5c0 4 9 4 9 0v-5z"/><ellipse cx="17" cy="5" rx="5" ry="3"/><ellipse cx="6.5" cy="13" rx="4.5" ry="2.5"/><path d="M12 9q5 4 10 0m-10 4q5 4 10 0m-10 4q5 4 10 0M2 17q4.5 3 9 0" fill="none" stroke="#071119" stroke-width=".8"/>',
@@ -28,11 +29,11 @@ const ENCORE_ICON_DESTINATIONS=[
  ['Releases','Releases','Drop music','Releases'],['Charts','Industry','See the impact','Charts'],
  ['PULSE','Social','Fans & culture','Pulse'],['Touring','Touring','Hit the road','Touring'],
  ['Representation','Agency','Your team','Representation'],['Business HQ','BusinessHQ','Expand empire','Business'],
- ['Legal Affairs','LegalAffairs','Protect yourself','Legal'],['Catalog','Catalog','Your legacy','Catalog'],
+ ['Label HQ','Labels','Run your label','Label'],['Legal Affairs','LegalAffairs','Protect yourself','Legal'],['Catalog','Catalog','Your legacy','Catalog'],
  ['Finance','Finances','Manage wealth','Finance'],['Awards','Awards','Earn recognition','Awards'],
  ['Settings','Settings','Customize game','Settings']
 ];
-const ENCORE_ICON_COVERED_ROUTE_IDS=new Set(['Create','Releases','Industry','Social','Touring','Agency','BusinessHQ','LegalAffairs','Finances','Awards','Settings']);
+const ENCORE_ICON_COVERED_ROUTE_IDS=new Set(['Create','Releases','Industry','Social','Touring','Agency','BusinessHQ','Labels','LegalAffairs','Finances','Awards','Settings']);
 const ENCORE_ICON_BUSINESS_ROUTE_IDS=new Set(['Agency','BusinessHQ','LegalAffairs']);
 /* Catalog means the player's music ownership/rights hub. Catalog Market remains
    a separate investment screen and is deliberately preserved in More. */
