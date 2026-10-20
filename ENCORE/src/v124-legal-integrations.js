@@ -1,24 +1,9 @@
-/* ENCORE 0.9.20 — Legal Affairs 2.0 integration pass.
-   Keep exposure accounting attached to authoritative game systems that live
-   outside the physical-asset ledger, and make the system directly testable in Sandbox. */
-const V124_ctxCore=V124_ctx;
-V124_ctx=function(){
- const ctx=V124_ctxCore();
- const sportsHoldings=Array.isArray(s.v081?.sports?.holdings)?s.v081.sports.holdings.length:0;
- ctx.sports+=sportsHoldings;
- return ctx
-};
-
-function V124_sandboxMatter(type=''){
- if(!(SANDBOX||s.sandbox))return false;
- if(V118_openCases().length>=5){toast?.('Resolve an open legal matter before generating another test case.');return false}
- const c=V124_generateMatter(type||null,true);if(!c){toast?.('Build more career exposure before generating a risk-weighted matter.');return false}
- queueSave?.();render();V118_openDocketCase(c.id);return true
-}
-const V124_legalAffairsPageCore=V118_legalAffairsPage;
-V118_legalAffairsPage=function(){
- const html=V124_legalAffairsPageCore();if(!(SANDBOX||s.sandbox))return html;
- const options=Object.entries(V124_LEGAL_TYPES).map(([id,x])=>`<option value="${id}">${esc(x.name)} · ${esc(x.category)}</option>`).join('');
- const lab=`<section class="card v124-sandbox-legal"><span class="eyebrow">SANDBOX · LEGAL PLAYTEST</span><h2>Put the legal system on the table.</h2><p>Generate a simulated filing immediately so you can test counsel, mediation, settlement, defense, deadlines and docket history without waiting for the weekly risk roll.</p><label>Matter to generate<select id="v124-sandbox-type"><option value="">Risk-weighted random matter</option>${options}</select></label><button class="primary" onclick="V124_sandboxMatter($('v124-sandbox-type').value)">Generate test legal matter</button><p class="fine">Sandbox-only. This never creates a case in your normal career.</p></section>`;
- return html.replace('<section class="card"><h2>Active docket',lab+'<section class="card"><h2>Active docket')
-};
+const V124_ctxCore=V124_ctx;V124_ctx=()=>{const c=V124_ctxCore();c.sports+=(s.v081?.sports?.holdings||[]).length;return c};
+function V124_sandboxMatter(t){if(!(SANDBOX||s.sandbox))return false;const c=V124_generateMatter(t||null,true);if(!c)return false;queueSave?.();V118_openDocketCase(c.id);return true}
+const V124_lp=V118_legalAffairsPage;V118_legalAffairsPage=()=>{const h=V124_lp();if(!(SANDBOX||s.sandbox))return h;const o=Object.entries(V124_LEGAL_TYPES).map(([i,x])=>`<option value="${i}">${x.name}</option>`).join(''),l=`<section class=v124-sandbox-legal><b>SANDBOX · LEGAL PLAYTEST</b><select id="v124-sandbox-type"><option value="">Any</option>${o}</select><button onclick="V124_sandboxMatter($('v124-sandbox-type').value)">Generate</button></section>`;return h.replace('<section class="card"><h2>Active docket',l+'<section class="card"><h2>Active docket')};
+const V124_fc=V118_fileCase;V118_fileCase=(x={})=>{const c=V124_fc(x);if(c&&x.generatedBy==='legal-risk'&&s.achievements?.briefings)s.achievements.briefings=s.achievements.briefings.filter(b=>b.id!=='legal:'+c.id);return c};
+function V124_brief(i){$('modal')?.close?.();if(i.startsWith('legal')){i=i.replace(/^legal(?:-risk)?:/,'');careerTab='LegalAffairs';go('Career');setTimeout(()=>V118_openDocketCase(i),0)}else{careerTab=i.startsWith('roster-request:')?'Labels':'Team';go('Career');if(i.startsWith('roster-request:'))setTimeout(()=>V118_reviewRosterRequest(i.slice(15)),0)}}
+const V124_ob=offerBriefingButton,V124_bt=(i,t)=>`<button class="memo-primary" onclick="V124_brief('${i}')">${t} →</button>`;offerBriefingButton=b=>{const i=b?.id||'',t=(b?.title||'').toLowerCase();return i.startsWith('legal')?V124_bt(i,'Review legal case'):i.startsWith('roster-request:')?V124_bt(i,'Review artist request'):t.includes('team needs attention')?V124_bt('team','Review Team'):V124_ob(b)};
+const V124_L=['Labels','League'];for(let i=V096_BUSINESS_AREAS.length;i--;)if(V124_L.includes(V096_BUSINESS_AREAS[i].id))V096_BUSINESS_AREAS.splice(i,1);for(const x of V124_L)V096_BUSINESS_IDS.delete(x);for(const g of V109_HQ_GROUPS)g.areas=g.areas.filter(x=>!V124_L.includes(x));
+const V124_pi=V109_businessPriorityItems;V109_businessPriorityItems=()=>V124_pi().filter(x=>x.kind!=='Label offer');for(let i=V080_destinations.length;i--;)if(V124_L.includes(V080_destinations[i][2]))V080_destinations.splice(i,1);V080_destinations.push(['Label HQ','Label','Labels','Roster',4],['Label League','Label','League','League',4]);
+const V124_bp=V109_businessPage;V109_businessPage=()=>V124_bp().replace(/<div><small>ROSTER<\/small><strong>.*?<\/strong><\/div>/,'').replace(/<h1>.*?<\/h1>/,`<h1>${esc(s.name)} Enterprises</h1>`);V092_businessPage=V109_businessPage;

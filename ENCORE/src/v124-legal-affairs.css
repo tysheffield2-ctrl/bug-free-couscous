@@ -9,15 +9,66 @@
 .v124-risk-row strong,.v124-risk-row small,.v124-risk-row span{display:block}
 .v124-risk-row small{margin-top:3px;color:#aebbd0;font-size:11px;letter-spacing:.04em}
 .v124-risk-row span{color:#d5dbe5;font-size:12px;line-height:1.45}
-.v124-cause{margin:16px 0;padding:14px 16px;border-left:3px solid #f4d27f;background:#f4d27f0d}
+.v124-cause{margin:16px 0;padding:14px 16px;border-left:3px solid #f4d27f;background:#f4d27f12}
 .v124-cause small{display:block;color:#f4d27f;font-size:10px;letter-spacing:.14em;font-weight:800}
-.v124-cause p{margin:6px 0 8px}
-.v124-cause strong{display:block;font-size:12px;line-height:1.45;color:#dce4ef}
+.v124-cause p{margin:6px 0 8px;color:#f4f6fa!important}
+.v124-cause strong{display:block;font-size:12px;line-height:1.45;color:#f0dfb7!important}
 .v124-docket-paper .v118-request-actions{display:flex;flex-wrap:wrap;gap:8px}
 .v124-docket-paper .v118-request-actions button{min-height:44px;flex:1 1 210px}
+
+/* Legal documents stay dark in every theme. The old cream-paper treatment was
+   visually attractive on desktop but low-contrast on iPhone once global text
+   overrides were applied. This keeps the legal-folder feel without sacrificing legibility. */
+.v118-docket-paper,.v124-docket-paper,[data-theme="light"] .v118-docket-paper,[data-theme="light"] .v124-docket-paper{background:linear-gradient(180deg,#111821 0%,#0b1118 100%)!important;color:#f8f4e9!important;border:1px solid #7a6742!important;box-shadow:0 24px 80px rgba(0,0,0,.5)!important}
+.v118-docket-paper:before,.v124-docket-paper:before{background:repeating-linear-gradient(0deg,rgba(244,210,127,.018) 0,rgba(244,210,127,.018) 1px,transparent 1px,transparent 4px)!important}
+.v118-docket-paper header,.v124-docket-paper header{border-color:#8e7546!important;color:#fff9ea!important}
+.v118-docket-paper h2,.v124-docket-paper h2,.v118-docket-paper h3,.v124-docket-paper h3{color:#fffaf0!important}
+.v118-docket-paper .profile-facts,.v124-docket-paper .profile-facts{border-color:#6b5b3b!important}
+.v118-docket-paper .profile-facts>div,.v124-docket-paper .profile-facts>div{border-color:#ffffff18!important}
+.v118-docket-paper .profile-facts dt,.v124-docket-paper .profile-facts dt{color:#d8c9a8!important;font-weight:800}
+.v118-docket-paper .profile-facts dd,.v124-docket-paper .profile-facts dd{color:#ffffff!important;font-weight:600}
+.v118-docket-paper .fine,.v124-docket-paper .fine{color:#c9d1dc!important}
+.v118-docket-stamp{border-color:#d49b79!important;color:#f0b58f!important;background:#d49b7910}
+.v118-case-history{border-color:#6b5b3b!important}
+.v118-case-history p{color:#e7ebf1!important}
+.v118-case-history strong{color:#f4d27f!important}
+.v118-docket-paper .v118-request-actions button,.v124-docket-paper .v118-request-actions button{border-color:#806d48!important}
+.v118-case-result{border-color:#806d48!important;color:#f8f4e9!important}
+.v124-sandbox-legal{background:linear-gradient(180deg,#141c27,#0d141d)!important;border-color:#6f5b37!important;color:#eef3f8!important}
+.v124-sandbox-legal label{color:#f0dfb7!important}
+.v124-sandbox-legal select{background:#0a1017!important;color:#fff!important;border-color:#655738!important}
+.v124-briefing-action{margin-bottom:8px}
+
+/* Dedicated Label HQ — intentionally not styled like Business HQ. */
+.v124-label-hq{display:grid;gap:16px}
+.v124-label-hero{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(230px,.75fr);gap:18px;padding:22px;border:1px solid #6a4d61;background:radial-gradient(circle at top right,#5d2f4b35,transparent 36%),linear-gradient(145deg,#17111b,#0d1017);box-shadow:0 20px 60px #0006}
+.v124-label-hero h1{margin:.3rem 0 .55rem;color:#fff7fb;font-family:Georgia,serif;font-size:clamp(2rem,6vw,3.6rem);line-height:1}
+.v124-label-hero p{max-width:62ch;color:#d9d2dc;line-height:1.55}
+.v124-label-status{display:flex;flex-direction:column;justify-content:flex-end;gap:7px;padding:17px;border:1px solid #ffffff18;background:#ffffff08}
+.v124-label-status small,.v124-label-lanes small{color:#d7a8c5;font-size:.68rem;letter-spacing:.13em;font-weight:800}
+.v124-label-status strong{color:#fff;font-size:1.15rem}
+.v124-label-status span{color:#c9c3cd;font-size:.84rem;line-height:1.4}
+.v124-label-lanes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.v124-label-lanes>button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:end;text-align:left;padding:18px;border:1px solid #563d4e;background:linear-gradient(145deg,#17121a,#10131a);color:#fff;min-height:145px}
+.v124-label-lanes>button small,.v124-label-lanes>button strong,.v124-label-lanes>button span{grid-column:1}
+.v124-label-lanes>button strong{font-size:1.15rem;color:#fff7fb}
+.v124-label-lanes>button span{color:#cfc7d1;line-height:1.45}
+.v124-label-lanes>button b{grid-column:2;grid-row:1/4;align-self:center;color:#f4d27f;white-space:nowrap}
+.v124-label-lanes>button.attention{grid-column:1/-1;border-color:#8a6c3d;background:linear-gradient(145deg,#231b12,#141419)}
+.v124-label-nav{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;margin-bottom:14px;padding:12px 14px;border:1px solid #5e4355;background:linear-gradient(90deg,#17121a,#10131a)}
+.v124-label-nav>button,.v124-label-nav nav button{min-height:40px;border:1px solid #ffffff18;background:#ffffff08;color:#f4edf2;padding:9px 12px}
+.v124-label-nav>div{display:grid;gap:2px}.v124-label-nav>div small{color:#d7a8c5;font-size:.66rem;letter-spacing:.12em}.v124-label-nav>div strong{color:#fff}
+.v124-label-nav nav{display:flex;gap:7px}.v124-label-nav nav button.selected{border-color:#d7a8c5;color:#fff;background:#6b3a5838}
+.section-identity{letter-spacing:.09em}
+
 @media(max-width:700px){
  .v124-risk-head>strong{font-size:28px}
  .v124-risk-row{grid-template-columns:1fr;gap:7px}
  .v124-docket-paper .v118-request-actions{display:grid;grid-template-columns:1fr}
  .v124-docket-paper .v118-request-actions button{width:100%}
+ .v124-label-hero{grid-template-columns:1fr}
+ .v124-label-lanes{grid-template-columns:1fr}
+ .v124-label-lanes>button.attention{grid-column:auto}
+ .v124-label-nav{grid-template-columns:1fr;align-items:stretch}
+ .v124-label-nav nav{display:grid;grid-template-columns:1fr 1fr}
 }
