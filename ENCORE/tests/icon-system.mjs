@@ -8,7 +8,7 @@ assert.match(h.run('home()'),/encore-wordmark/);
 assert.equal((h.run('navigationBar()').match(/<button /g)||[]).length,5);
 assert.match(h.run("tab='Home';navigationBar()"),/nav-home[^]*aria-current="page"/);
 const destinations=h.run('ENCORE_ICON_DESTINATIONS.map(x=>x[1])');
-assert.equal(destinations.length,13);
+assert.equal(destinations.length,14);
 for(const id of destinations){
  assert.doesNotThrow(()=>h.run(`encoreOpenIconDestination('${id}')`),id+' opens and renders');
  if(id==='Settings'){assert.ok(h.elements.modal.open);h.run("$('modal').close()");continue}
@@ -41,8 +41,9 @@ assert.match(fullDirectory,/encore-all-screens/);
 assert.match(fullDirectory,/data-destination="CatalogMarket"/,'secondary catalog investment screen remains reachable from More');
 assert.match(h.run("V103_menuResults('Stats')"),/data-destination="Stats"/);
 assert.match(h.run("V103_menuResults('Legal Affairs')"),/data-destination="LegalAffairs"/);
+assert.match(h.run("V103_menuResults('Label HQ')"),/data-destination="Labels"/);
 assert.match(h.run("V103_menuResults('Catalog Valuation')"),/data-destination="CatalogValuation"/);
-for(const [label,id] of [['Studio','Create'],['Releases','Releases'],['Charts','Industry'],['PULSE','Social'],['Touring','Touring'],['Representation','Agency'],['Business HQ','BusinessHQ'],['Legal Affairs','LegalAffairs'],['Catalog Valuation','CatalogValuation'],['Finance','Finances'],['Awards','Awards'],['Settings','Settings']]){
+for(const [label,id] of [['Studio','Create'],['Releases','Releases'],['Charts','Industry'],['PULSE','Social'],['Touring','Touring'],['Representation','Agency'],['Business HQ','BusinessHQ'],['Label HQ','Labels'],['Legal Affairs','LegalAffairs'],['Catalog Valuation','CatalogValuation'],['Finance','Finances'],['Awards','Awards'],['Settings','Settings']]){
  const html=h.run(`V103_menuResults(${JSON.stringify(label)})`);
  assert.equal((html.match(new RegExp('data-destination="'+id+'"','g'))||[]).length,1,label+' is not duplicated in More');
 }
@@ -50,7 +51,7 @@ assert.match(h.run("V103_menuResults('not-a-screen-xyz')"),/No matching destinat
 /* Visibility regression: icon glyphs must use direct currentColor paint, not
    fragment-linked url(#gradient) references that may disappear in iOS/WebKit
    after dynamic innerHTML replacement. */
-for(const icon of ['Home','Studio','Charts','Pulse','Touring','Representation','Business','Legal','Catalog','Finance','Awards','Settings','More']){
+for(const icon of ['Home','Studio','Charts','Pulse','Touring','Representation','Business','Label','Legal','Catalog','Finance','Awards','Settings','More']){
  const svg=h.run(`encoreIcon('${icon}')`);
  assert.match(svg,/class="encore-icon"/);
  assert.match(svg,/fill="currentColor"/);
@@ -60,4 +61,4 @@ for(const icon of ['Home','Studio','Charts','Pulse','Touring','Representation','
 const css=readFileSync(new URL('../src/icon-system.css',import.meta.url),'utf8');
 for(const token of ['--encore-bg:#071119','--encore-gold:#f1cf7a','--encore-blue:#e2bf68','--encore-sage:#caa45a','--encore-lavender:#f0d98f'])assert.ok(css.includes(token),'missing cohesive palette token '+token);
 assert.match(css,/\.encore-icon\{[^}]*fill:currentColor/,'icon CSS enforces currentColor paint');
-console.log('Gold icon system: all 13 destinations render, Catalog Valuation has its own screen, icons use iPhone-safe currentColor paint, Business HQ routes stay authoritative, bottom navigation renders, More has no primary duplicates, secondary screens remain reachable, and the cohesive palette passed.');
+console.log('Gold icon system: all 14 destinations including Label HQ render, Catalog Valuation has its own screen, icons use iPhone-safe currentColor paint, Business HQ routes stay authoritative, bottom navigation renders, More has no primary duplicates, secondary screens remain reachable, and the cohesive palette passed.');
