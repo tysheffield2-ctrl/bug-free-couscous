@@ -8,7 +8,8 @@ h.run(`
  s.songs=Array.from({length:12},(_,i)=>({id:i,title:'Record '+i,released:Math.max(1,s.week-i),features:i%3===0?[1,2]:[]}));
  migrateEmpire();s.empire.merch=[{id:1,item:'tee',name:'Tour tee',stock:100,sold:12000,price:35},{id:2,item:'hoodie',name:'Hoodie',stock:40,sold:4200,price:80}];
  s.empire.media=[{id:1,name:'Brand campaign',used:true,expires:s.week+2},{id:2,name:'Sync',used:true,expires:s.week+2}];
- s.empire.assets=[{id:1,kind:'Property',name:'Creative HQ',item:'creative-hq',value:8000000},{id:2,kind:'Sports',name:'Austin Outlaws stake',item:'sports-team',value:100000000}];
+ s.empire.assets=[{id:1,kind:'Property',name:'Creative HQ',item:'creative-hq',value:8000000}];
+ migrateV083();s.v081.sports.holdings=[{id:9001,team:0,share:.01,basis:18500000,payouts:0,history:[]}];
  migrateSocial();s.social.feed=Array.from({length:12},(_,i)=>({artist:0,week:s.week-i,text:'Post '+i}));
  migrateTouring();s.touring.archive=[{route:Array.from({length:8},(_,i)=>({status:'played',report:{incident:i===0}}))}];
  s.labelBusiness.company={name:'Encore Group',contracts:[{artist:0,started:s.week-10,ends:s.week+30,advance:250000,share:.5,type:'record',excludedIds:[]},{artist:1,started:s.week-8,ends:s.week+24,advance:100000,share:.4,type:'record',excludedIds:[]}]};
@@ -17,7 +18,7 @@ h.run(`
 
 assert.equal(Object.keys(h.run('V124_LEGAL_TYPES')).length,15,'Legal Affairs 2.0 should ship fifteen distinct matter families');
 const ctx=h.run('V124_ctx()');
-assert.ok(ctx.songs>=12&&ctx.played>=8&&ctx.merchSold>=16000&&ctx.properties>=1&&ctx.sports>=1);
+assert.ok(ctx.songs>=12&&ctx.played>=8&&ctx.merchSold>=16000&&ctx.properties>=1&&ctx.sports>=1,'authoritative sports holdings and mature-career activity should enter legal exposure');
 const scores=h.run('V124_scores()');
 for(const type of ['copyright','credit','producer','venue','injury','merch','sponsor','trademark','defamation','property','label','tax','sports'])assert.ok(scores[type]>0,`${type} should be an active exposure in the mature test career`);
 
@@ -49,12 +50,15 @@ assert.ok(page.includes('Copyright / sample dispute'));
 assert.ok(page.includes('General Counsel')||page.includes(h.run('V123_execState().team.legal.name')));
 
 const src=fs.readFileSync(new URL('../src/v124-legal-affairs.js',import.meta.url),'utf8');
+const integrations=fs.readFileSync(new URL('../src/v124-legal-integrations.js',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v124-legal-affairs.css',import.meta.url),'utf8');
 const build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
 assert.ok(src.includes('V124_legalRiskWeek'));
 assert.ok(src.includes('V124_generateMatter'));
 assert.ok(src.includes('V124_assignGeneralCounsel'));
 assert.ok(src.includes('V124_mediateCase'));
+assert.ok(integrations.includes('s.v081?.sports?.holdings'));
 assert.ok(css.includes('.v124-risk-card'));
 assert.ok(build.includes("'v124-legal-affairs'"));
-console.log('PASS Legal Affairs 2.0: fifteen cause-based legal matter families, career-scaled filing risk, Sandbox acceleration, General Counsel prevention/assignment, outside counsel, mediation, permanent docket metadata and risk-monitor UI are wired into the weekly career simulation.');
+assert.ok(build.includes("'v124-legal-integrations'"));
+console.log('PASS Legal Affairs 2.0: fifteen cause-based legal matter families, career-scaled filing risk, Sandbox acceleration, General Counsel prevention/assignment, real sports-ownership exposure, outside counsel, mediation, permanent docket metadata and risk-monitor UI are wired into the weekly career simulation.');
