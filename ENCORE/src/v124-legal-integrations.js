@@ -1,6 +1,7 @@
-/* ENCORE 0.9.20 — Legal Affairs 2.0 integration pass.
+/* ENCORE 0.9.20 — Legal Affairs 2.0 integration + action-routing pass.
    Keep exposure accounting attached to authoritative game systems that live
-   outside the physical-asset ledger, and make the system directly testable in Sandbox. */
+   outside the physical-asset ledger, make legal playtesting immediate in Sandbox,
+   and keep label operations separate from the general Business HQ. */
 const V124_ctxCore=V124_ctx;
 V124_ctx=function(){
  const ctx=V124_ctxCore();
@@ -22,3 +23,101 @@ V118_legalAffairsPage=function(){
  const lab=`<section class="card v124-sandbox-legal"><span class="eyebrow">SANDBOX · LEGAL PLAYTEST</span><h2>Put the legal system on the table.</h2><p>Generate a simulated filing immediately so you can test counsel, mediation, settlement, defense, deadlines and docket history without waiting for the weekly risk roll.</p><label>Matter to generate<select id="v124-sandbox-type"><option value="">Risk-weighted random matter</option>${options}</select></label><button class="primary" onclick="V124_sandboxMatter($('v124-sandbox-type').value)">Generate test legal matter</button><p class="fine">Sandbox-only. This never creates a case in your normal career.</p></section>`;
  return html.replace('<section class="card"><h2>Active docket',lab+'<section class="card"><h2>Active docket')
 };
+
+/* Cause-based legal filings already create a detailed risk briefing after V118_fileCase.
+   Remove the older generic duplicate so one lawsuit produces one player-facing alert. */
+const V124_fileCaseIntegrated=V118_fileCase;
+V118_fileCase=function(spec={}){
+ const c=V124_fileCaseIntegrated(spec);
+ if(c&&spec.generatedBy==='legal-risk'&&Array.isArray(s.achievements?.briefings)){
+  s.achievements.briefings=s.achievements.briefings.filter(b=>b.id!=='legal:'+c.id)
+ }
+ return c
+};
+
+function V124_caseIdFromBriefing(id=''){return String(id).replace(/^legal(?:-risk)?:/,'')}
+function V124_openLegalBriefing(id){
+ const caseId=V124_caseIdFromBriefing(id),c=V118_legalCases().find(x=>x.id===caseId);
+ $('modal')?.close?.();careerTab='LegalAffairs';go('Career');
+ if(c)setTimeout(()=>V118_openDocketCase(caseId),0)
+}
+function V124_openRosterBriefing(id){
+ const requestId=String(id).replace(/^roster-request:/,'');
+ $('modal')?.close?.();careerTab='Labels';go('Career');
+ setTimeout(()=>V118_reviewRosterRequest?.(requestId),0)
+}
+function V124_openTeamBriefing(){
+ $('modal')?.close?.();careerTab='Team';go('Career')
+}
+
+/* Briefings that tell the player to do something now take them directly to the
+   decision surface. Pure world/immersion stories (for example breakout shocks)
+   deliberately remain read-only and keep their narrative feel. */
+const V124_offerBriefingButtonCore=offerBriefingButton;
+offerBriefingButton=function(b){
+ const id=String(b?.id||''),text=`${b?.title||''} ${b?.body||''} ${b?.detail||''}`.toLowerCase();
+ if(/^legal(?:-risk)?:/.test(id))return `<button class="memo-primary v124-briefing-action" onclick="V124_openLegalBriefing('${esc(id)}')">Review legal case →</button>`;
+ if(id.startsWith('roster-request:'))return `<button class="memo-primary v124-briefing-action" onclick="V124_openRosterBriefing('${esc(id)}')">Review artist request →</button>`;
+ if(text.includes('review this hire in team')||text.includes('team needs attention'))return `<button class="memo-primary v124-briefing-action" onclick="V124_openTeamBriefing()">Review Team →</button>`;
+ return V124_offerBriefingButtonCore(b)
+};
+
+/* Old saves can contain both the generic filing memo and the detailed risk memo.
+   Opening either marks its sibling read so the same lawsuit never interrupts twice. */
+const V124_showBriefingCore=showBriefing;
+showBriefing=function(id){
+ const key=String(id||'');
+ if(/^legal(?:-risk)?:/.test(key)&&Array.isArray(s.achievements?.briefings)){
+  const caseId=V124_caseIdFromBriefing(key);
+  for(const b of s.achievements.briefings)if(V124_caseIdFromBriefing(b.id)===caseId&&/^legal(?:-risk)?:/.test(String(b.id||'')))b.read=true
+ }
+ return V124_showBriefingCore(id)
+};
+
+/* ---------- LABEL HQ ----------
+   Record-company gameplay is its own pillar now. Business HQ remains for general
+   commerce, representation, executive operations, ownership and non-label deals. */
+function V124_rewireLabelNavigation(){
+ if(typeof V096_BUSINESS_AREAS!=='undefined'){
+  for(let i=V096_BUSINESS_AREAS.length-1;i>=0;i--)if(['Labels','League'].includes(V096_BUSINESS_AREAS[i].id))V096_BUSINESS_AREAS.splice(i,1)
+ }
+ V096_BUSINESS_IDS?.delete?.('Labels');V096_BUSINESS_IDS?.delete?.('League');
+ if(typeof V109_HQ_GROUPS!=='undefined')for(const group of V109_HQ_GROUPS)group.areas=group.areas.filter(id=>!['Labels','League'].includes(id));
+ if(typeof V080_destinations!=='undefined'){
+  for(let i=V080_destinations.length-1;i>=0;i--)if(['Labels','League','LabelHQ'].includes(V080_destinations[i][2]))V080_destinations.splice(i,1);
+  const businessIndex=V080_destinations.findIndex(x=>x[2]==='BusinessHQ');
+  V080_destinations.splice(businessIndex>=0?businessIndex+1:Math.min(12,V080_destinations.length),0,['Label HQ','Label','LabelHQ','Artist deals, roster, requests and label competition',4])
+ }
+ if(typeof careerGroups!=='undefined'&&Array.isArray(careerGroups)){
+  for(const g of careerGroups)g.tabs=g.tabs.filter(id=>!['Labels','League','LabelHQ'].includes(id));
+  if(!careerGroups.some(g=>g.name==='Label')){
+   const at=Math.max(1,careerGroups.findIndex(g=>g.name==='Legacy'));
+   careerGroups.splice(at,0,{name:'Label',tabs:['LabelHQ','Labels','League']})
+  }
+ }
+}
+V124_rewireLabelNavigation();
+
+const V124_businessPriorityItemsCore=typeof V109_businessPriorityItems==='function'?V109_businessPriorityItems:null;
+if(V124_businessPriorityItemsCore)V109_businessPriorityItems=function(){return V124_businessPriorityItemsCore().filter(x=>x.kind!=='Label offer')};
+
+function V124_labelOpenRequests(){return (V118_state?.().rosterRequests||[]).filter(x=>x.status==='open')}
+function V124_openFirstLabelRequest(){const req=V124_labelOpenRequests()[0];if(req)V118_reviewRosterRequest?.(req.id);else toast?.('No roster request needs a decision right now.')}
+function V124_labelHQPage(){
+ migrateLabelBusiness?.();
+ const co=s.labelBusiness?.company,roster=typeof ownerContracts==='function'?ownerContracts():[],requests=V124_labelOpenRequests(),offers=(s.labelBusiness?.offers||[]).filter(o=>!o.used&&o.expires>=s.week),artistDeal=s.expansion?.contract;
+ return head('A record company deserves its own room','Label HQ.')+`<article class="v124-label-hq"><header class="v124-label-hero"><div><span class="eyebrow">LABEL HQ · ARTIST + EXECUTIVE SIDE</span><h1>${co?esc(co.name):'Your label career'}</h1><p>Label offers, your artist agreement, roster management, artist requests and industry competition live here now. Business HQ no longer doubles as the label office.</p></div><div class="v124-label-status"><small>YOUR POSITION</small><strong>${co?'Founder / owner':artistDeal?'Signed artist':'Independent artist'}</strong><span>${co?roster.length+' active roster artist'+(roster.length===1?'':'s'):artistDeal?esc(artistDeal.name||'Active label agreement'):'No active label agreement'}</span></div></header>${metricRail([['Open label offers',String(offers.length)],['Roster artists',String(roster.length)],['Artist requests',String(requests.length)],['Label receipts',money(co?.receipts||0)]])}<section class="v124-label-lanes"><button onclick="careerTab='Labels';render()"><small>OPERATIONS</small><strong>Label operations</strong><span>Artist deal, incoming offers, demos, your company, staff, scouting and roster contracts.</span><b>Open →</b></button><button onclick="careerTab='League';render()"><small>COMPETITION</small><strong>Label League</strong><span>See rival companies, market position and how your label compares.</span><b>Open →</b></button>${requests.length?`<button class="attention" onclick="V124_openFirstLabelRequest()"><small>DECISION REQUIRED</small><strong>${requests.length} artist request${requests.length===1?'':'s'} waiting</strong><span>Renegotiations, release requests and catalog ownership requests should be handled here.</span><b>Review →</b></button>`:''}</section></article>`
+}
+function V124_labelSectionNav(active){return `<section class="v124-label-nav"><button onclick="careerTab='LabelHQ';render()">← Label HQ</button><div><small>LABEL HQ</small><strong>${active==='Labels'?'Operations':'Label League'}</strong></div><nav><button class="${active==='Labels'?'selected':''}" onclick="careerTab='Labels';render()">Operations</button><button class="${active==='League'?'selected':''}" onclick="careerTab='League';render()">League</button></nav></section>`}
+
+const V124_careerCore=career;
+career=function(){
+ if(tab==='Career'&&careerTab==='LabelHQ')return careerMenu()+V124_labelHQPage();
+ if(tab==='Career'&&careerTab==='Labels')return careerMenu()+V124_labelSectionNav('Labels')+labelPage();
+ if(tab==='Career'&&careerTab==='League')return careerMenu()+V124_labelSectionNav('League')+labelLeaguePage();
+ return V124_careerCore()
+};
+const V124_openDestinationCore=openDestination;
+openDestination=function(id){if(id==='LabelHQ'){careerTab='LabelHQ';go('Career');return}return V124_openDestinationCore(id)};
+const V124_screenFamilyCore=screenFamily;
+screenFamily=function(){if(tab==='Career'&&['LabelHQ','Labels','League'].includes(careerTab))return 'label';return V124_screenFamilyCore()};
