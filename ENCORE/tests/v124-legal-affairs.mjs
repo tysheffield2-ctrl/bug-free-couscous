@@ -5,7 +5,7 @@ import {harness} from './harness.mjs';
 const h=harness('/sandbox',124001);await h.run('boot()');
 h.run(`
  s.cash=500000000;s.fans=25000000;s.reputation=72;s.started=true;
- s.songs=Array.from({length:12},(_,i)=>({id:i,title:'Record '+i,released:Math.max(1,s.week-i),features:i%3===0?[1,2]:[]}));
+ s.songs=Array.from({length:12},(_,i)=>({id:i,title:'Record '+i,released:Math.max(1,s.week-i),features:i%3===0?[1,2]:[],credits:i===0?[{id:s.world[2].id,name:s.world[2].name,role:'writer',agreement:'unauthorized',credited:false,usualShare:20}]:i===1?[{id:s.world[3].id,name:s.world[3].name,role:'producer',agreement:'unauthorized',credited:false,usualShare:5}]:[]}));
  migrateEmpire();s.empire.merch=[{id:1,item:'tee',name:'Tour tee',stock:100,sold:12000,price:35},{id:2,item:'hoodie',name:'Hoodie',stock:40,sold:4200,price:80}];
  s.empire.media=[{id:1,name:'Brand campaign',used:true,expires:s.week+2},{id:2,name:'Sync',used:true,expires:s.week+2}];
  s.empire.assets=[{id:1,kind:'Property',name:'Creative HQ',item:'creative-hq',value:8000000}];
