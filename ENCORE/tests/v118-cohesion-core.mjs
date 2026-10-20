@@ -44,10 +44,10 @@ assert.equal(h.run(`V118_legalCases()[0].agreementId`),agreement,'lawsuit must l
 
 // The docket is player-facing and permanent.
 const legal=h.run(`V118_legalAffairsPage()`);
-assert.ok(legal.includes('ENCORE CIVIL DOCKET'));
+assert.ok(legal.includes('ENCORE LEGAL AFFAIRS'));
 assert.ok(legal.includes(caseNo));
 h.run(`V118_openDocketCase(V118_legalCases()[0].id)`);
-assert.ok(h.elements.modal.innerHTML.includes('Clauses in dispute'));
+assert.ok(h.elements.modal.innerHTML.includes('Cause / issue'));
 assert.ok(h.elements.modal.innerHTML.includes('File defense'));
 
 const file=h.run(`artistFilePage()`);
