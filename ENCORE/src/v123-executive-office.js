@@ -64,7 +64,7 @@ function V123_candidate(role,i){
  const skill=clamp(72+((seed*7)%20)+style.skill,65,99),reputation=clamp(68+((seed*5)%22)+style.rep,60,99);
  const base={chief:180000,coo:450000,cfo:520000,legal:560000,cmo:480000,creative:500000,touring:360000,catalog:520000,international:600000}[role]||350000;
  const salary=Math.round(base*(.72+skill/160)*(1+(scale-1)*.32)/5000)*5000;
- const bonusPct=clamp(8+Math.round((skill-70)/3)+((seed)%5)*2,8,35),8,35);
+ const bonusPct=clamp(8+Math.round((skill-70)/3)+((seed)%5)*2,8,35);
  const equityBps=scale>=3&&skill>=90?25+((seed*11)%76):scale>=2&&skill>=95?20:0;
  return {id:`v123-${role}-${i}`,role,name,skill,reputation,style:style.id,styleName:style.name,styleDesc:style.desc,salary,bonusPct,equityBps,specialty:V123_EXEC_ROLES[role].kpis[(i+ri)%V123_EXEC_ROLES[role].kpis.length]}
 }
@@ -92,15 +92,15 @@ function V123_interact(role,kind){const x=V123_execState().team[role];if(!x)retu
 
 function V123_execKpiScore(role){
  const e=V123_execState(),x=e.team[role];if(!x)return 0;let score=65;
- if(role==='cfo'){const last=s.finance?.last;score=55+(s.cash>=Math.max(0,e.policies.reserveFloor)?12:-10)+(last?.net>=0?8:-5)+V092_businessLevel?.('Finance')*.12}
- else if(role==='coo')score=60+V092_businessLevel?.('Management')*.18+(s.cash>=0?8:-8);
- else if(role==='legal')score=62+V092_businessLevel?.('Negotiation')*.12+(s.expansion?.contract?3:8);
- else if(role==='cmo')score=58+clamp((s.careerWorld?.momentum||0)*.2,0,20)+V092_businessLevel?.('Marketing')*.12;
- else if(role==='creative')score=58+V092_businessLevel?.('A&R')*.15+clamp((s.careerWorld?.releaseForm||50)*.18,0,18);
- else if(role==='touring')score=58+V092_businessLevel?.('Management')*.08+clamp((s.careerWorld?.tourDemand||45)*.2,0,20)+(s.careerRecords?.liveProfit>=0?5:-5);
+ if(role==='cfo'){const last=s.finance?.last;score=55+(s.cash>=Math.max(0,e.policies.reserveFloor)?12:-10)+(last?.net>=0?8:-5)+V092_businessLevel('Finance')*.12}
+ else if(role==='coo')score=60+V092_businessLevel('Management')*.18+(s.cash>=0?8:-8);
+ else if(role==='legal')score=62+V092_businessLevel('Negotiation')*.12+(s.expansion?.contract?3:8);
+ else if(role==='cmo')score=58+clamp((s.careerWorld?.momentum||0)*.2,0,20)+V092_businessLevel('Marketing')*.12;
+ else if(role==='creative')score=58+V092_businessLevel('A&R')*.15+clamp((s.careerWorld?.releaseForm||50)*.18,0,18);
+ else if(role==='touring')score=58+V092_businessLevel('Management')*.08+clamp((s.careerWorld?.tourDemand||45)*.2,0,20)+(s.careerRecords?.liveProfit>=0?5:-5);
  else if(role==='chief'){const open=e.meetings.filter(m=>m.status==='open').length,avg=Object.values(e.team).reduce((n,z)=>n+z.alignment,0)/Math.max(1,Object.keys(e.team).length);score=65+avg*.18-open*4}
- else if(role==='catalog')score=58+V092_businessLevel?.('Finance')*.08+clamp(Math.log10(1+(s.v080?.catalog?.holdings||[]).reduce((n,h)=>n+(h.lastValue||0),0))*3,0,22);
- else if(role==='international')score=60+clamp((s.careerWorld?.momentum||0)*.12,0,12)+V092_businessLevel?.('Networking')*.15;
+ else if(role==='catalog')score=58+V092_businessLevel('Finance')*.08+clamp(Math.log10(1+(s.v080?.catalog?.holdings||[]).reduce((n,h)=>n+(h.lastValue||0),0))*3,0,22);
+ else if(role==='international')score=60+clamp((s.careerWorld?.momentum||0)*.12,0,12)+V092_businessLevel('Networking')*.15;
  return clamp(score+(V123_effectiveSkill(x)-80)*.18+V123_strategyBias(role)*.35,30,99)
 }
 function V123_applyExecutiveEffects(){
