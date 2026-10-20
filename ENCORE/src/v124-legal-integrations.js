@@ -82,7 +82,11 @@ function V124_rewireLabelNavigation(){
   for(let i=V096_BUSINESS_AREAS.length-1;i>=0;i--)if(['Labels','League'].includes(V096_BUSINESS_AREAS[i].id))V096_BUSINESS_AREAS.splice(i,1)
  }
  V096_BUSINESS_IDS?.delete?.('Labels');V096_BUSINESS_IDS?.delete?.('League');
- if(typeof V109_HQ_GROUPS!=='undefined')for(const group of V109_HQ_GROUPS)group.areas=group.areas.filter(id=>!['Labels','League'].includes(id));
+ if(typeof V109_HQ_GROUPS!=='undefined'){
+  for(const group of V109_HQ_GROUPS)group.areas=group.areas.filter(id=>!['Labels','League'].includes(id));
+  const company=V109_HQ_GROUPS.find(g=>g.id==='Company');
+  if(company){company.name='Representation & team';company.desc='Representation, executives and operating staff outside your record label.'}
+ }
  if(typeof V080_destinations!=='undefined'){
   for(let i=V080_destinations.length-1;i>=0;i--)if(['Labels','League','LabelHQ'].includes(V080_destinations[i][2]))V080_destinations.splice(i,1);
   const businessIndex=V080_destinations.findIndex(x=>x[2]==='BusinessHQ');
@@ -91,7 +95,7 @@ function V124_rewireLabelNavigation(){
  if(typeof careerGroups!=='undefined'&&Array.isArray(careerGroups)){
   for(const g of careerGroups)g.tabs=g.tabs.filter(id=>!['Labels','League','LabelHQ'].includes(id));
   if(!careerGroups.some(g=>g.name==='Label')){
-   const at=Math.max(1,careerGroups.findIndex(g=>g.name==='Legacy'));
+   const legacyIndex=careerGroups.findIndex(g=>g.name==='Legacy'),at=legacyIndex>=0?legacyIndex:careerGroups.length;
    careerGroups.splice(at,0,{name:'Label',tabs:['LabelHQ','Labels','League']})
   }
  }
@@ -100,6 +104,16 @@ V124_rewireLabelNavigation();
 
 const V124_businessPriorityItemsCore=typeof V109_businessPriorityItems==='function'?V109_businessPriorityItems:null;
 if(V124_businessPriorityItemsCore)V109_businessPriorityItems=function(){return V124_businessPriorityItemsCore().filter(x=>x.kind!=='Label offer')};
+
+/* Business HQ should not borrow the label company's name or use roster count as
+   a company KPI now that label operations have their own office. */
+if(typeof V109_businessPage==='function'){
+ V109_businessPage=function(){
+  const value=V092_businessValue(),commercial=V109_activeCommercial().length,open=V109_businessPriorityItems().length,executives=typeof V123_execState==='function'?Object.keys(V123_execState().team||{}).length:0;
+  return `<article class="v109-hq"><header class="v109-hq-hero"><div><span class="eyebrow">BUSINESS HQ / EXECUTIVE OFFICE</span><h1>${esc(s.name)} Enterprises</h1><p>General business operations live here. Record-label operations, roster decisions and label competition have moved to Label HQ.</p></div><div class="v109-hq-value"><small>BUSINESS ASSETS</small><strong>${money(value)}</strong><span>Tracked holdings, inventory and ownership value outside artist-label operations.</span></div></header><section class="v109-hq-metrics">${[['DECISIONS',open],['ACTIVE DEALS',commercial],['EXECUTIVES',executives],['CASH',money(s.cash)]].map(([k,v])=>`<div><small>${k}</small><strong>${v}</strong></div>`).join('')}</section>${V109_hqTabs()}${V109_hqFocusPanel()}<footer class="v109-hq-footer"><div><span class="eyebrow">QUICK RULE</span><strong>Opening a department never accepts an offer or spends money.</strong></div><button class="secondary" onclick="V109_openBusinessDirectory()">Open full directory</button></footer></article>`
+ };
+ V092_businessPage=V109_businessPage
+}
 
 function V124_labelOpenRequests(){return (V118_state?.().rosterRequests||[]).filter(x=>x.status==='open')}
 function V124_openFirstLabelRequest(){const req=V124_labelOpenRequests()[0];if(req)V118_reviewRosterRequest?.(req.id);else toast?.('No roster request needs a decision right now.')}
