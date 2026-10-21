@@ -17,3 +17,19 @@ const n=harness('/sandbox');await n.run('boot()');n.run(`submitDemo({preventDefa
 // No retroactive catalog income, and unfunded staff pause without fees.
 const z=harness('/sandbox');await z.run('boot()');z.run(`foundLabel({preventDefault(){},target:{name:'Test'}});globalThis.a=s.world[23];reviewRosterOffer({preventDefault(){},target:{type:'record',share:'10',weeks:'26',advance:String(rosterTerms(a,'record',.1,26).minimum)}},23);confirmRosterOffer();toggleLabelStaff('marketing',true);s.cash=0;s.walletCents='0';prepareLabelWeek();settleLabelWeek();if(s.cash!==0||s.labelBusiness.company.last.income!==0||s.labelBusiness.company.staffFunded)throw Error('Back catalog or payroll bug');`);
 console.log('PASS label formation, staff, negotiated signing confirmation, duplicate signing protection, actual new-release income, payroll accounting, save/import, feature booking using 5 energy, service-term expiry with persistent covered-master participation, 360 income scope, and unfunded staff pause.');
+
+/* Label renewals 2.0: controls are actionable and entity attribution uses the
+   owned label instead of the performing artist. */
+const renewalHarness=harness('/sandbox');await renewalHarness.run('boot()');
+renewalHarness.run(`foundLabel({preventDefault(){},target:{name:'Renewal Records'}});globalThis.renewArtist=s.world[23];s.labelBusiness.company.contracts.push({artist:23,type:'record',share:.1,weeks:26,advance:25000,started:s.week-25,ends:s.week+1,receipts:1200,excludedIds:[]});`);
+assert.ok(renewalHarness.run("typeof V126_renewalContract==='function'"));
+renewalHarness.run('V126_renewalContract(23)');
+assert.ok(renewalHarness.elements.modal.innerHTML.includes('CONTRACT RENEWAL'));
+assert.ok(renewalHarness.elements.modal.innerHTML.includes('name="share"'));
+assert.ok(renewalHarness.elements.modal.innerHTML.includes('name="advance"'));
+assert.ok(renewalHarness.elements.modal.innerHTML.includes('name="weeks"'));
+assert.equal(renewalHarness.run("V126_legalDefendant().name"),'Renewal Records');
+const labelCase=renewalHarness.run("V124_generateMatter('tax',true)");
+assert.ok(labelCase);
+assert.ok(labelCase.title.includes('Renewal Records'));
+assert.equal(labelCase.defendantEntity.name,'Renewal Records');
