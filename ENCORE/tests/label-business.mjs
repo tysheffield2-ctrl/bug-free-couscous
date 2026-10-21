@@ -21,7 +21,7 @@ console.log('PASS label formation, staff, negotiated signing confirmation, dupli
 /* Label renewals 2.0: controls are actionable and entity attribution uses the
    owned label instead of the performing artist. */
 const renewalHarness=harness('/sandbox');await renewalHarness.run('boot()');
-renewalHarness.run(`foundLabel({preventDefault(){},target:{name:'Renewal Records'}});globalThis.renewArtist=s.world[23];reviewRosterOffer({preventDefault(){},target:{type:'record',share:'10',weeks:'26',advance:String(rosterTerms(renewArtist,'record',.1,26).minimum)}},23);confirmRosterOffer();`);
+renewalHarness.run(`foundLabel({preventDefault(){},target:{name:'Renewal Records'}});globalThis.renewArtist=s.world[23];s.labelBusiness.company.contracts.push({artist:23,type:'record',share:.1,weeks:26,advance:25000,started:s.week-25,ends:s.week+1,receipts:1200,excludedIds:[]});`);
 assert.ok(renewalHarness.run("typeof V126_renewalContract==='function'"));
 renewalHarness.run('V126_renewalContract(23)');
 assert.ok(renewalHarness.elements.modal.innerHTML.includes('CONTRACT RENEWAL'));
