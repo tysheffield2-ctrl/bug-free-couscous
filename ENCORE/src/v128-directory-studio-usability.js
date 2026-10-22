@@ -9,7 +9,9 @@ const V128_PLATFORM_LINKS=[
 function V128_openPlatform(id){V114_setTab(id);careerTab='Platforms';tab='Career';render();window.scrollTo?.({top:0,behavior:'instant'})}
 const V128_iconDirectoryBase=encoreIconDirectory;
 encoreIconDirectory=function(query=''){
- const q=String(query).trim().toLowerCase(),main=ENCORE_ICON_DESTINATIONS.filter(row=>row.join(' ').toLowerCase().includes(q));
+ const q=String(query).trim().toLowerCase();
+ if(q)return V128_iconDirectoryBase(query);
+ const main=ENCORE_ICON_DESTINATIONS;
  const groups=[
   {name:'MAKE & RELEASE',ids:['Studio','Releases','Charts']},
   {name:'AUDIENCE & LIVE',ids:['PULSE','Touring']},
