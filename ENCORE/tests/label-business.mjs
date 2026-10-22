@@ -16,6 +16,18 @@ h.run(`globalThis.c=s.labelBusiness.company.contracts[0];s.week=c.ends+1;prepare
 const n=harness('/sandbox');await n.run('boot()');n.run(`submitDemo({preventDefault(){},target:{song:s.songs[0].id}},0);`);assert.equal(n.run('s.labelBusiness.offers.length'),1);n.run(`s.labelBusiness.offers[0].proposal={type:'360',share:.25,weeks:26,advance:25000};signNegotiatedOffer(s.labelBusiness.offers[0].id,true);s.finance.week.live=100;s.finance.week.albumSales=200;`);assert.equal(n.run('artistLabelCut(1000)'),325);n.run('validateBundle(saveBundle())');
 // No retroactive catalog income, and unfunded staff pause without fees.
 const z=harness('/sandbox');await z.run('boot()');z.run(`foundLabel({preventDefault(){},target:{name:'Test'}});globalThis.a=s.world[23];reviewRosterOffer({preventDefault(){},target:{type:'record',share:'10',weeks:'26',advance:String(rosterTerms(a,'record',.1,26).minimum)}},23);confirmRosterOffer();toggleLabelStaff('marketing',true);s.cash=0;s.walletCents='0';prepareLabelWeek();settleLabelWeek();if(s.cash!==0||s.labelBusiness.company.last.income!==0||s.labelBusiness.company.staffFunded)throw Error('Back catalog or payroll bug');`);
+
+/* Contract negotiation coverage: numeric terms are editable before the legal
+   document opens, and revised terms are staged rather than auto-signed. */
+assert.ok(h.run("typeof V127_counterCommercialTerms==='function'"));
+const editableCommercial=h.run("V127_commercialTermsForm({id:7,totalValue:10000,guarantee:7000,bonus:3000,lifetime:false,durationMonths:12})");
+for(const field of ['name="value"','name="guarantee"','name="bonus"','name="months"'])assert.ok(editableCommercial.includes(field),field);
+const repCandidate=h.run("V100_REP_CANDIDATES[0]");
+h.run("V127_openRepTerms(V100_REP_CANDIDATES[0].id)");
+assert.ok(h.elements.modal.innerHTML.includes('name="commission"'));
+assert.ok(h.elements.modal.innerHTML.includes('name="months"'));
+assert.ok(h.elements.modal.innerHTML.includes('Prepare revised agreement'));
+
 console.log('PASS label formation, staff, negotiated signing confirmation, duplicate signing protection, actual new-release income, payroll accounting, save/import, feature booking using 5 energy, service-term expiry with persistent covered-master participation, 360 income scope, and unfunded staff pause.');
 
 /* Label renewals 2.0: controls are actionable and entity attribution uses the
