@@ -8,6 +8,21 @@ const V128_PLATFORM_LINKS=[
 ];
 function V128_openPlatform(id){V114_setTab(id);careerTab='Platforms';tab='Career';render();window.scrollTo?.({top:0,behavior:'instant'})}
 const V128_iconDirectoryBase=encoreIconDirectory;
+const V128_menuResultsBase=V103_menuResults;
+V103_menuResults=function(query=''){
+ const q=String(query).trim().toLowerCase();
+ if(q){
+  const rows=typeof V080_destinations!=='undefined'?V080_destinations:destinations;
+  const legacy=rows.filter(d=>d.join(' ').toLowerCase().includes(q)&&!ENCORE_ICON_COVERED_ROUTE_IDS.has(d[2]));
+  const platformMatches=V128_PLATFORM_LINKS.filter(p=>(p.name+' '+p.desc+' music platform').toLowerCase().includes(q));
+  const normal=V128_menuResultsBase(query);
+  const extra=legacy.length?legacy.map(([name,g,id,desc])=>`<button class="v128-search-result" data-destination="${id}" onclick="openDestination('${id}')"><strong>${esc(name)}</strong><small>${esc(desc)}</small></button>`).join(''):'';
+  const plats=platformMatches.map(p=>`<button class="v128-search-result" onclick="V128_openPlatform('${p.id}')"><strong>${p.name}</strong><small>${p.desc}</small></button>`).join('');
+  return normal+extra+plats||'<section class="v103-menu-empty"><strong>No matching destination.</strong><span>Try a broader term.</span></section>';
+ }
+ return V128_menuResultsBase(query);
+};
+
 encoreIconDirectory=function(query=''){
  const q=String(query).trim().toLowerCase(),main=ENCORE_ICON_DESTINATIONS.filter(row=>row.join(' ').toLowerCase().includes(q));
  const groups=[
