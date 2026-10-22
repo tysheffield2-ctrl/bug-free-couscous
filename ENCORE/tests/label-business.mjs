@@ -26,7 +26,7 @@ const repCandidate=h.run("V100_REP_CANDIDATES[0]");
 h.run("V127_openRepTerms(V100_REP_CANDIDATES[0].id)");
 assert.ok(h.elements.modal.innerHTML.includes('name="commission"'));
 assert.ok(h.elements.modal.innerHTML.includes('name="months"'));
-assert.ok(h.elements.modal.innerHTML.includes('Prepare revised agreement'));
+assert.ok(h.elements.modal.innerHTML.includes('Review revised agreement'));
 
 console.log('PASS label formation, staff, negotiated signing confirmation, duplicate signing protection, actual new-release income, payroll accounting, save/import, feature booking using 5 energy, service-term expiry with persistent covered-master participation, 360 income scope, and unfunded staff pause.');
 
