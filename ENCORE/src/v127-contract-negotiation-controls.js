@@ -25,4 +25,4 @@ function V127_submitLabelTerms(e,i){e.preventDefault();const d=labelDeals?.[i],f
 signLabel=function(i,confirmed=false){if(confirmed)return V127_signLabelBase(i,true);return V127_openLabelTerms(i)};
 
 
-globalThis.V127_CONTRACT_NEGOTIATION_VERSION=1;
+
