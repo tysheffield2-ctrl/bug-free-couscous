@@ -1,0 +1,4 @@
+ENCORE 0.9.23-beta.1 playtest
+Career: https://raw.githack.com/tysheffield2-ctrl/bug-free-couscous/playtest-static/index.html
+Sandbox: https://raw.githack.com/tysheffield2-ctrl/bug-free-couscous/playtest-static/index.html?sandbox=1
+Saves stay in this browser and career/sandbox saves are isolated.
