@@ -16,7 +16,7 @@ V103_menuResults=function(query=''){
   const legacy=rows.filter(d=>d.join(' ').toLowerCase().includes(q)&&!ENCORE_ICON_COVERED_ROUTE_IDS.has(d[2]));
   const platformMatches=V128_PLATFORM_LINKS.filter(p=>(p.name+' '+p.desc+' music platform').toLowerCase().includes(q));
   const normal=V128_menuResultsBase(query);
-  const extra=legacy.filter(([,g,id])=>!normal.includes('data-destination=\"'+id+'\"')).map(([name,g,id,desc])=>`<button class="v128-search-result" data-destination="${id}" onclick="openDestination('${id}')"><strong>${esc(name)}</strong><small>${esc(desc)}</small></button>`).join(''):'';
+  const extra=legacy.filter(([,g,id])=>!normal.includes('data-destination=\"'+id+'\"')).map(([name,g,id,desc])=>`<button class="v128-search-result" data-destination="${id}" onclick="openDestination('${id}')"><strong>${esc(name)}</strong><small>${esc(desc)}</small></button>`).join('');
   const plats=platformMatches.map(p=>`<button class="v128-search-result" onclick="V128_openPlatform('${p.id}')"><strong>${p.name}</strong><small>${p.desc}</small></button>`).join('');
   return normal+extra+plats||'<section class="v103-menu-empty"><strong>No matching destination.</strong><span>Try a broader term.</span></section>';
  }
