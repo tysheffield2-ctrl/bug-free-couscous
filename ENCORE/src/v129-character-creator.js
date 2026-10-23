@@ -1,0 +1,27 @@
+/* ENCORE 1.29 — persistent, player-controlled appearance. */
+const V129_SKINS=['#6b3f2d','#87543c','#a66d4d','#c18b68','#d8a887','#edc7a4','#f4d8bc'];
+const V129_HAIRS=['#171311','#35251d','#68452e','#b08a4e','#b85b38','#d5c4a0','#6c747b','#9b466f'];
+const V129_STYLES=['Close fade','Short curls','Waves','Locs','Long straight','Braids'];
+const V129_EYES=['#302019','#68452e','#527b69','#6585a8','#7a604b','#72777d'];
+function V129_default(){return {skin:2,hair:0,style:1,eyes:0,gender:'masculine',facialHair:0}}
+function V129_get(){if(!s.appearance)s.appearance=V129_default();return s.appearance}
+function V129_portrait(a){
+ const skin=V129_SKINS[a.skin]||V129_SKINS[2],hair=V129_HAIRS[a.hair]||V129_HAIRS[0],eyes=V129_EYES[a.eyes]||V129_EYES[0];
+ const styles=[`<path d="M25 40Q21 12 50 12Q80 12 75 40L67 30Q50 22 33 31Z" fill="${hair}"/>`,`<path d="M22 39Q23 9 50 12Q78 10 78 39L70 28Q50 20 30 30Z" fill="${hair}"/><circle cx="29" cy="29" r="8" fill="${hair}"/><circle cx="70" cy="28" r="8" fill="${hair}"/>`,`<path d="M23 39Q23 10 50 12Q78 10 77 39L72 65H64L67 30Q50 21 33 30L36 65H28Z" fill="${hair}"/>`,`<path d="M22 38Q22 10 50 12Q78 10 78 38L73 72H65L67 28L57 73H49L50 27L40 73H32L34 29L27 68Z" fill="${hair}"/>`,`<path d="M23 38Q22 10 50 12Q78 10 77 38L80 88H69L66 30Q50 21 34 30L31 88H20Z" fill="${hair}"/>`,`<path d="M22 38Q22 10 50 12Q78 10 78 38L75 78H67L68 29L58 76H50L50 27L40 76H32L33 29L25 78Z" fill="${hair}"/>`];
+ return `<svg viewBox="0 0 100 100" role="img" aria-label="Your customized character portrait"><rect width="100" height="100" rx="10" fill="#263746"/><path d="M8 100Q15 70 36 68H64Q85 70 92 100" fill="#d8b45f"/><path d="M40 60H60V75H40Z" fill="${skin}"/><ellipse cx="50" cy="43" rx="23" ry="28" fill="${skin}"/>${styles[a.style]||styles[1]}<path d="M37 42h9M54 42h9" stroke="#302019" stroke-width="2" stroke-linecap="round"/><circle cx="42" cy="44" r="2.3" fill="${eyes}"/><circle cx="58" cy="44" r="2.3" fill="${eyes}"/><path d="M50 45l-2 9h5M42 61q8 5 16 0" fill="none" stroke="#704735" stroke-width="1.6" stroke-linecap="round"/>${a.facialHair?'<path d="M35 56Q50 73 65 56L61 69Q50 78 39 69Z" fill="'+hair+'"/>':''}</svg>`
+}
+function V129_open(){const a=V129_get();const root=document.getElementById('v129-character-editor');if(root){root.remove();return}
+ const el=document.createElement('div');el.id='v129-character-editor';el.className='v129-overlay';el.innerHTML=`<section class="v129-sheet" role="dialog" aria-modal="true" aria-labelledby="v129-title"><header><div><small>ENCORE · IDENTITY</small><h2 id="v129-title">Create your artist</h2><p>Your look is yours. Change it whenever you want.</p></div><button class="v129-close" onclick="V129_close()" aria-label="Close">×</button></header><div class="v129-preview" id="v129-preview">${V129_portrait(a)}<div><strong>${esc(s.name||'Your artist')}</strong><span>Appearance preview</span></div></div><div class="v129-fields">
+ <label>Skin tone<div class="v129-swatches">${V129_SKINS.map((c,i)=>`<button aria-label="Skin tone ${i+1}" class="${a.skin===i?'selected':''}" style="background:${c}" onclick="V129_set('skin',${i})"></button>`).join('')}</div></label>
+ <label>Hair color<div class="v129-swatches">${V129_HAIRS.map((c,i)=>`<button aria-label="Hair color ${i+1}" class="${a.hair===i?'selected':''}" style="background:${c}" onclick="V129_set('hair',${i})"></button>`).join('')}</div></label>
+ <label>Hair style<select onchange="V129_set('style',this.value)">${V129_STYLES.map((v,i)=>`<option value="${i}" ${a.style===i?'selected':''}>${v}</option>`).join('')}</select></label>
+ <label>Eye color<select onchange="V129_set('eyes',this.value)">${V129_EYES.map((v,i)=>`<option value="${i}" ${a.eyes===i?'selected':''}>${['Dark brown','Brown','Hazel green','Blue','Light brown','Gray'][i]}</option>`).join('')}</select></label>
+ <label class="v129-check"><input type="checkbox" ${a.facialHair?'checked':''} onchange="V129_set('facialHair',this.checked?1:0)"> Facial hair</label>
+ </div><footer><button class="v129-reset" onclick="V129_reset()">Reset appearance</button><button class="v129-save" onclick="V129_save()">Save appearance</button></footer></section>`;
+ el.addEventListener('click',e=>{if(e.target===el)V129_close()});document.body.appendChild(el)}
+function V129_set(k,v){const a=V129_get();a[k]=['skin','hair','style','eyes','facialHair'].includes(k)?Number(v):v;const p=document.getElementById('v129-preview');if(p)p.innerHTML=V129_portrait(a)+'<div><strong>'+esc(s.name||'Your artist')+'</strong><span>Appearance preview</span></div>';document.querySelectorAll('#v129-character-editor select').forEach(x=>{if(x!==document.activeElement&&x.name===k)x.value=v})}
+function V129_reset(){s.appearance=V129_default();V129_close();V129_open()}
+function V129_save(){s.appearance=V129_get();if(typeof save==='function')save();V129_close();if(typeof render==='function')render()}
+function V129_close(){document.getElementById('v129-character-editor')?.remove()}
+const V129_oldArtistFile=artistFilePage;
+artistFilePage=function(){let html=V129_oldArtistFile();const button='<button class="secondary v129-edit-button" onclick="V129_open()">Edit appearance ✦</button>';if(html.includes('af-hero-actions-v095'))return html.replace('</div></div><div class="af-money-v095">',''+button+'</div></div><div class="af-money-v095">');return html.replace('<article class="artist-file-page-v095">','<article class="artist-file-page-v095"><button class="secondary v129-edit-button" onclick="V129_open()">Edit appearance ✦</button>')};
