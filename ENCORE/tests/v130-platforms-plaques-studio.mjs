@@ -35,8 +35,14 @@ assert.match(studio,/>Features</);
 assert.match(studio,/>Mood</);
 for(const removed of ['>Theme<','>Tempo<','>Intent<','>Texture<','>Hook approach<','>Writing approach<','>Production budget<'])assert.ok(!studio.includes(removed),`simple studio should not show ${removed}`);
 
+h.run("s.world[0].relation=100;s.world[0].fans=1000;s.world[0].reputation=20;s.draft=null;newSong({preventDefault(){},target:{songtitle:'Three Fields',feature:'0',mood:directions[0].id,package:'0',brief:'story'}})");
+assert.equal(h.run("s.draft.title"),'Three Fields');
+assert.ok(h.run("document.getElementById('modal').innerHTML.includes('FEATURE NEGOTIATION')"));
+
 const src=fs.readFileSync(new URL('../src/v130-platforms-plaques-studio.js',import.meta.url),'utf8');
+const handoff=fs.readFileSync(new URL('../src/v130-studio-feature-handoff.js',import.meta.url),'utf8');
 assert.ok(src.includes('V130_worldMap'));
 assert.ok(src.includes('V130_plaqueArt'));
 assert.ok(src.includes('Three decisions'));
-console.log('PASS Music Platforms 2.0, real visual plaques, Diamond treatment, platform strategy actions and Song / Features / Mood studio setup.');
+assert.ok(handoff.includes('studioGuest'));
+console.log('PASS Music Platforms 2.0, real visual plaques, Diamond treatment, platform strategy actions and Song / Features / Mood Studio with live feature negotiation handoff.');
