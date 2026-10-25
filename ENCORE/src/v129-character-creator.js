@@ -27,6 +27,6 @@ function V129_reset(){V129_draft=V129_default();V129_draw()}
 async function V129_save(){if(!V129_draft||!saveReady||saveConflict)return;s.appearance=V129_normalize(V129_draft);V129_close();render();await saveNow()}
 function V129_close(){document.getElementById('v129-character-editor')?.remove();V129_draft=null;if(V129_returnFocus?.isConnected)V129_returnFocus.focus()}
 const V129_oldArtistFile=artistFilePage;
-artistFilePage=function(){return V129_oldArtistFile().replace('</header>','<button class="secondary v129-edit-button" onclick="V129_open()">Edit appearance</button></header>')};
+artistFilePage=function(){return V129_oldArtistFile().replace('</header>','<div class="v129-entry"><button class="secondary v129-edit-button" onclick="V129_open()">Edit appearance</button></div></header>')};
 const V129_oldPersonPhoto=personPhoto;
 personPhoto=function(key,name,large=false){if(key==='player-'+s.name&&s.appearance)return '<span class="person-photo v129-portrait '+(large?'portrait-large':'')+'">'+V129_portrait(V129_get())+'</span>';return V129_oldPersonPhoto(key,name,large)};
