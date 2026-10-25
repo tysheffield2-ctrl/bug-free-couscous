@@ -7,14 +7,15 @@ for(const mode of ['offline','online']){
  let stored=null;
  if(mode==='online')await page.route('**/api/save',async route=>{if(route.request().method()==='PUT')stored=route.request().postDataJSON();await route.fulfill({json:route.request().method()==='PUT'?{etag:'test'}:{save:stored,etag:stored?'test':null}})});
  await page.goto('http://localhost:8879/'+(mode==='offline'?'offline':''));await page.waitForFunction(()=>saveReady);
- await page.evaluate(()=>{s.started=true;s.name='Creator Test';titleVisible=false;renderTitle();openArtistFile()});
+ await page.evaluate(()=>{s.started=true;s.name='Creator Test';s.achievements.popups=false;clearTimeout(briefingTimer);document.getElementById('modal').close();titleVisible=false;renderTitle();openArtistFile()});
+ console.log('Artist File visible buttons:',await page.getByRole('button').allTextContents());
  await page.getByRole('button',{name:'Edit appearance',exact:true}).click();
  await page.getByRole('button',{name:'Skin tone 7',exact:true}).click();
  assert.equal(await page.getByRole('button',{name:'Skin tone 7',exact:true}).getAttribute('aria-pressed'),'true');
  await page.locator('select[name=style]').selectOption('3');await page.locator('select[name=eyes]').selectOption('3');await page.getByRole('checkbox').check();
  await page.getByRole('button',{name:'Save appearance',exact:true}).click();await page.waitForFunction(()=>lastSaved===JSON.stringify(s));
  await page.reload();await page.waitForFunction(()=>saveReady);assert.equal(await page.evaluate(()=>s.appearance.skin),6);assert.equal(await page.evaluate(()=>s.appearance.style),3);
- await page.evaluate(()=>{titleVisible=false;renderTitle();openArtistFile()});assert.equal(await page.locator('.v129-portrait svg').count(),1);
+ await page.evaluate(()=>{s.achievements.popups=false;clearTimeout(briefingTimer);document.getElementById('modal').close();titleVisible=false;renderTitle();openArtistFile()});assert.equal(await page.locator('.v129-portrait svg').count(),1);
  await page.getByRole('button',{name:'Edit appearance',exact:true}).click();await page.getByRole('button',{name:'Reset appearance',exact:true}).click();await page.getByRole('button',{name:'Close',exact:true}).click();assert.equal(await page.evaluate(()=>s.appearance.skin),6);
  await page.getByRole('button',{name:'Edit appearance',exact:true}).click();assert.equal(await page.getByRole('button',{name:'Skin tone 7',exact:true}).getAttribute('aria-pressed'),'true');
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
