@@ -10,7 +10,8 @@ assert.match(h.run("V103_menuResults('Label HQ')"),/data-destination="Labels"/);
 assert.match(h.run("encoreIcon('Label')"),/class="encore-icon"/);
 
 const form=h.run('V092_unifiedSongForm()');
-for(const token of ['SONG CREDITS & SPLITS','+ Songwriter','+ Composer','+ Producer','Rights chain:'])assert.ok(form.includes(token),token+' should be visible in Studio creation');
+for(const token of ['>Song<','>Features<','>Mood<'])assert.ok(form.includes(token),token+' should remain visible in simple Studio creation');
+for(const token of ['SONG CREDITS & SPLITS','+ Songwriter','+ Composer','+ Producer','Rights chain:'])assert.ok(!form.includes(token),token+' should stay out of the simple Studio creation form');
 
 h.run(`
  s.studioIdea=ensureStudioIdeaSchema({title:'Paper Trail'});s.studioIdea.credits=[];
@@ -63,4 +64,4 @@ const build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
 for(const token of ['V125_openCreditTerms','V125_sendCreditOffer','V125_offerFeature','V125_useFeatureWithoutClearance','V125_rightsDiscoveryWeek','V125_fileRightsSuit'])assert.ok(js.includes(token));
 assert.ok(css.includes('.v125-splits')&&css.includes('.v125-release-risk'));
 assert.ok(build.includes("'v125-collaboration-splits'"));
-console.log('PASS Studio rights-chain overhaul: primary Label HQ icon, songwriter/composer/producer terms, manual splits, free/custom negotiations, manual feature terms, release-without-clearance risk, song-specific lawsuits and accepted royalty payouts are wired into ENCORE.');
+console.log('PASS rights-chain depth remains wired while simple Studio creation stays Song / Features / Mood; songwriter/composer/producer terms, manual splits, feature terms, release risk, song-specific lawsuits and accepted royalty payouts remain covered.');
