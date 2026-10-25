@@ -2,10 +2,12 @@ const {chromium}=require('playwright');
 const fs=require('fs'),http=require('http'),assert=require('assert/strict');
 const root=process.cwd()+'/dist';
 const server=http.createServer((req,res)=>{let path=req.url.split('?')[0];if(path==='/'||path.startsWith('/offline'))path='/index.html';try{const content=fs.readFileSync(root+path);res.setHeader('Content-Type',path.endsWith('.js')?'text/javascript':path.endsWith('.html')?'text/html':'application/octet-stream');res.end(content)}catch{res.statusCode=404;res.end()}}).listen(8879);
-(async()=>{const browser=await chromium.launch({headless:true,args:['--no-sandbox']});const page=await browser.newPage({viewport:{width:390,height:844}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+let browser=null,page=null;
+(async()=>{browser=await chromium.launch({headless:true,args:['--no-sandbox']});page=await browser.newPage({viewport:{width:390,height:844}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
 for(const mode of ['offline','online']){
  let stored=null;
  if(mode==='online')await page.route('**/api/save',async route=>{if(route.request().method()==='PUT')stored=route.request().postDataJSON();await route.fulfill({json:route.request().method()==='PUT'?{etag:'test'}:{save:stored,etag:stored?'test':null}})});
+ console.log('START '+mode);
  await page.goto('http://localhost:8879/'+(mode==='offline'?'offline':''));await page.waitForFunction(()=>saveReady);
  await page.evaluate(()=>{s.started=true;s.name='Creator Test';s.achievements.popups=false;clearTimeout(briefingTimer);document.getElementById('modal').close();titleVisible=false;renderTitle();openArtistFile()});
  console.log('Artist File visible buttons:',await page.getByRole('button').allTextContents());
@@ -23,4 +25,4 @@ for(const mode of ['offline','online']){
  await page.getByRole('button',{name:'Reset appearance',exact:true}).click();await page.getByRole('button',{name:'Save appearance',exact:true}).click();await page.waitForFunction(()=>lastSaved===JSON.stringify(s));await page.reload();await page.waitForFunction(()=>saveReady);assert.equal(await page.evaluate(()=>s.appearance.skin),2);
  console.log(mode+': entry, controls, save, reload, portrait, cancel, reset passed');
 }
-assert.deepEqual(errors,[]);await browser.close();server.close();})().catch(e=>{console.error(e);server.close();process.exit(1)});
+assert.deepEqual(errors,[]);await browser.close();browser=null;server.close();})().catch(async e=>{console.error(e);try{const buttons=page?await page.getByRole('button').allTextContents():[];fs.writeFileSync('creator-failure.txt',String(e&&e.stack||e)+'\nURL: '+(page?page.url():'n/a')+'\nButtons: '+JSON.stringify(buttons,null,2)+'\n');if(page)await page.screenshot({path:'creator-mobile.png',fullPage:true})}catch(diag){console.error('diagnostic capture failed',diag)}try{if(browser)await browser.close()}catch{}server.close();process.exit(1)});
