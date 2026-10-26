@@ -22,6 +22,6 @@ assert.equal(h.run(`certificationUnits(album,'albums')`),3010);
 const n=harness('/');await n.run('boot()');assert.equal(n.run('executiveReadiness().ready'),false);
 n.run(`s.week=261;s.fans=250000;s.reputation=60;s.cash=250000;s.walletCents='25000000';s.songs=Array.from({length:12},()=>({released:1}));`);assert.equal(n.run('executiveReadiness().ready'),true);
 n.run(`s.labelBusiness.company={name:'Existing'};s.cash=0;s.fans=0;s.week=1`);assert.equal(n.run('executiveReadiness().ready'),true);
-// Advance rollback restores monthly charges and weekly state when any phase fails.
-const r=harness();await r.run('boot()');r.run(`migrateV083();s.week=4;migrateV083();globalThis.before=JSON.stringify(s);advanceWeek=()=>{throw Error('injected failure')};console.error=()=>{};advance(true)`);assert.equal(r.run('JSON.stringify(s)'),r.run('before'));
-console.log('PASS regional conservation/migration, audience bounds, growth UI, ordered saves, campaign settlement, certification policy, executive gates and rollback.');
+// The canonical transaction restores monthly charges and weekly state when any engine phase fails.
+const r=harness();await r.run('boot()');r.run(`migrateV083();s.week=4;migrateV083();globalThis.before=JSON.stringify(s);settleWorldTour=()=>{throw Error('injected engine failure')};console.error=()=>{};advance(true)`);assert.equal(r.run('JSON.stringify(s)'),r.run('before'));
+console.log('PASS regional conservation/migration, audience bounds, growth UI, ordered saves, campaign settlement, certification policy, executive gates and canonical transaction rollback.');
