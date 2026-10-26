@@ -17,4 +17,7 @@ const settleFinance=(state,input={})=>components.finance.settle(state,input);
 const migrate=(state,plan={})=>components.migrations.migrate(state,plan);
 const health=()=>({version:2,components:Object.fromEntries(Object.entries(components).map(([k,v])=>[k,v.version||1]))});
 global.ENCORE_ENGINE=Object.freeze({version:2,components,settleWeek,transactWeek,applyAudience,publishCharts,trackChart,chartRecord,settleFinance,migrate,health,studio:components.studio,roster:components.roster,scheduler:components.scheduler,charts:components.charts,audience:components.audience,finance:components.finance,releases:components.releases});
+/* Historical modules may reference these scheduler names while they are being parsed.
+   They are declarations only; src/engine-adapter.js installs the sole live bindings after all overlays load. */
+for(const name of ['V083_accumulateWeek','V083_isMonthClosing','V083_settleMonthEnd','isAnnualClosing'])if(!(name in global))global[name]=undefined;
 })(globalThis);
