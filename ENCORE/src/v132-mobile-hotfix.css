@@ -1,0 +1,21 @@
+/* ENCORE 1.32 — targeted Artist File mobile presentation hotfixes. */
+/* The Current Chapter is intentionally a light paper panel inside the dark dossier. Lock its ink colors so global theme rules cannot wash the content out. */
+.v131-file .v131-spread>aside{background:#e9e2d5!important;color:#11161a!important}
+.v131-file .v131-spread>aside .v131-kicker{color:#8b6115!important;opacity:1!important;-webkit-text-fill-color:currentColor!important}
+.v131-file .v131-spread>aside>strong{color:#11161a!important;opacity:1!important;-webkit-text-fill-color:currentColor!important}
+.v131-file .v131-spread>aside p{color:#394248!important;opacity:1!important;-webkit-text-fill-color:currentColor!important}
+.v131-file .v131-spread>aside button{color:#263039!important;opacity:1!important;-webkit-text-fill-color:currentColor!important}
+/* Plaque-wall art has only ~164 SVG units for copy. Keep long Diamond/multi-platinum labels, titles and unit totals inside the hardware frame instead of drawing through the emblem or clipping off-screen. */
+.v130-plaque.small svg{overflow:hidden}
+.v130-plaque.small svg text:nth-of-type(1){font-size:10px!important;letter-spacing:-.1px;transform:translateX(-16px)}
+.v130-plaque.small svg text:nth-of-type(2){font-size:12px!important;transform:translateX(-16px)}
+.v130-plaque.small svg text:nth-of-type(3){font-size:9.5px!important;transform:translateX(-16px)}
+.v130-plaque.small svg text:nth-of-type(4){font-size:9px!important;transform:translateX(-16px)}
+.v130-plaque-diamond.small svg>g{transform-box:view-box;transform-origin:0 0;transform:translate(331px,72px) scale(.46)}
+@media(max-width:760px){
+ .v131-file .v131-spread>aside{padding-top:26px;padding-bottom:26px}
+ .v131-file .v131-spread>aside>strong{font-size:2.15rem;line-height:1.05}
+ .v131-file .v131-spread>aside p{font-size:1rem;line-height:1.55;max-width:34rem}
+ .v130-plaque-grid>button{overflow:hidden;min-width:0}
+ .v130-plaque.small{max-width:100%}
+}
