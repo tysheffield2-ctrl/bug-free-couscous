@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-const source=fs.readFileSync(new URL('../engine/finance.js',import.meta.url),'utf8'),bridge=fs.readFileSync(new URL('../src/finance-engine-bridge.js',import.meta.url),'utf8'),build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
+const source=fs.readFileSync(new URL('../engine/finance.js',import.meta.url),'utf8'),adapter=fs.readFileSync(new URL('../src/engine-adapter.js',import.meta.url),'utf8'),runtime=fs.readFileSync(new URL('../engine/runtime.js',import.meta.url),'utf8'),build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
 const ctx={console,BigInt,Math,Number,String,Object,Array,Error};ctx.globalThis=ctx;vm.createContext(ctx);vm.runInContext(source,ctx);const E=ctx.ENCORE_FINANCE;
 function state(){return {week:8,cash:1000,walletCents:'100000',finance:{year:1,weeks:0,revenue:0,expenses:0,reserve:0,taxesPaid:0,week:{wages:180,live:25,expenses:50}},expansion:{contract:{recovered:0}}}}
 {
@@ -11,5 +11,5 @@ function state(){return {week:8,cash:1000,walletCents:'100000',finance:{year:1,w
 {
  const s=state();s.finance.year=3;s.finance.weeks=51;s.finance.revenue=50000;s.finance.expenses=10000;s.finance.reserve=8000;const r=E.settle(s,{royalties:1000,income:{},incomeTotal:0,labelCut:0,labelPayroll:0,representation:[],agentFee:0,operations:{},operatingCost:0,actionExpenses:0,yearEnd:true,taxQuote:()=>({total:10000,marginal:.3,city:{taxAdj:.02}})});assert.equal(r.yearEnd,true);assert.equal(r.taxReserve,2000);assert.equal(r.settlement,10000);assert.equal(s.cash,0);assert.equal(s.walletCents,'0');assert.equal(s.finance.lastSettlement.year,3);assert.equal(s.finance.lastSettlement.tax,10000);assert.equal(s.finance.taxesPaid,10000);assert.equal(s.finance.reserve,0);assert.equal(s.finance.year,4);assert.equal(s.finance.weeks,0);assert.equal(s.finance.revenue,0);assert.equal(s.finance.expenses,0)
 }
-assert.ok(bridge.includes('ENCORE_FINANCE.settle'));assert.ok(bridge.includes('V100_taxQuote'));assert.ok(build.includes("readFileSync('engine/finance.js'"));
-console.log('PASS shared Finance Ledger owns week-close revenue/expense totals, exact-cent cash, tax reserve, annual settlement/reset and contract recovery for legacy ENCORE and UI2.');
+assert.ok(adapter.includes('ENCORE_ENGINE.settleFinance'));assert.ok(adapter.includes('V100_taxQuote'));assert.ok(runtime.includes("finance:snap('ENCORE_FINANCE')"));assert.ok(build.includes("readFileSync('engine/finance.js'"));assert.equal(fs.existsSync(new URL('../src/finance-engine-bridge.js',import.meta.url)),false);
+console.log('PASS Finance Ledger owns week-close totals, exact-cent cash, tax reserve and annual settlement; the live renderer routes finance through the single ENCORE Engine adapter.');

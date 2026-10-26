@@ -110,8 +110,6 @@ function V117_settleRepRelationships(completedWeek=s.week){
   }else if(c.relationship>10)c.breakingPointWeek=null
  }
 }
-const V117_accumulateWeekBase=V083_accumulateWeek;
-V083_accumulateWeek=function(completed,beforeCash){V117_settleRepRelationships(completed);return V117_accumulateWeekBase(completed,beforeCash)};
 
 /* Relationship-adjusted advisor effectiveness is deliberately small. It never
    changes contract commission or tax law; it only changes systems that already

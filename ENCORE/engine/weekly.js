@@ -30,6 +30,8 @@
       fmt,
       money,
     } = h;
+    const releaseEngine=h.releases||global.ENCORE_RELEASES;
+    if(!releaseEngine||typeof releaseEngine.settle!=="function")throw Error("Release Engine is unavailable.");
     tickMarket();
     beginCareerWeek();
     settleLivingWorld();
@@ -39,7 +41,7 @@
     let count = 0,
       added = 0,
       debut = [];
-    ({ count, added, debut } = global.ENCORE_RELEASES.settle(s, h));
+    ({ count, added, debut } = releaseEngine.settle(s, h));
     settleAlbumSales();
     worldWeek();
     settleLabelWeek();
@@ -96,5 +98,5 @@
       log("Your balance is below zero. Work shifts can cover the shortfall.");
     return { completed, count, added, debut, financial, earned };
   }
-  global.ENCORE_WEEKLY = { settle };
+  global.ENCORE_WEEKLY = Object.freeze({version:2,settle});
 })(globalThis);
