@@ -87,6 +87,7 @@ V083_isMonthClosing=function(week=s.week){return ENCORE_ENGINE.scheduler.monthCl
 V083_settleMonthEnd=function(){return ENCORE_ENGINE.scheduler.runMonthEnd(ENCORE_MONTH_END_HOOKS)};
 V083_accumulateWeek=function(completed,beforeCash){
  if(typeof V117_settleRepRelationships==='function')V117_settleRepRelationships(completed);
+ if(typeof V118_advanceLegal==='function')V118_advanceLegal(completed);
  return ENCORE_ENGINE.scheduler.accumulate(s,{completed,beforeCash},{cents,calendarMonthAtWeek,catalogValue,generateCommercialOffers:()=>{if(typeof generateCommercialOffers080==='function')generateCommercialOffers080()},rollThreat:()=>{if(typeof rollThreat==='function')rollThreat()},captureSnapshot:()=>{if(typeof V131_captureSnapshot==='function')V131_captureSnapshot()}})
 };
 
