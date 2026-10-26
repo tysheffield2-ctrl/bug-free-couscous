@@ -11,11 +11,12 @@ const V136_MEMORY_PRUNE_TARGET=1080;
 const V136_ENTITY_LIMIT=140;
 function V136_state(){
  const root=typeof V118_state==='function'?V118_state():(s.cohesion??={events:[]});
- if(!root.memory||typeof root.memory!=='object')root.memory={version:V136_MEMORY_SCHEMA,records:{},entities:{},relationships:{},lastSweepWeek:0,backfilled:false};
+ if(!root.memory||typeof root.memory!=='object')root.memory={version:V136_MEMORY_SCHEMA,records:{},entities:{},relationships:{},recordCount:0,lastSweepWeek:0,backfilled:false};
  const m=root.memory;m.version=V136_MEMORY_SCHEMA;
  if(!m.records||typeof m.records!=='object'||Array.isArray(m.records))m.records={};
  if(!m.entities||typeof m.entities!=='object'||Array.isArray(m.entities))m.entities={};
  if(!m.relationships||typeof m.relationships!=='object'||Array.isArray(m.relationships))m.relationships={};
+ if(!Number.isFinite(Number(m.recordCount))||m.recordCount<0)m.recordCount=Object.keys(m.records).length;
  if(!Number.isFinite(Number(m.lastSweepWeek)))m.lastSweepWeek=0;
  return m
 }
@@ -81,18 +82,19 @@ function V136_applyRelationshipContext(e){
 }
 function V136_compactEvent(e){return {id:e.id,week:e.week,kind:e.kind,title:e.title,detail:e.detail,entities:[...(e.entities||[])],causeIds:[...(e.causeIds||[])],effects:[...(e.effects||[])],salience:e.salience,tags:[...(e.tags||[])]}}
 function V136_trimMemory(){
- const m=V136_state(),ids=Object.keys(m.records);if(ids.length<=V136_MEMORY_PRUNE_TRIGGER)return;
- const protectedIds=new Set();for(const row of Object.values(m.entities))for(const id of (row?.eventIds||[]).slice(0,6))protectedIds.add(id);
+ const m=V136_state();if(m.recordCount<=V136_MEMORY_PRUNE_TRIGGER)return;
+ const ids=Object.keys(m.records),protectedIds=new Set();for(const row of Object.values(m.entities))for(const id of (row?.eventIds||[]).slice(0,6))protectedIds.add(id);
  const removable=ids.map(id=>m.records[id]).filter(Boolean).sort((a,b)=>(a.salience||0)-(b.salience||0)||(a.week||0)-(b.week||0));
- const deleted=new Set();let remaining=ids.length;
+ const deleted=new Set();let remaining=m.recordCount;
  for(const e of removable){if(remaining<=V136_MEMORY_PRUNE_TARGET)break;if((e.salience||0)>=90||protectedIds.has(e.id))continue;delete m.records[e.id];deleted.add(e.id);remaining--}
  if(remaining>V136_MEMORY_LIMIT){for(const e of removable){if(remaining<=V136_MEMORY_LIMIT)break;if((e.salience||0)>=90||deleted.has(e.id))continue;delete m.records[e.id];deleted.add(e.id);remaining--}}
- if(deleted.size)for(const row of Object.values(m.entities))if(Array.isArray(row.eventIds))row.eventIds=row.eventIds.filter(id=>!deleted.has(id))
+ if(deleted.size)for(const row of Object.values(m.entities))if(Array.isArray(row.eventIds))row.eventIds=row.eventIds.filter(id=>!deleted.has(id));
+ m.recordCount=remaining
 }
 function V136_indexEvent(e,{apply=true}={}){
  if(!e?.id)return e;const m=V136_state();e.links=e.links&&typeof e.links==='object'?e.links:{};e.entities=Array.isArray(e.entities)&&e.entities.length?e.entities:V136_entityRefs(e.kind,e.links);e.causeIds=Array.isArray(e.causeIds)?e.causeIds:V136_inferCauseIds(e.kind,e.links,e.entities);e.salience=Number.isFinite(Number(e.salience))?clamp(Math.round(e.salience),1,100):V136_eventSalience(e.kind,e.title);e.tags=Array.isArray(e.tags)?e.tags:[];e.effects=Array.isArray(e.effects)?e.effects:[];
  if(apply&&!e.v136Applied){e.effects.push(...V136_applyRelationshipContext(e));e.v136Applied=true}
- m.records[e.id]=V136_compactEvent(e);
+ const existed=Object.prototype.hasOwnProperty.call(m.records,e.id);m.records[e.id]=V136_compactEvent(e);if(!existed)m.recordCount++;
  for(const ref of e.entities){const row=m.entities[ref]??=( {eventIds:[],lastWeek:0} );row.eventIds=[e.id,...row.eventIds.filter(id=>id!==e.id)].slice(0,V136_ENTITY_LIMIT);row.lastWeek=Math.max(row.lastWeek||0,e.week||0)}
  V136_trimMemory();return e
 }
@@ -140,6 +142,6 @@ function V136_sweep(){
  V136_trimMemory()
 }
 if(typeof worldWeek==='function'){const V136_worldWeekBase=worldWeek;worldWeek=function(){const result=V136_worldWeekBase();V136_sweep();return result}}
-function V136_validate(){const m=V136_state();if(m.version!==V136_MEMORY_SCHEMA||!m.records||!m.entities||!m.relationships)throw Error('Invalid Living Memory state');for(const r of Object.values(m.relationships)){for(const k of ['affinity','respect'])if(!Number.isFinite(Number(r[k]))||r[k]<-100||r[k]>100)throw Error('Invalid memory relationship '+k);for(const k of ['rivalry','grievance'])if(!Number.isFinite(Number(r[k]))||r[k]<0||r[k]>100)throw Error('Invalid memory relationship '+k)}}
+function V136_validate(){const m=V136_state();if(m.version!==V136_MEMORY_SCHEMA||!m.records||!m.entities||!m.relationships||!Number.isFinite(Number(m.recordCount)))throw Error('Invalid Living Memory state');for(const r of Object.values(m.relationships)){for(const k of ['affinity','respect'])if(!Number.isFinite(Number(r[k]))||r[k]<-100||r[k]>100)throw Error('Invalid memory relationship '+k);for(const k of ['rivalry','grievance'])if(!Number.isFinite(Number(r[k]))||r[k]<0||r[k]>100)throw Error('Invalid memory relationship '+k)}}
 if(typeof validatePresentationState==='function'){const V136_validateBase=validatePresentationState;validatePresentationState=function(){V136_validateBase();V136_validate()}}
 V136_backfill();
