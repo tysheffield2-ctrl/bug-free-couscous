@@ -85,7 +85,10 @@ const ENCORE_MONTH_END_HOOKS=[
 isAnnualClosing=function(week=s.week){return ENCORE_ENGINE.scheduler.annualClosing(week)};
 V083_isMonthClosing=function(week=s.week){return ENCORE_ENGINE.scheduler.monthClosing(week,calendarMonthAtWeek)};
 V083_settleMonthEnd=function(){return ENCORE_ENGINE.scheduler.runMonthEnd(ENCORE_MONTH_END_HOOKS)};
-V083_accumulateWeek=function(completed,beforeCash){return ENCORE_ENGINE.scheduler.accumulate(s,{completed,beforeCash},{cents,calendarMonthAtWeek,catalogValue,generateCommercialOffers:()=>{if(typeof generateCommercialOffers080==='function')generateCommercialOffers080()},rollThreat:()=>{if(typeof rollThreat==='function')rollThreat()},captureSnapshot:()=>{if(typeof V131_captureSnapshot==='function')V131_captureSnapshot()}})};
+V083_accumulateWeek=function(completed,beforeCash){
+ if(typeof V117_settleRepRelationships==='function')V117_settleRepRelationships(completed);
+ return ENCORE_ENGINE.scheduler.accumulate(s,{completed,beforeCash},{cents,calendarMonthAtWeek,catalogValue,generateCommercialOffers:()=>{if(typeof generateCommercialOffers080==='function')generateCommercialOffers080()},rollThreat:()=>{if(typeof rollThreat==='function')rollThreat()},captureSnapshot:()=>{if(typeof V131_captureSnapshot==='function')V131_captureSnapshot()}})
+};
 
 advanceWeek=function(confirmed=false){
  if(!saveReady||saveConflict)return;
