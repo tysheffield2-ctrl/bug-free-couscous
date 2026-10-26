@@ -6,6 +6,8 @@
 
 const V136_MEMORY_SCHEMA=1;
 const V136_MEMORY_LIMIT=1200;
+const V136_MEMORY_PRUNE_TRIGGER=1320;
+const V136_MEMORY_PRUNE_TARGET=1080;
 const V136_ENTITY_LIMIT=140;
 function V136_state(){
  const root=typeof V118_state==='function'?V118_state():(s.cohesion??={events:[]});
@@ -79,10 +81,13 @@ function V136_applyRelationshipContext(e){
 }
 function V136_compactEvent(e){return {id:e.id,week:e.week,kind:e.kind,title:e.title,detail:e.detail,entities:[...(e.entities||[])],causeIds:[...(e.causeIds||[])],effects:[...(e.effects||[])],salience:e.salience,tags:[...(e.tags||[])]}}
 function V136_trimMemory(){
- const m=V136_state(),ids=Object.keys(m.records);if(ids.length<=V136_MEMORY_LIMIT)return;
- const protectedIds=new Set();for(const row of Object.values(m.entities))for(const id of (row?.eventIds||[]).slice(0,12))protectedIds.add(id);
+ const m=V136_state(),ids=Object.keys(m.records);if(ids.length<=V136_MEMORY_PRUNE_TRIGGER)return;
+ const protectedIds=new Set();for(const row of Object.values(m.entities))for(const id of (row?.eventIds||[]).slice(0,6))protectedIds.add(id);
  const removable=ids.map(id=>m.records[id]).filter(Boolean).sort((a,b)=>(a.salience||0)-(b.salience||0)||(a.week||0)-(b.week||0));
- for(const e of removable){if(Object.keys(m.records).length<=V136_MEMORY_LIMIT)break;if((e.salience||0)>=90||protectedIds.has(e.id))continue;delete m.records[e.id];for(const row of Object.values(m.entities))if(Array.isArray(row.eventIds))row.eventIds=row.eventIds.filter(id=>id!==e.id)}
+ const deleted=new Set();let remaining=ids.length;
+ for(const e of removable){if(remaining<=V136_MEMORY_PRUNE_TARGET)break;if((e.salience||0)>=90||protectedIds.has(e.id))continue;delete m.records[e.id];deleted.add(e.id);remaining--}
+ if(remaining>V136_MEMORY_LIMIT){for(const e of removable){if(remaining<=V136_MEMORY_LIMIT)break;if((e.salience||0)>=90||deleted.has(e.id))continue;delete m.records[e.id];deleted.add(e.id);remaining--}}
+ if(deleted.size)for(const row of Object.values(m.entities))if(Array.isArray(row.eventIds))row.eventIds=row.eventIds.filter(id=>!deleted.has(id))
 }
 function V136_indexEvent(e,{apply=true}={}){
  if(!e?.id)return e;const m=V136_state();e.links=e.links&&typeof e.links==='object'?e.links:{};e.entities=Array.isArray(e.entities)&&e.entities.length?e.entities:V136_entityRefs(e.kind,e.links);e.causeIds=Array.isArray(e.causeIds)?e.causeIds:V136_inferCauseIds(e.kind,e.links,e.entities);e.salience=Number.isFinite(Number(e.salience))?clamp(Math.round(e.salience),1,100):V136_eventSalience(e.kind,e.title);e.tags=Array.isArray(e.tags)?e.tags:[];e.effects=Array.isArray(e.effects)?e.effects:[];
