@@ -39,12 +39,12 @@ function V136_entityRefs(kind,links={}){
  if(links.actorArtistId!==undefined&&links.actorArtistId!==null)add(V136_artistRef(links.actorArtistId));
  if(links.targetArtistId!==undefined&&links.targetArtistId!==null)add(V136_artistRef(links.targetArtistId));
  if(links.agreementId){add(V136_ref('agreement',links.agreementId));const c=s.labelBusiness?.company?.contracts?.find?.(x=>x.agreementId===links.agreementId);if(c?.artist!==undefined&&c?.artist!==null)add(V136_artistRef(c.artist));}
- if(links.caseId)add(V136_ref('case',links.caseId));
+ if(links.caseId){add(V136_ref('case',links.caseId));const c=typeof V118_legalCases==='function'?V118_legalCases().find?.(x=>x.id===links.caseId):null;if(c?.collaboratorId!==undefined&&c?.collaboratorId!==null)add(V136_artistRef(c.collaboratorId));}
  if(links.requestId)add(V136_ref('request',links.requestId));
  if(links.trackId)add(V136_ref('track',links.trackId));
  if(links.platformId)add(V136_ref('platform',links.platformId));
  if(links.labelId!==undefined&&links.labelId!==null)add(V136_ref('label',links.labelId));
- if(links.includePlayer!==false&&(/roster|legal|contract|collab|feature|management|release|tour|number-one/.test(String(kind||''))||links.playerInvolved))add('player');
+ if(links.includePlayer!==false&&(/roster|legal|lawsuit|contract|collab|feature|management|release|tour|number-one/.test(String(kind||''))||links.playerInvolved))add('player');
  return [...refs]
 }
 function V136_inferCauseIds(kind,links={},entities=[]){
@@ -117,6 +117,7 @@ let V136_relationProjectionDepth=0;
 function V136_withEffectiveRelation(a,fn){if(!a||V136_relationProjectionDepth>0)return fn();const raw=a.relation;a.relation=V136_effectiveRelation(a);V136_relationProjectionDepth++;try{return fn()}finally{V136_relationProjectionDepth--;a.relation=raw}}
 if(typeof V125_terms==='function'){const V136_termsBase=V125_terms;V125_terms=function(a,role){return V136_withEffectiveRelation(a,()=>V136_termsBase(a,role))}}
 if(typeof V125_acceptChance==='function'){const V136_acceptBase=V125_acceptChance;V125_acceptChance=function(a,role,fee,share){return V136_withEffectiveRelation(a,()=>V136_acceptBase(a,role,fee,share))}}
+if(typeof V092_outgoingFeatureTerms==='function'){const V136_featureTermsBase=V092_outgoingFeatureTerms;V092_outgoingFeatureTerms=function(a){return V136_withEffectiveRelation(a,()=>V136_featureTermsBase(a))}}
 
 function V136_relationshipLabel(r){const n=r.affinity-r.grievance*.45;return n>=35?'Trusted history':n>=10?'Warm history':n<=-35?'Hostile history':n<=-10?'Fractured history':r.rivalry>=35?'Competitive history':'Developing history'}
 function V136_artistMemoryPanel(id){
