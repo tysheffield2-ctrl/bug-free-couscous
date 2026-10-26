@@ -17,12 +17,12 @@ globalThis.onmessage = ({ data }) => {
     saveReady = true;
     saveConflict = false;
     migrateV083();
-    const result = ENCORE_WEEK_TRANSACTION.run(s, {
+    const result = ENCORE_ENGINE.transactWeek(s, {
       isMonthClosing: (week) => V083_isMonthClosing(week),
       settleMonthEnd: () => V083_settleMonthEnd(),
-      settleWeek: () => advanceWeek(true),
       accumulate: ({ completed, beforeCash }) =>
         V083_accumulateWeek(completed, beforeCash),
+      hooks: ENCORE_engineHooks(),
     });
     if (!result.ok) throw result.error;
     if (result.state.week !== input.week + 1)
