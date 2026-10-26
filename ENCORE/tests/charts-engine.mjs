@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-const source=fs.readFileSync(new URL('../engine/charts.js',import.meta.url),'utf8'),bridge=fs.readFileSync(new URL('../src/charts-engine-bridge.js',import.meta.url),'utf8'),build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
+const source=fs.readFileSync(new URL('../engine/charts.js',import.meta.url),'utf8'),adapter=fs.readFileSync(new URL('../src/engine-adapter.js',import.meta.url),'utf8'),runtime=fs.readFileSync(new URL('../engine/runtime.js',import.meta.url),'utf8'),build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
 const ctx={console,structuredClone,JSON,Number,String,Array,Object,Error,Map,Set};ctx.globalThis=ctx;vm.createContext(ctx);vm.runInContext(source,ctx);const E=ctx.ENCORE_CHARTS;
 function state(){return {week:10,chartWeek:10,songs:[{id:1,title:'Mine',peak:null,chartWeeks:0,numberOneWeeks:0,numberOneStreak:0,longestNumberOne:0}],albums:[],chartBook:E.initial(1)}}
 {
@@ -13,5 +13,5 @@ function state(){return {week:10,chartWeek:10,songs:[{id:1,title:'Mine',peak:nul
 {
  const s=state();s.chartBook=E.initial(8);s.chartWeek=10;E.track(s,'songs',[{key:'npc:s:old',title:'Old',artist:'NPC',streams:100,releaseWeek:4}],{baseline:true});assert.equal(s.chartBook.songs.current[0].movement,'BASE');assert.equal(s.chartBook.songs.records['npc:s:old'].partial,true);assert.equal(s.chartBook.songs.records['npc:s:old'].debutRank,null)
 }
-assert.ok(bridge.includes('ENCORE_CHARTS.publish'));assert.ok(bridge.includes('ENCORE_CHARTS.track'));assert.ok(build.includes("readFileSync('engine/charts.js'"));
-console.log('PASS shared Chart Ledger owns issue publication, movement, re-entry, peak, longevity and #1 streak state for legacy ENCORE and UI2.');
+assert.ok(adapter.includes('ENCORE_ENGINE.publishCharts'));assert.ok(adapter.includes('ENCORE_ENGINE.trackChart'));assert.ok(runtime.includes("charts:snap('ENCORE_CHARTS')"));assert.ok(build.includes("readFileSync('engine/charts.js'"));assert.equal(fs.existsSync(new URL('../src/charts-engine-bridge.js',import.meta.url)),false);
+console.log('PASS Chart Ledger owns publication, movement, re-entry, peak and longevity; the live renderer routes charts through the single ENCORE Engine adapter.');
