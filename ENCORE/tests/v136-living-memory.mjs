@@ -19,22 +19,26 @@ assert.equal(h.run(`V136_memories('artist:0',{limit:10}).some(x=>x.id==='${refus
 assert.ok(h.run(`V136_relation('artist:0','player').grievance`)>=16,'refusal should create remembered grievance');
 assert.ok(h.run(`V136_effectiveRelation(s.world[0])`)<before,'remembered grievance should lower effective relationship context');
 
-// A lawsuit filed in the same causal chain should point back to the refusal and
-// recover the artist entity from the linked agreement.
+// A lawsuit filed in the same causal chain should point back to the refusal,
+// recover the artist from the linked agreement, and deepen the remembered dispute.
 const lawsuit=h.run(`V118_event('lawsuit','Artist v. Encore Records','Catalog ownership dispute.',{agreementId:'${agreement}',caseId:'case-test'})`);
 assert.equal(h.run(`V136_findEvent('${lawsuit.id}').causeIds.includes('${refused.id}')`),true,'legal escalation should retain its causal parent');
 assert.equal(h.run(`V136_memories('artist:0',{limit:10}).some(x=>x.id==='${lawsuit.id}')`),true,'agreement-linked legal event should resolve back to the artist');
+assert.ok(h.run(`V136_relation('artist:0','player').grievance`)>=30,'lawsuit should deepen remembered grievance');
 
 // Positive later history can repair context instead of relations being frozen.
+const affinityBeforeRepair=h.run(`V136_relation('artist:0','player').affinity`);
 h.run(`V118_event('roster-request-resolved','Artist request accepted','The label reached a new agreement.',{artistId:0,agreementId:'${agreement}'})`);
-assert.ok(h.run(`V136_relation('artist:0','player').affinity`)>-14,'later choices should be able to repair remembered affinity');
+assert.ok(h.run(`V136_relation('artist:0','player').affinity`)>affinityBeforeRepair,'later choices should be able to repair remembered affinity');
 
 // Collaboration terms use effective remembered history while the raw legacy
 // relation remains intact for compatibility with systems not migrated yet.
 const raw=h.run(`s.world[0].relation`);
 const projected=h.run(`V125_terms(s.world[0],'writer').rel`);
 assert.equal(h.run(`s.world[0].relation`),raw,'projection must not mutate legacy relation storage');
-assert.equal(projected,h.run(`V136_effectiveRelation(s.world[0])`),'collaboration terms should read remembered relationship context');
+assert.equal(projected,h.run(`V136_effectiveRelation(s.world[0])`),'songwriting terms should read remembered relationship context');
+h.run(`V092_outgoingFeatureTerms(s.world[0])`);
+assert.equal(h.run(`s.world[0].relation`),raw,'feature-term projection must restore legacy relation storage');
 
 // Important memories survive beyond Cohesion Core's 500-event rolling feed.
 const defining=h.run(`V136_recordEvent({kind:'award',title:'Defining career win',detail:'A permanent milestone.',entities:['player'],salience:96}).id`);
@@ -56,6 +60,7 @@ const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),
 assert.ok(src.includes('V136_indexEvent'));
 assert.ok(src.includes('V136_causeTrail'));
 assert.ok(src.includes('V136_effectiveRelation'));
+assert.ok(src.includes('V136_featureTermsBase'));
 assert.ok(css.includes('.v136-memory'));
 assert.ok(build.includes("'v136-living-memory'"));
 assert.ok(pkg.scripts['test:regression'].includes('v136-living-memory.mjs'));
