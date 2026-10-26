@@ -40,15 +40,21 @@ assert.equal(projected,h.run(`V136_effectiveRelation(s.world[0])`),'songwriting 
 h.run(`V092_outgoingFeatureTerms(s.world[0])`);
 assert.equal(h.run(`s.world[0].relation`),raw,'feature-term projection must restore legacy relation storage');
 
-// Important memories survive beyond Cohesion Core's 500-event rolling feed.
-// Pruning is intentionally batched so a long career does not sort the memory
-// graph on every single event once it becomes large.
+// Routine activity belongs to Cohesion Core's rolling feed, not permanent memory.
+const routineBefore=h.run(`V136_state().recordCount`);
+h.run(`for(let i=0;i<100;i++)V118_event('noise','Routine update '+i,'Low-salience activity.',{includePlayer:false,entities:['system:test']})`);
+assert.equal(h.run(`V136_state().recordCount`),routineBefore,'low-salience feed noise should not inflate durable memory');
+
+// Consequential history is retained in a lean record shape and pruned in batches.
 const defining=h.run(`V136_recordEvent({kind:'award',title:'Defining career win',detail:'A permanent milestone.',entities:['player'],salience:96}).id`);
-h.run(`for(let i=0;i<1400;i++)V118_event('noise','Routine update '+i,'Low-salience activity.',{includePlayer:false,entities:['system:test']})`);
-assert.equal(h.run(`!!V136_findEvent('${defining}')`),true,'high-salience career memory must outlive the rolling event feed and pruning');
+h.run(`for(let i=0;i<1000;i++)V118_event('industry-routine','Industry shift '+i,'A notable but non-defining industry signal.',{includePlayer:false,entities:['system:test']})`);
+assert.equal(h.run(`!!V136_findEvent('${defining}')`),true,'high-salience career memory must survive durable-memory pruning');
 assert.ok(h.run(`V118_state().events.length`)<=500,'legacy activity feed should remain bounded');
 assert.ok(h.run(`V136_state().recordCount`)<=h.run(`V136_MEMORY_PRUNE_TRIGGER`),'durable memory store should remain bounded after batched pruning');
 assert.equal(h.run(`V136_state().recordCount`),h.run(`Object.keys(V136_state().records).length`),'constant-time record counter must stay synchronized with durable memory storage');
+const compact=h.run(`V136_findEvent('${defining}')`);
+assert.equal(Object.hasOwn(compact,'detail'),false,'durable memory should not duplicate verbose rolling-feed detail');
+assert.equal(Object.hasOwn(compact,'effects'),false,'durable memory should not duplicate effect payloads already represented in state');
 
 const artistPanel=h.run(`V136_artistMemoryPanel(0)`);
 assert.ok(artistPanel.includes('PERSISTENT MEMORY'));
@@ -62,6 +68,7 @@ const css=fs.readFileSync(new URL('../src/v136-living-memory.css',import.meta.ur
 const build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
 const pkg=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'));
 assert.ok(src.includes('V136_indexEvent'));
+assert.ok(src.includes('V136_shouldRemember'));
 assert.ok(src.includes('V136_causeTrail'));
 assert.ok(src.includes('V136_effectiveRelation'));
 assert.ok(src.includes('V136_featureTermsBase'));
@@ -70,4 +77,4 @@ assert.ok(src.includes('recordCount'));
 assert.ok(css.includes('.v136-memory'));
 assert.ok(build.includes("'v136-living-memory'"));
 assert.ok(pkg.scripts['test:regression'].includes('v136-living-memory.mjs'));
-console.log('PASS Living Memory foundation: durable entity memory, causal chains, remembered relationship context, collaboration consequences, constant-time event counting, batched pruning, high-salience retention and player-facing history.');
+console.log('PASS Living Memory foundation: selective durable memory, causal chains, remembered relationship context, collaboration consequences, compact save shape, constant-time counting, batched pruning and player-facing history.');
