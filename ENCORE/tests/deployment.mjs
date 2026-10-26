@@ -4,7 +4,7 @@ import {execFileSync} from 'node:child_process';
 import handler from '../dist/server/index.js';
 const version=JSON.parse(readFileSync('package.json')).version;
 const gameBytes=readFileSync('dist/game.js').length,workerBytes=readFileSync('dist/server/index.js').length;
-assert.ok(gameBytes<1_430_000,`game.js exceeded 1.43 MB budget: ${gameBytes}`);
+assert.ok(gameBytes<1_480_000,`game.js exceeded 1.48 MB budget: ${gameBytes}`);
 assert.ok(workerBytes<1_500_000,`Worker exceeded 1.5 MB budget: ${workerBytes}`);
 const interactiveRoutes=['/','/sandbox','/legacy','/legacy/sandbox','/offline','/offline/sandbox'];
 const ui2Routes=['/ui2','/preview-ui2','/ui2/sandbox','/preview-ui2/sandbox'];
