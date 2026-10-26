@@ -37,6 +37,7 @@ assert.ok(src.includes('V131_captureSnapshot')&&src.includes('V131_legacy')&&src
 assert.ok(css.includes('.v131-file')&&css.includes('.v131-stats')&&css.includes('@media(max-width:760px)'));
 assert.ok(hotfix.includes('.v131-file .v131-spread>aside')&&hotfix.includes('-webkit-text-fill-color:currentColor!important'),'Current Chapter light panel must force readable ink through theme overrides');
 assert.ok(hotfix.includes('.v130-plaque.small svg text:nth-of-type(1)')&&hotfix.includes('.v130-plaque-diamond.small svg>g'),'small plaque SVG copy and Diamond emblem must have mobile-safe constraints');
+assert.ok(hotfix.includes('.certification-card .v130-plaque svg text:nth-of-type(1)')&&hotfix.includes('.certification-card .v130-plaque-diamond svg>g'),'full song/album certification plaques must constrain copy and the Diamond emblem too');
 const build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
 assert.ok(build.includes("'v131-artist-file-stats','v132-mobile-hotfix'"),'mobile hotfix CSS must load after Artist File 2.0 styles');
-console.log('PASS Artist File + Stats 2.0 legacy score, era history, career highs, plaque wall continuity, real weekly stat snapshots, radar analytics, mobile presentation and Artist File hotfix contracts.');
+console.log('PASS Artist File + Stats 2.0 legacy score, era history, career highs, plaque wall continuity, real weekly stat snapshots, radar analytics, mobile presentation and Artist File/certification hotfix contracts.');
