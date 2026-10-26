@@ -22,14 +22,15 @@ applyAudienceEvent=function(source,delta,options={}){
  return ENCORE_ENGINE.applyAudience(s,source,delta,options,{ensureWorld:()=>migrateCareerWorld(),reconcile:()=>reconcileRegionalAudience()});
 };
 
-/* Finance — one close path with Tax Foundation 2.0 + Tax Planning 2.0 folded in. */
+/* Finance — one close path with Tax Foundation, Tax Planning and Entities/Assets folded in. */
 closeFinances=function(royalties,rate){
+ migrateFinance?.();
+ if(!s.finance.week||typeof s.finance.week!=='object')s.finance.week={wages:0,live:0,expenses:0};
+ const depreciation=typeof V113_weeklyDepreciation==='function'?Math.max(0,Number(V113_weeklyDepreciation())||0):0,admin=typeof V113_entityAdminFee==='function'?Math.max(0,Number(V113_entityAdminFee())||0):0;
+ if(depreciation||admin)s.finance.week.expenses=cents((Number(s.finance.week.expenses)||0)+depreciation+admin);
+ if(admin){changeCash(-admin);moneyEvent?.((typeof V113_entity==='function'?V113_entity().name:'Business structure')+' administration',-admin)}
  const plan=typeof V112_plan==='function'?V112_plan():null,cpa=typeof V112_cpa==='function'?V112_cpa():null,advisorFee=cpa&&typeof V112_cpaWeeklyFee==='function'?Math.max(0,Number(V112_cpaWeeklyFee())||0):0;
- if(advisorFee){
-  migrateFinance?.();
-  if(!s.finance.week||typeof s.finance.week!=='object')s.finance.week={wages:0,live:0,expenses:0};
-  s.finance.week.expenses=cents((Number(s.finance.week.expenses)||0)+advisorFee);
- }
+ if(advisorFee)s.finance.week.expenses=cents((Number(s.finance.week.expenses)||0)+advisorFee);
  const f=s.finance,w=f.week,income=V091_incomeBreakdown(w),labelCut=artistLabelCut(royalties),labelPayroll=V091_num(w.labelPayroll),repIncome={royalties,albumSales:income.albumSales,live:income.live,media:income.media,publishing:income.publishing,sync:income.sync,endorsement:income.endorsement,merch:income.merch,sponsorship:income.sponsorship},representation=V100_repSettlements(repIncome),agentFee=V100_repTotal(representation),operations=V100_operatingCosts(),operatingCost=V100_operatingTotal(operations);
  if(agentFee)moneyEvent('Representation commissions',-agentFee);
  const report=ENCORE_ENGINE.settleFinance(s,{royalties,income,incomeTotal:V091_incomeTotal(w),labelCut,labelPayroll,representation,agentFee,operations,operatingCost,actionExpenses:V091_num(w.expenses),yearEnd:isAnnualClosing(),taxQuote:V100_taxQuote});
@@ -49,6 +50,9 @@ closeFinances=function(royalties,rate){
   }
   report.taxForecastConfidence=typeof V112_forecastConfidence==='function'?V112_forecastConfidence():null;
  }
+ if(admin){report.entityAdminFee=admin;report.cash=s.cash}
+ report.depreciationDeduction=depreciation;report.entityStructure=typeof V113_entity==='function'?V113_entity().name:'Individual / Sole Operation';report.businessAssetCount=typeof V113_businessAssets==='function'?V113_businessAssets().length:0;
+ if(report.deductibleBreakdown){const cpaFee=Math.max(0,Number(report.taxAdvisorFee||0));report.deductibleBreakdown.depreciation=depreciation;report.deductibleBreakdown.entityAdministration=admin;report.deductibleBreakdown.taxAdvisor=cpaFee;report.deductibleBreakdown.actions=Math.max(0,Number(report.deductibleBreakdown.actions||0)-depreciation-admin-cpaFee)}
  s.finance.last=report;return report
 };
 
