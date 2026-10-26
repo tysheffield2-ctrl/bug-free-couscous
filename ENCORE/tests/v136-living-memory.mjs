@@ -47,7 +47,8 @@ const defining=h.run(`V136_recordEvent({kind:'award',title:'Defining career win'
 h.run(`for(let i=0;i<1400;i++)V118_event('noise','Routine update '+i,'Low-salience activity.',{includePlayer:false,entities:['system:test']})`);
 assert.equal(h.run(`!!V136_findEvent('${defining}')`),true,'high-salience career memory must outlive the rolling event feed and pruning');
 assert.ok(h.run(`V118_state().events.length`)<=500,'legacy activity feed should remain bounded');
-assert.ok(h.run(`Object.keys(V136_state().records).length`)<=h.run(`V136_MEMORY_PRUNE_TRIGGER`),'durable memory store should remain bounded after batched pruning');
+assert.ok(h.run(`V136_state().recordCount`)<=h.run(`V136_MEMORY_PRUNE_TRIGGER`),'durable memory store should remain bounded after batched pruning');
+assert.equal(h.run(`V136_state().recordCount`),h.run(`Object.keys(V136_state().records).length`),'constant-time record counter must stay synchronized with durable memory storage');
 
 const artistPanel=h.run(`V136_artistMemoryPanel(0)`);
 assert.ok(artistPanel.includes('PERSISTENT MEMORY'));
@@ -65,7 +66,8 @@ assert.ok(src.includes('V136_causeTrail'));
 assert.ok(src.includes('V136_effectiveRelation'));
 assert.ok(src.includes('V136_featureTermsBase'));
 assert.ok(src.includes('V136_MEMORY_PRUNE_TRIGGER'));
+assert.ok(src.includes('recordCount'));
 assert.ok(css.includes('.v136-memory'));
 assert.ok(build.includes("'v136-living-memory'"));
 assert.ok(pkg.scripts['test:regression'].includes('v136-living-memory.mjs'));
-console.log('PASS Living Memory foundation: durable entity memory, causal chains, remembered relationship context, collaboration consequences, batched pruning, high-salience retention and player-facing history.');
+console.log('PASS Living Memory foundation: durable entity memory, causal chains, remembered relationship context, collaboration consequences, constant-time event counting, batched pruning, high-salience retention and player-facing history.');
