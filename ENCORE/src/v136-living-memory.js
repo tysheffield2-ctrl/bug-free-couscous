@@ -1,14 +1,13 @@
 /* ENCORE 0.9.24 — Living Memory / Causality Foundation.
-   Turns Cohesion Core's durable event ledger into entity memory and cause/effect
-   history. Important events survive the rolling activity feed, NPCs retain
-   relationship context, and existing collaboration economics can react to that
-   history instead of reading only a flat relationship number. */
+   Turns Cohesion Core's event ledger into selective entity memory and cause/effect
+   history. Routine activity stays in the rolling feed; consequential events can
+   survive for decades and influence future relationship-driven decisions. */
 
 const V136_MEMORY_SCHEMA=1;
-const V136_MEMORY_LIMIT=1200;
-const V136_MEMORY_PRUNE_TRIGGER=1320;
-const V136_MEMORY_PRUNE_TARGET=1080;
-const V136_ENTITY_LIMIT=140;
+const V136_MEMORY_LIMIT=760;
+const V136_MEMORY_PRUNE_TRIGGER=840;
+const V136_MEMORY_PRUNE_TARGET=680;
+const V136_ENTITY_LIMIT=80;
 function V136_state(){
  const root=typeof V118_state==='function'?V118_state():(s.cohesion??={events:[]});
  if(!root.memory||typeof root.memory!=='object')root.memory={version:V136_MEMORY_SCHEMA,records:{},entities:{},relationships:{},recordCount:0,lastSweepWeek:0,backfilled:false};
@@ -78,12 +77,15 @@ function V136_relationshipDelta(kind,title=''){
 }
 function V136_applyRelationshipContext(e){
  const artists=(e.entities||[]).filter(x=>x.startsWith('artist:')),delta=V136_relationshipDelta(e.kind,e.title);if(!delta||!artists.length||!(e.entities||[]).includes('player'))return [];
- const effects=[];for(const ref of artists){const r=V136_relation(ref,'player');for(const [key,val] of Object.entries(delta)){if(!Number.isFinite(Number(val)))continue;const lo=key==='rivalry'||key==='grievance'?0:-100,hi=100;r[key]=clamp((Number(r[key])||0)+Number(val),lo,hi)}r.lastWeek=s.week;r.history.unshift(e.id);r.history=[...new Set(r.history)].slice(0,60);effects.push({type:'relationship-context',entity:ref,...delta})}return effects
+ const effects=[];for(const ref of artists){const r=V136_relation(ref,'player');for(const [key,val] of Object.entries(delta)){if(!Number.isFinite(Number(val)))continue;const lo=key==='rivalry'||key==='grievance'?0:-100,hi=100;r[key]=clamp((Number(r[key])||0)+Number(val),lo,hi)}r.lastWeek=s.week;r.history.unshift(e.id);r.history=[...new Set(r.history)].slice(0,30);effects.push({type:'relationship-context',entity:ref,...delta})}return effects
 }
-function V136_compactEvent(e){return {id:e.id,week:e.week,kind:e.kind,title:e.title,detail:e.detail,entities:[...(e.entities||[])],causeIds:[...(e.causeIds||[])],effects:[...(e.effects||[])],salience:e.salience,tags:[...(e.tags||[])]}}
+function V136_shouldRemember(e){return !!(e?.links?.remember||Number(e?.salience)>=55||(e?.causeIds?.length)||V136_relationshipDelta(e?.kind,e?.title))}
+function V136_compactEvent(e){return {id:e.id,week:e.week,kind:e.kind,title:e.title,entities:[...(e.entities||[])],causeIds:[...(e.causeIds||[])],salience:e.salience}}
 function V136_trimMemory(){
  const m=V136_state();if(m.recordCount<=V136_MEMORY_PRUNE_TRIGGER)return;
- const ids=Object.keys(m.records),protectedIds=new Set();for(const row of Object.values(m.entities))for(const id of (row?.eventIds||[]).slice(0,6))protectedIds.add(id);
+ const ids=Object.keys(m.records),protectedIds=new Set();
+ for(const row of Object.values(m.entities))for(const id of (row?.eventIds||[]).slice(0,4))protectedIds.add(id);
+ for(const e of Object.values(m.records))if((e?.salience||0)>=78)for(const id of e.causeIds||[])protectedIds.add(id);
  const removable=ids.map(id=>m.records[id]).filter(Boolean).sort((a,b)=>(a.salience||0)-(b.salience||0)||(a.week||0)-(b.week||0));
  const deleted=new Set();let remaining=m.recordCount;
  for(const e of removable){if(remaining<=V136_MEMORY_PRUNE_TARGET)break;if((e.salience||0)>=90||protectedIds.has(e.id))continue;delete m.records[e.id];deleted.add(e.id);remaining--}
@@ -94,6 +96,7 @@ function V136_trimMemory(){
 function V136_indexEvent(e,{apply=true}={}){
  if(!e?.id)return e;const m=V136_state();e.links=e.links&&typeof e.links==='object'?e.links:{};e.entities=Array.isArray(e.entities)&&e.entities.length?e.entities:V136_entityRefs(e.kind,e.links);e.causeIds=Array.isArray(e.causeIds)?e.causeIds:V136_inferCauseIds(e.kind,e.links,e.entities);e.salience=Number.isFinite(Number(e.salience))?clamp(Math.round(e.salience),1,100):V136_eventSalience(e.kind,e.title);e.tags=Array.isArray(e.tags)?e.tags:[];e.effects=Array.isArray(e.effects)?e.effects:[];
  if(apply&&!e.v136Applied){e.effects.push(...V136_applyRelationshipContext(e));e.v136Applied=true}
+ if(!V136_shouldRemember(e))return e;
  const existed=Object.prototype.hasOwnProperty.call(m.records,e.id);m.records[e.id]=V136_compactEvent(e);if(!existed)m.recordCount++;
  for(const ref of e.entities){const row=m.entities[ref]??=( {eventIds:[],lastWeek:0} );row.eventIds=[e.id,...row.eventIds.filter(id=>id!==e.id)].slice(0,V136_ENTITY_LIMIT);row.lastWeek=Math.max(row.lastWeek||0,e.week||0)}
  V136_trimMemory();return e
@@ -112,7 +115,7 @@ function V136_causeTrail(id,limit=6){
  const out=[],seen=new Set();let cur=V136_findEvent(id);while(cur&&out.length<limit&&!seen.has(cur.id)){out.push(cur);seen.add(cur.id);cur=cur.causeIds?.length?V136_findEvent(cur.causeIds[0]):null}return out
 }
 function V136_recordEvent(spec={}){
- const links={...(spec.links||{}),entities:spec.entities||spec.links?.entities||[],causeEventIds:spec.causeIds||spec.links?.causeEventIds||[],playerInvolved:spec.playerInvolved};const e=V118_event(spec.kind||'world-event',spec.title||'World event',spec.detail||'',links);if(spec.salience!==undefined)e.salience=spec.salience;if(spec.tags)e.tags=[...spec.tags];if(spec.effects)e.effects=[...(e.effects||[]),...spec.effects];return V136_indexEvent(e)
+ const links={...(spec.links||{}),remember:true,entities:spec.entities||spec.links?.entities||[],causeEventIds:spec.causeIds||spec.links?.causeEventIds||[],playerInvolved:spec.playerInvolved};const e=V118_event(spec.kind||'world-event',spec.title||'World event',spec.detail||'',links);if(spec.salience!==undefined)e.salience=spec.salience;if(spec.tags)e.tags=[...spec.tags];if(spec.effects)e.effects=[...(e.effects||[]),...spec.effects];return V136_indexEvent(e)
 }
 const V136_eventBase=V118_event;
 V118_event=function(kind,title,detail,links={}){const e=V136_eventBase(kind,title,detail,links);return V136_indexEvent(e)};
