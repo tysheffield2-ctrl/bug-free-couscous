@@ -6,7 +6,9 @@ const missing=required.filter(k=>!global[k]);if(missing.length)throw Error('ENCO
 const snap=name=>Object.freeze({...global[name]});
 const components=Object.freeze({releases:snap('ENCORE_RELEASES'),weekly:snap('ENCORE_WEEKLY'),audience:snap('ENCORE_AUDIENCE'),transaction:snap('ENCORE_WEEK_TRANSACTION'),studio:snap('ENCORE_STUDIO'),charts:snap('ENCORE_CHARTS'),finance:snap('ENCORE_FINANCE'),roster:snap('ENCORE_ROSTER_NEGOTIATION'),scheduler:snap('ENCORE_SCHEDULER'),migrations:snap('ENCORE_MIGRATIONS')});
 function settleWeek(state,hooks={}){if(!state)throw Error('Missing ENCORE career state.');return components.weekly.settle(state,{...hooks,releases:components.releases})}
-function transactWeek(state,{isMonthClosing,settleMonthEnd,accumulate,hooks={}}={}){return components.transaction.run(state,{isMonthClosing,settleMonthEnd,settleWeek:()=>settleWeek(state,hooks),accumulate})}
+function transactWeek(state,{isMonthClosing,settleMonthEnd,accumulate,hooks={}}={}){
+ let weekResult=null;const tx=components.transaction.run(state,{isMonthClosing,settleMonthEnd,settleWeek:()=>{weekResult=settleWeek(state,hooks);return weekResult},accumulate});return {...tx,weekResult}
+}
 const applyAudience=(state,source,delta,options={},hooks={})=>components.audience.apply(state,source,delta,options,hooks);
 const publishCharts=(state,args={})=>components.charts.publish(state,args);
 const trackChart=(state,kind,list,args={})=>components.charts.track(state,kind,list,args);
