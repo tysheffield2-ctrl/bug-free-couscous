@@ -41,10 +41,13 @@ h.run(`V092_outgoingFeatureTerms(s.world[0])`);
 assert.equal(h.run(`s.world[0].relation`),raw,'feature-term projection must restore legacy relation storage');
 
 // Important memories survive beyond Cohesion Core's 500-event rolling feed.
+// Pruning is intentionally batched so a long career does not sort the memory
+// graph on every single event once it becomes large.
 const defining=h.run(`V136_recordEvent({kind:'award',title:'Defining career win',detail:'A permanent milestone.',entities:['player'],salience:96}).id`);
-h.run(`for(let i=0;i<520;i++)V118_event('noise','Routine update '+i,'Low-salience activity.',{includePlayer:false,entities:['system:test']})`);
-assert.equal(h.run(`!!V136_findEvent('${defining}')`),true,'high-salience career memory must outlive the rolling event feed');
+h.run(`for(let i=0;i<1400;i++)V118_event('noise','Routine update '+i,'Low-salience activity.',{includePlayer:false,entities:['system:test']})`);
+assert.equal(h.run(`!!V136_findEvent('${defining}')`),true,'high-salience career memory must outlive the rolling event feed and pruning');
 assert.ok(h.run(`V118_state().events.length`)<=500,'legacy activity feed should remain bounded');
+assert.ok(h.run(`Object.keys(V136_state().records).length`)<=h.run(`V136_MEMORY_PRUNE_TRIGGER`),'durable memory store should remain bounded after batched pruning');
 
 const artistPanel=h.run(`V136_artistMemoryPanel(0)`);
 assert.ok(artistPanel.includes('PERSISTENT MEMORY'));
@@ -61,7 +64,8 @@ assert.ok(src.includes('V136_indexEvent'));
 assert.ok(src.includes('V136_causeTrail'));
 assert.ok(src.includes('V136_effectiveRelation'));
 assert.ok(src.includes('V136_featureTermsBase'));
+assert.ok(src.includes('V136_MEMORY_PRUNE_TRIGGER'));
 assert.ok(css.includes('.v136-memory'));
 assert.ok(build.includes("'v136-living-memory'"));
 assert.ok(pkg.scripts['test:regression'].includes('v136-living-memory.mjs'));
-console.log('PASS Living Memory foundation: durable entity memory, causal chains, remembered relationship context, collaboration consequences, high-salience retention and player-facing history.');
+console.log('PASS Living Memory foundation: durable entity memory, causal chains, remembered relationship context, collaboration consequences, batched pruning, high-salience retention and player-facing history.');
