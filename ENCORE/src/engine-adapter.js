@@ -22,11 +22,34 @@ applyAudienceEvent=function(source,delta,options={}){
  return ENCORE_ENGINE.applyAudience(s,source,delta,options,{ensureWorld:()=>migrateCareerWorld(),reconcile:()=>reconcileRegionalAudience()});
 };
 
-/* Finance */
+/* Finance — one close path with Tax Foundation 2.0 + Tax Planning 2.0 folded in. */
 closeFinances=function(royalties,rate){
+ const plan=typeof V112_plan==='function'?V112_plan():null,cpa=typeof V112_cpa==='function'?V112_cpa():null,advisorFee=cpa&&typeof V112_cpaWeeklyFee==='function'?Math.max(0,Number(V112_cpaWeeklyFee())||0):0;
+ if(advisorFee){
+  migrateFinance?.();
+  if(!s.finance.week||typeof s.finance.week!=='object')s.finance.week={wages:0,live:0,expenses:0};
+  s.finance.week.expenses=cents((Number(s.finance.week.expenses)||0)+advisorFee);
+ }
  const f=s.finance,w=f.week,income=V091_incomeBreakdown(w),labelCut=artistLabelCut(royalties),labelPayroll=V091_num(w.labelPayroll),repIncome={royalties,albumSales:income.albumSales,live:income.live,media:income.media,publishing:income.publishing,sync:income.sync,endorsement:income.endorsement,merch:income.merch,sponsorship:income.sponsorship},representation=V100_repSettlements(repIncome),agentFee=V100_repTotal(representation),operations=V100_operatingCosts(),operatingCost=V100_operatingTotal(operations);
  if(agentFee)moneyEvent('Representation commissions',-agentFee);
- return ENCORE_ENGINE.settleFinance(s,{royalties,income,incomeTotal:V091_incomeTotal(w),labelCut,labelPayroll,representation,agentFee,operations,operatingCost,actionExpenses:V091_num(w.expenses),yearEnd:isAnnualClosing(),taxQuote:V100_taxQuote});
+ const report=ENCORE_ENGINE.settleFinance(s,{royalties,income,incomeTotal:V091_incomeTotal(w),labelCut,labelPayroll,representation,agentFee,operations,operatingCost,actionExpenses:V091_num(w.expenses),yearEnd:isAnnualClosing(),taxQuote:V100_taxQuote});
+ if(advisorFee){changeCash(-advisorFee);report.taxAdvisorFee=advisorFee;report.cash=s.cash;moneyEvent?.((cpa?.name||'CPA')+' tax-advisory retainer',-advisorFee)}
+ if(typeof V111_weekTaxBreakdown==='function'){
+  const b=V111_weekTaxBreakdown(report);report.weekGrossIncome=b.gross;report.deductibleExpenses=b.deductions;report.deductibleBreakdown={contractual:b.contractual,labelPayroll:b.labelPayroll,actions:b.actions,operations:b.operations,other:b.other};report.weekTaxableIncome=b.taxable;report.ytdTaxableIncome=Math.max(0,Number(report.taxableProfit)||0);report.estimatedTaxLiability=V100_taxQuote(report.ytdTaxableIncome).total;report.taxModel='ENCORE Tax Foundation 2.0';
+ }
+ if(plan&&typeof V112_strategy==='function'){
+  report.reserveStrategy=plan.reserveStrategy;report.reserveStrategyName=V112_strategy().name;
+  if(!report.yearEnd){
+   const recommended=Math.max(0,Number(s.finance.reserve)||0),strategy=V112_strategy(),rawTarget=cents(recommended*strategy.multiplier);let adjustment=cents(rawTarget-recommended);
+   if(adjustment>0)adjustment=Math.min(adjustment,Math.max(0,Number(s.cash)||0));
+   if(adjustment){changeCash(-adjustment);s.finance.reserve=cents(recommended+adjustment);report.taxReserve=cents((Number(report.taxReserve)||0)+adjustment);report.net=cents((Number(report.net)||0)-adjustment);report.cash=s.cash}
+   report.recommendedTaxReserve=recommended;report.actualTaxReserve=Math.max(0,Number(s.finance.reserve)||0);report.reserveCoverage=recommended?report.actualTaxReserve/recommended:1;report.projectedReserveShortfall=Math.max(0,cents(recommended-report.actualTaxReserve));
+  }else{
+   report.recommendedTaxReserve=Math.max(0,Number(report.settlement)||0);report.actualTaxReserve=report.recommendedTaxReserve;report.reserveCoverage=1;report.projectedReserveShortfall=0;
+  }
+  report.taxForecastConfidence=typeof V112_forecastConfidence==='function'?V112_forecastConfidence():null;
+ }
+ s.finance.last=report;return report
 };
 
 /* Studio */
