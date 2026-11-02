@@ -8,3 +8,4 @@
 - Makes Wealth use ENCORE's actual cash, physical assets, simulated investments, music-catalog valuation, acquired catalog interests, finance ledger, property system and Business HQ.
 - Keeps Energy in the persistent command bar instead of using it as an unrelated contextual button.
 - Adds responsive mobile styling and regression coverage that rejects placeholder labels such as **Find a Job** or **Songboard** from these new hubs.
+- Establishes a UI contract for future screens: nearby buttons must describe the ENCORE system or data they act on rather than borrowing unrelated labels for visual symmetry.
