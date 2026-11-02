@@ -8,3 +8,4 @@ body:has(.v137-shell) nav>.v137-bottom-nav{pointer-events:auto}
 .v137-bottom-nav .nav-home svg{background:transparent!important;color:inherit!important;padding:0!important;margin:0 auto!important;width:27px!important;height:27px!important}
 .v137-bottom-nav .nav-home.active svg{background:transparent!important;color:inherit!important}
 .v137-home .encore-next-move{margin:18px 0 20px;border-radius:24px}
+.v137-desk-label{margin:6px 4px 10px;color:#8f9aa0;font-size:11px;font-weight:900;letter-spacing:.22em;text-transform:uppercase}
