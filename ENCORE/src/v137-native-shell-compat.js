@@ -6,8 +6,9 @@ home=function(){
  let html=V137_nativeHomeBase();
  html=html.replace('<article class="v137-shell v137-home">','<article class="v137-shell v137-home v103-home home-dashboard"><span class="encore-wordmark v137-compat-marker" aria-hidden="true"></span>');
  const next=typeof encoreNextMove==='function'?encoreNextMove():'';
- if(next&&!html.includes('NEXT MOVE'))html=html.replace('<section class="v137-menu-stack">',next+'<div class="v137-desk-label">CAREER DESK</div><section class="v137-menu-stack">');
- else if(!html.includes('CAREER DESK'))html=html.replace('<section class="v137-menu-stack">','<div class="v137-desk-label">CAREER DESK</div><section class="v137-menu-stack">');
+ const desk='<div class="v137-desk-label v103-desk">CAREER DESK</div>';
+ if(next&&!html.includes('NEXT MOVE'))html=html.replace('<section class="v137-menu-stack">',next+desk+'<section class="v137-menu-stack">');
+ else if(!html.includes('CAREER DESK'))html=html.replace('<section class="v137-menu-stack">',desk+'<section class="v137-menu-stack">');
  return html
 };
 const V137_nativeNavigationBase=navigationBar;
