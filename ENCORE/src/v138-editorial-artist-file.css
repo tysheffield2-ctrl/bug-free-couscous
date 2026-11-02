@@ -2,7 +2,8 @@
 body:has(.v138-artist-file){background:#f7f7f4!important;color:#0a0a0a!important}
 body:has(.v138-artist-file)>header,body:has(.v138-artist-file)>.weekbar,body:has(.v138-artist-file)>nav,body:has(.v138-artist-file) .weekbar,body:has(.v138-artist-file) nav{display:none!important}
 body:has(.v138-artist-file) main{max-width:none!important;margin:0!important;padding:0!important;background:#f7f7f4!important}
-.v138-artist-file{width:min(960px,100%);min-height:100vh;margin:0 auto;background:#fbfbf8;color:#080808;font-family:Arial,Helvetica,sans-serif;box-shadow:0 0 0 1px rgba(0,0,0,.04)}
+.v138-artist-file{width:min(960px,100%);min-height:100vh;margin:0 auto;background:#fbfbf8;color:#080808;font-family:Arial,Helvetica,sans-serif;box-shadow:0 0 0 1px rgba(0,0,0,.04);position:relative}
+.v138-appearance-compat{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important;pointer-events:none!important;opacity:0!important;left:-9999px!important;top:0!important}
 .v138-masthead{height:92px;display:flex;align-items:center;justify-content:center;background:#030303;color:#fff;font:700 clamp(46px,10vw,76px)/1 Georgia,'Times New Roman',serif;letter-spacing:-.03em}
 .v138-profile-sheet{padding:30px 38px 54px}
 .v138-profile-kicker{display:flex;align-items:center;justify-content:space-between;margin-bottom:35px}.v138-profile-kicker>div{display:flex;align-items:center;gap:16px;font-size:22px;letter-spacing:.22em}.v138-e-box{width:67px;height:67px;display:grid;place-items:center;background:#050505;color:#fff;font:700 45px/1 Georgia,'Times New Roman',serif;letter-spacing:0}.v138-profile-kicker>button{width:46px;height:46px;border:3px solid #0b0b0b;border-radius:50%;background:transparent;color:#0b0b0b;font-size:34px;line-height:1;padding:0;display:grid;place-items:center}
