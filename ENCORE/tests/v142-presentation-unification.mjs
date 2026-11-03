@@ -25,13 +25,15 @@ assert.ok(!v103.includes('V092_unifiedSongForm'), 'core Studio must not render t
 assert.ok(!v103.includes('studioV089()'), 'core Studio must not render the retired pre-v103 Studio beneath the current UI');
 assert.ok(!v103.includes('v103-studio-legacy'), 'active Studio must not append retired legacy project tools');
 
-for(const token of ['function V143_songCreationPage','function V143_submitSong','function V143_cycleValue','ARTISTRY','WRITING','STUDIO','TOTAL COST'])assert.ok(creator.includes(token),`canonical Song Creation missing ${token}`);
+for(const token of ['function V143_songCreationPage','function V143_submitSong','function V143_cycleValue','ARTISTRY','WRITING','STUDIO','TOTAL COST','CREDITS & SPLITS'])assert.ok(creator.includes(token),`canonical Song Creation missing ${token}`);
 assert.ok(creator.includes("V143_cycleValue('artistryIndex'")||creator.includes("V143_picker('ARTISTRY','artistryIndex'"), 'Artistry arrows must use the canonical selector');
 assert.ok(creator.includes("V143_picker('WRITING','writingIndex'"), 'Writing arrows must use the canonical selector');
 assert.ok(creator.includes("V143_picker('STUDIO','studioIndex'"), 'Studio arrows must use the canonical selector');
+assert.ok(creator.includes('V125_creditBuilder'), 'credits and splits must attach to the canonical creator instead of a legacy form');
 assert.ok(creator.includes('V143_applyChoices(idea)')&&creator.includes('ENCORE_STUDIO?.score?.(s.draft)'), 'selected providers must affect the authoritative draft score');
 assert.ok(creator.includes('newSong(e)'), 'canonical submit must use the established draft engine without rendering its retired UI');
 assert.ok(creatorCss.includes('.v143-song-create')&&!creatorCss.includes('.v140-fullscreen'), 'canonical creator must have its own root presentation instead of the retired v140 wrapper');
+assert.ok(creatorCss.includes('.v143-credits'), 'credits and splits must stay compact/collapsible inside the canonical creator');
 
 const modules=build.match(/const modules=\[(.*?)\];/s)?.[1]||'';
 const shellList=build.match(/const shellModules=\[(.*?)\];/s)?.[1]||'';
@@ -41,8 +43,9 @@ assert.ok(modules.lastIndexOf("'v143-song-creation'")>modules.lastIndexOf("'v136
 assert.ok(shellList.includes("'v142-presentation-unification'"), 'v142 presentation routes must remain in the native shell');
 assert.ok(cssList.lastIndexOf("'v143-song-creation'")>cssList.lastIndexOf("'v142-presentation-unification'"), 'canonical Song Creation CSS must load last');
 assert.ok(!build.includes("'V142_cycleValue'"), 'retired v142 Song Creation globals must not be exported');
-assert.ok(build.includes("name==='v090-studio'")&&build.includes("name==='v092-business-career'"), 'build must explicitly remove retired creation generations');
-for(const retired of ['Start your next record','SESSION 01','studio-v092','creativeDirectionMarkup','CREATIVE BRIEF'])assert.ok(!game.includes(retired),`shipped game.js still contains retired Song Creation markup: ${retired}`);
+assert.ok(build.includes("name==='v090-studio'")&&build.includes("name==='v092-business-career'")&&build.includes("name==='v125-collaboration-splits'"), 'build must explicitly remove every retired creation wrapper');
+for(const retired of ['Start your next record','SESSION 01','studio-v092','creativeDirectionMarkup','CREATIVE BRIEF','V092_unifiedSongForm','V125_songFormBase'])assert.ok(!game.includes(retired),`shipped game.js still contains retired Song Creation code: ${retired}`);
 assert.ok(game.includes('function V143_songCreationPage'), 'shipped game.js must contain the canonical v143 creator');
+assert.ok(game.includes('function V125_creditBuilder'), 'rights-chain credits/splits gameplay must remain available after removing its old UI hook');
 
-console.log('PASS v143 Song Creation replacement: one canonical creator ships, retired creation generations are absent from game.js, and no legacy UI can render beneath it.');
+console.log('PASS v143 Song Creation replacement: one canonical creator ships, credits/splits attach to it, retired creation generations are absent from game.js, and no legacy UI can render beneath it.');
