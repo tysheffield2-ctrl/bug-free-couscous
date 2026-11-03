@@ -26,6 +26,8 @@ assert.match(home,/CAREER DESK/);
 assert.match(home,/v103-home/);
 assert.match(home,/v103-desk/);
 assert.match(home,/encore-wordmark/);
+assert.ok(!/NEXT MOVE|Where do you want to focus/i.test(home),'Home must not re-inject the retired Next Move block');
+for(const id of ['vybe','muse','amp'])assert.ok(home.includes(`V137_openPlatforms('${id}')`),`Home must deep-link ${id.toUpperCase()} to its own profile`);
 
 const music=h.run(`V137_musicHub()`);
 for(const token of ['TOTAL STREAMS','NEW PROJECT','CHARTS','PLATFORMS','Studio','Songs &amp; Catalog','Contracts &amp; Rights','Marketing','Touring','Awards &amp; Achievements','Music Platforms','Merch &amp; Media'])assert.ok(music.includes(token),`music hub missing ${token}`);
@@ -34,6 +36,11 @@ assert.ok(!/SONGBOARD|FIND A JOB/.test(music),'reference-game placeholder action
 const wealth=h.run(`V137_wealthHub()`);
 for(const token of ['NET WORTH','CATALOG','VIEW CATALOG','VIEW FINANCES','Balance Sheet &amp; Taxes','Investments','Catalog &amp; Rights','Collection','Property','Business HQ'])assert.ok(wealth.includes(token),`wealth hub missing ${token}`);
 assert.ok(!/FIND A JOB/.test(wealth),'catalog value must use a contextual ENCORE action, never Find a Job');
+assert.ok(!wealth.includes('wealth-actions'),'redundant Catalog Rights / Business HQ quick-pill block must be removed');
+
+const more=h.run(`menu()`);
+for(const token of ['Career &amp; utilities','Representation','Legal Affairs','Label HQ','Finance','Settings'])assert.ok(more.includes(token)||more.includes(token.replace('&amp;','&')),`More hub missing ${token}`);
+assert.ok(!/Where do you want to go|encore-icon-directory|MUSIC PLATFORMS[\s\S]*SEPARATE PROFILES/.test(more),'More must no longer render the old icon directory wall');
 
 const nav=h.run(`navigationBar()`);
 for(const token of ['Home','Artist File','Career','Wealth','More'])assert.ok(nav.includes(token),`bottom navigation missing ${token}`);
@@ -44,15 +51,19 @@ h.run(`V137_openMusicHub()`);assert.equal(h.run(`careerTab`),'V137MusicHub');
 h.run(`V137_openWealthHub()`);assert.equal(h.run(`careerTab`),'V137WealthHub');
 
 const src=fs.readFileSync(new URL('../src/v137-native-shell.js',import.meta.url),'utf8');
+const compat=fs.readFileSync(new URL('../src/v137-native-shell-compat.js',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v137-native-shell.css',import.meta.url),'utf8');
 const compatCss=fs.readFileSync(new URL('../src/v137-native-shell-compat.css',import.meta.url),'utf8');
 const build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../dist/index.html',import.meta.url),'utf8');
 assert.ok(src.includes("V137_openCatalog()")&&src.includes("VIEW CATALOG")&&src.includes("VIEW FINANCES"));
 assert.ok(src.includes("V137_openContracts('Catalog')"));
+assert.ok(compat.includes("V128_openPlatform")&&compat.includes("V137_openPlatforms=function(id='')"),'Home platform shortcuts must use the authoritative profile router');
+assert.ok(compat.includes('menu=V137_moreHub'),'More must replace the legacy directory renderer');
 assert.ok(css.includes('.v137-bottom-nav')&&css.includes('.v137-menu-row')&&css.includes('@media(max-width:720px)'));
-assert.ok(compatCss.includes('Native Shell 3.1 polish'));
-assert.ok(compatCss.includes('.v137-command .v137-end-week{position:absolute'),'End Week must stay integrated inside the command header on compact screens');
+assert.ok(compatCss.includes('Native Shell 3.2 polish'));
+assert.ok(compatCss.includes('.v137-command .v137-end-week{position:static'),'End Week must participate in layout instead of floating over stats');
+assert.ok(compatCss.includes("grid-template-areas:'cash energy' 'date end'"),'compact command header must use a non-overlapping two-row grid');
 assert.ok(compatCss.includes('.v137-menu-row strong{color:#14212a!important}'),'light action rows must force readable primary text');
 assert.ok(compatCss.includes('.v137-bottom-nav button.active:after'),'active navigation needs a persistent visual indicator');
 assert.ok(compatCss.includes('.v131-file{max-width:900px'),'Artist File must share the Native Shell width and surface family');
@@ -61,4 +72,4 @@ assert.ok(build.includes("const shellModules=['v137-native-shell','v137-native-s
 assert.ok(html.includes('/native-shell.js'),'interactive document must load the split Native Shell asset');
 assert.ok(fs.statSync(new URL('../dist/native-shell.js',import.meta.url)).size>1000,'split Native Shell asset should be emitted');
 assert.ok(fs.statSync(new URL('../dist/game.js',import.meta.url)).size<1_480_000,'core simulation bundle must stay within deployment budget');
-console.log('PASS Native Shell 3.1 + editorial Artist File: integrated command header, stronger row contrast, persistent active navigation, split presentation assets and ENCORE-only contextual actions.');
+console.log('PASS Native Shell 3.2: platform-specific Home deep-links, no Next Move/directory wall, mobile-safe command layout, simplified Wealth actions, readable white rows and preserved editorial Artist File.');
