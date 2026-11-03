@@ -52,6 +52,11 @@ function moduleSource(name){
   if(next===source)throw new Error('Retired v125 Song Creation wrapper was not removed');
   source=next;
  }
+ if(name==='v130-platforms-plaques-studio'){
+  const next=source.replace(/function V130_featureCandidates\(\)\{[\s\S]*?\nV103_studioIdeaSummary=/,'V103_studioIdeaSummary=');
+  if(next===source)throw new Error('Retired v130 Song Creation block was not removed');
+  source=next.replace('Start with only what matters: Song, Features and Mood. ENCORE handles the deeper scoring underneath, and unfinished work still carries forward.','Build the record through the current New Song screen, then attach collaborators and finish the active session. ENCORE keeps the deeper scoring underneath.');
+ }
  for(const marker of retiredSongCreationMarkers)if(source.includes(marker))throw new Error(`Retired Song Creation marker "${marker}" remains in src/${name}.js`);
  return source;
 }
