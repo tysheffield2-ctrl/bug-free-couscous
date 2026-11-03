@@ -7,6 +7,7 @@ const creatorCss=fs.readFileSync(new URL('../src/v143-song-creation.css',import.
 const v103=fs.readFileSync(new URL('../src/v103-studio.js',import.meta.url),'utf8');
 const v140=fs.readFileSync(new URL('../src/v140-cohesive-career-ui.js',import.meta.url),'utf8');
 const build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
+const game=fs.readFileSync(new URL('../dist/game.js',import.meta.url),'utf8');
 
 assert.ok(js.includes("careerTab==='Inbox'"), 'Inbox route must be replaced by v142 presentation');
 assert.ok(js.includes("careerTab==='Releases'"), 'Catalog route must be replaced by v142 presentation');
@@ -40,5 +41,8 @@ assert.ok(modules.lastIndexOf("'v143-song-creation'")>modules.lastIndexOf("'v136
 assert.ok(shellList.includes("'v142-presentation-unification'"), 'v142 presentation routes must remain in the native shell');
 assert.ok(cssList.lastIndexOf("'v143-song-creation'")>cssList.lastIndexOf("'v142-presentation-unification'"), 'canonical Song Creation CSS must load last');
 assert.ok(!build.includes("'V142_cycleValue'"), 'retired v142 Song Creation globals must not be exported');
+assert.ok(build.includes("name==='v090-studio'")&&build.includes("name==='v092-business-career'"), 'build must explicitly remove retired creation generations');
+for(const retired of ['Start your next record','SESSION 01','studio-v092','creativeDirectionMarkup','CREATIVE BRIEF'])assert.ok(!game.includes(retired),`shipped game.js still contains retired Song Creation markup: ${retired}`);
+assert.ok(game.includes('function V143_songCreationPage'), 'shipped game.js must contain the canonical v143 creator');
 
-console.log('PASS v143 Song Creation replacement: one canonical creator owns the live Studio route and legacy creation layers cannot render beneath it.');
+console.log('PASS v143 Song Creation replacement: one canonical creator ships, retired creation generations are absent from game.js, and no legacy UI can render beneath it.');
