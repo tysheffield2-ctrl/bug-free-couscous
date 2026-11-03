@@ -32,6 +32,11 @@ function moduleSource(name){
   const bytes=Buffer.from(data,'base64'),file='/art/'+createHash('sha256').update(bytes).digest('hex').slice(0,16)+'.'+type;
   mkdirSync('public/art',{recursive:true});mkdirSync('dist/art',{recursive:true});writeFileSync('public'+file,bytes);writeFileSync('dist'+file,bytes);staticArt.push(file);return file;
  });
+ if(name==='experience'){
+  const next=source.replace(/function studioLegacy\(\)\{[\s\S]*?\nfunction parkProject\(\)\{/,"function studioLegacy(){migrateExperience();if(!s.draft&&typeof V143_songCreationPage==='function')return V143_songCreationPage();return typeof V103_studio==='function'?V103_studio():''}\nfunction parkProject(){");
+  if(next===source)throw new Error('Retired experience Studio renderer was not removed');
+  source=next;
+ }
  if(name==='v090-studio'){
   const next=source.replace(/function creativeDirectionMarkup\(\)\{[\s\S]*?\nconst newSongV089=/,'const newSongV089=');
   if(next===source)throw new Error('Retired v090 Song Creation block was not removed');
