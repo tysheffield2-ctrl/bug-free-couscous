@@ -9,7 +9,8 @@ assert.ok(js.includes("careerTab==='Inbox'"), 'Inbox route must be replaced by v
 assert.ok(js.includes("careerTab==='Releases'"), 'Catalog route must be replaced by v142 presentation');
 assert.ok(js.includes("careerTab==='Achievements'"), 'Awards route must be replaced by v142 presentation');
 assert.ok(js.includes("careerTab==='Wealth'")&&js.includes("careerTab==='Properties'"), 'Collection and property routes must use the unified storefront presentation');
-assert.ok(js.includes("V142_cycleValue('artistryIndex'")&&js.includes("V142_cycleValue('writingIndex'")&&js.includes("V142_cycleValue('studioIndex'"), 'Song creation arrows must be functional for artistry, writing and studio choices');
+assert.ok(js.includes("V142_picker('ARTISTRY','artistryIndex'")&&js.includes("V142_picker('WRITING','writingIndex'")&&js.includes("V142_picker('STUDIO','studioIndex'"), 'Song creation must render Artistry, Writing and Studio selectors');
+assert.ok(js.includes("onclick=\"V142_cycleValue('${key}',${options.length},-1)\"")&&js.includes("onclick=\"V142_cycleValue('${key}',${options.length},1)\""), 'Reusable Studio picker must wire both arrows to live selector state');
 assert.ok(js.includes('V142_applyStudioChoices')&&js.includes('ENCORE_STUDIO?.score?.(s.draft)'), 'Selected song providers must affect the authoritative draft score');
 assert.ok(js.includes('TOTAL COST')&&js.includes('V142_studioTotal()'), 'Song creation must show the combined provider and studio cost');
 assert.ok(css.includes('.v142-song-create{max-width:760px'), 'New Song screen must use the compact composition rather than the giant legacy layout');
