@@ -1,7 +1,3 @@
-/* ENCORE v143 — Canonical Song Creation.
-   This is the only player-facing new-song renderer. Older Studio generations may
-   still own active-session mechanics, but they no longer own creation markup. */
-
 function V143_num(v){const n=Number(v);return Number.isFinite(n)?n:0}
 function V143_cycleValue(key,length,dir){const idea=ensureStudioIdeaSchema(),i=Math.max(0,Math.min(length-1,Number(idea[key])||0));setCreativeDirection(key,(i+dir+length)%length);render()}
 function V143_serviceOptions(kind){
