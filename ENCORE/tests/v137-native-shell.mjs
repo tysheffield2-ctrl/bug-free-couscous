@@ -38,9 +38,13 @@ for(const token of ['NET WORTH','CATALOG','VIEW CATALOG','VIEW FINANCES','Balanc
 assert.ok(!/FIND A JOB/.test(wealth),'catalog value must use a contextual ENCORE action, never Find a Job');
 assert.ok(!wealth.includes('wealth-actions'),'redundant Catalog Rights / Business HQ quick-pill block must be removed');
 
-const more=h.run(`menu()`);
+/* Critical: go('Menu') renders menuPage(). Testing menu() alone can pass while the
+   live route still serves the retired directory, so both must resolve identically. */
+const more=h.run(`menuPage()`);
+const legacyMoreAlias=h.run(`menu()`);
 for(const token of ['Career &amp; utilities','Representation','Legal Affairs','Label HQ','Finance','Settings'])assert.ok(more.includes(token)||more.includes(token.replace('&amp;','&')),`More hub missing ${token}`);
-assert.ok(!/Where do you want to go|encore-icon-directory|MUSIC PLATFORMS[\s\S]*SEPARATE PROFILES/.test(more),'More must no longer render the old icon directory wall');
+assert.ok(!/Where do you want to go|encore-icon-directory|MUSIC PLATFORMS[\s\S]*SEPARATE PROFILES/.test(more),'Live More renderer must no longer render the old icon directory wall');
+assert.equal(more,legacyMoreAlias,'menuPage() and legacy menu() must resolve to the same More hub');
 
 const nav=h.run(`navigationBar()`);
 for(const token of ['Home','Artist File','Career','Wealth','More'])assert.ok(nav.includes(token),`bottom navigation missing ${token}`);
@@ -59,7 +63,7 @@ const html=fs.readFileSync(new URL('../dist/index.html',import.meta.url),'utf8')
 assert.ok(src.includes("V137_openCatalog()")&&src.includes("VIEW CATALOG")&&src.includes("VIEW FINANCES"));
 assert.ok(src.includes("V137_openContracts('Catalog')"));
 assert.ok(compat.includes("V128_openPlatform")&&compat.includes("V137_openPlatforms=function(id='')"),'Home platform shortcuts must use the authoritative profile router');
-assert.ok(compat.includes('menu=V137_moreHub'),'More must replace the legacy directory renderer');
+assert.ok(compat.includes('menuPage=V137_moreHub')&&compat.includes('menu=V137_moreHub'),'Live and legacy Menu renderers must both use the simplified More hub');
 assert.ok(css.includes('.v137-bottom-nav')&&css.includes('.v137-menu-row')&&css.includes('@media(max-width:720px)'));
 assert.ok(compatCss.includes('Native Shell 3.2 polish'));
 assert.ok(compatCss.includes('.v137-command .v137-end-week{position:static'),'End Week must participate in layout instead of floating over stats');
@@ -72,4 +76,4 @@ assert.ok(build.includes("const shellModules=['v137-native-shell','v137-native-s
 assert.ok(html.includes('/native-shell.js'),'interactive document must load the split Native Shell asset');
 assert.ok(fs.statSync(new URL('../dist/native-shell.js',import.meta.url)).size>1000,'split Native Shell asset should be emitted');
 assert.ok(fs.statSync(new URL('../dist/game.js',import.meta.url)).size<1_480_000,'core simulation bundle must stay within deployment budget');
-console.log('PASS Native Shell 3.2: platform-specific Home deep-links, no Next Move/directory wall, mobile-safe command layout, simplified Wealth actions, readable white rows and preserved editorial Artist File.');
+console.log('PASS Native Shell 3.2.1: live Menu route uses the simplified More hub, platform-specific Home deep-links persist, mobile command layout stays safe, Wealth stays simplified and Artist File remains intact.');
