@@ -29,20 +29,22 @@ assert.match(plaque,/<svg/);
 assert.doesNotMatch(plaque,/class=\"bar\"/);
 assert.match(plaque,/DIAMOND/);
 
-const studio=h.run('V092_unifiedSongForm()');
-assert.match(studio,/>Song</);
-assert.match(studio,/>Features</);
-assert.match(studio,/>Mood</);
-for(const removed of ['>Theme<','>Tempo<','>Intent<','>Texture<','>Hook approach<','>Writing approach<','>Production budget<'])assert.ok(!studio.includes(removed),`simple studio should not show ${removed}`);
+const studio=h.run('V143_songCreationPage()');
+for(const token of ['NEW SONG','ARTISTRY','WRITING','STUDIO','CREDITS & SPLITS','TOTAL COST'])assert.ok(studio.includes(token),`canonical Studio missing ${token}`);
+assert.ok(!studio.includes('Start your next record'));
+assert.ok(!studio.includes('SESSION 01'));
+assert.ok(!studio.includes('studio-v130-simple'));
 
-h.run("s.world[0].relation=100;s.world[0].fans=1000;s.world[0].reputation=20;s.draft=null;newSong({preventDefault(){},target:{songtitle:'Three Fields',feature:'0',mood:directions[0].id,package:'0',brief:'story'}})");
-assert.equal(h.run("s.draft.title"),'Three Fields');
-assert.ok(h.run("document.getElementById('modal').innerHTML.includes('FEATURE NEGOTIATION')"));
+h.run("s.world[0].relation=100;s.world[0].fans=1000;s.world[0].reputation=20;s.draft=null;V143_submitSong({preventDefault(){},target:{songtitle:'Current Flow',mood:directions[0].id,package:'0',brief:'story'}})");
+assert.equal(h.run("s.draft.title"),'Current Flow');
+h.run('studioGuest(0)');
+assert.ok(h.run("document.getElementById('modal').innerHTML.includes('FEATURE NEGOTIATION')"),'feature negotiation must remain available from the current Studio handoff');
 
 const src=fs.readFileSync(new URL('../src/v130-platforms-plaques-studio.js',import.meta.url),'utf8');
 const handoff=fs.readFileSync(new URL('../src/v130-studio-feature-handoff.js',import.meta.url),'utf8');
+const build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
 assert.ok(src.includes('V130_worldMap'));
 assert.ok(src.includes('V130_plaqueArt'));
-assert.ok(src.includes('Three decisions'));
 assert.ok(handoff.includes('studioGuest'));
-console.log('PASS Music Platforms 2.0, real visual plaques, Diamond treatment, platform strategy actions and Song / Features / Mood Studio with live feature negotiation handoff.');
+assert.ok(build.includes("name==='v130-platforms-plaques-studio'"),'production build must strip v130 retired Song Creation ownership');
+console.log('PASS Music Platforms 2.0, visual plaques, platform strategy and canonical v143 Studio with live feature-negotiation handoff.');
