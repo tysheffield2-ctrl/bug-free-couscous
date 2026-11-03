@@ -31,8 +31,8 @@ function moduleSource(name){
   const bytes=Buffer.from(data,'base64'),file='/art/'+createHash('sha256').update(bytes).digest('hex').slice(0,16)+'.'+type;
   mkdirSync('public/art',{recursive:true});mkdirSync('dist/art',{recursive:true});writeFileSync('public'+file,bytes);writeFileSync('dist'+file,bytes);staticArt.push(file);return file;
  });
- // These are retired Song Creation renderers, not gameplay engines. Keep their
- // surrounding era systems, but do not ship the obsolete forms in game.js.
+ // Retired Song Creation renderers are not gameplay engines. Preserve the
+ // surrounding era systems while excluding obsolete form ownership.
  if(name==='v090-studio'){
   const next=source.replace(/function creativeDirectionMarkup\(\)\{[\s\S]*?\nconst newSongV089=/,'const newSongV089=');
   if(next===source)throw new Error('Retired v090 Song Creation block was not removed');
@@ -41,6 +41,11 @@ function moduleSource(name){
  if(name==='v092-business-career'){
   const next=source.replace(/\/\* One Studio creation interface:[\s\S]*?\/\* Feature economy:/,'/* Feature economy:');
   if(next===source)throw new Error('Retired v092 Song Creation block was not removed');
+  source=next;
+ }
+ if(name==='v125-collaboration-splits'){
+  const next=source.replace(/\/\* Add the rights-chain editor[\s\S]*?const V125_studioBase=studio;/,'const V125_studioBase=studio;');
+  if(next===source)throw new Error('Retired v125 Song Creation wrapper was not removed');
   source=next;
  }
  return source;
