@@ -9,9 +9,10 @@ assert.equal(h.run("ENCORE_ICON_DESTINATIONS.some(x=>x[0]==='Label HQ'&&x[1]==='
 assert.match(h.run("V103_menuResults('Label HQ')"),/data-destination="Labels"/);
 assert.match(h.run("encoreIcon('Label')"),/class="encore-icon"/);
 
-const form=h.run('V092_unifiedSongForm()');
-for(const token of ['>Song<','>Features<','>Mood<'])assert.ok(form.includes(token),token+' should remain visible in simple Studio creation');
-for(const token of ['SONG CREDITS & SPLITS','+ Songwriter','+ Composer','+ Producer','Rights chain:'])assert.ok(!form.includes(token),token+' should stay out of the simple Studio creation form');
+const form=h.run('V143_songCreationPage()');
+for(const token of ['NEW SONG','ARTISTRY','WRITING','STUDIO','CREDITS & SPLITS','SONG CREDITS & SPLITS','+ Songwriter','+ Composer','+ Producer','Rights chain:'])assert.ok(form.includes(token),token+' must live in canonical Song Creation');
+assert.ok(!form.includes('Start your next record'),'retired v092 creator must not return through the credits system');
+assert.ok(!form.includes('SESSION 01'),'retired session wrapper must not return through the credits system');
 
 h.run(`
  s.studioIdea=ensureStudioIdeaSchema({title:'Paper Trail'});s.studioIdea.credits=[];
@@ -24,6 +25,7 @@ assert.equal(h.run('V125_compUsed()'),20,'accepted writing plus unauthorized pro
 assert.equal(h.run('V125_idea().credits.length'),3);
 assert.match(h.run('V125_creditBuilder()'),/YOUR COMPOSITION SHARE/);
 assert.match(h.run('V125_creditBuilder()'),/UNAPPROVED/);
+assert.ok(h.run('V143_creditCost()')>=500,'canonical New Song total must include accepted contributor fees');
 
 h.run(`
  const clean={id:700,title:'Clean Session',released:1,streams:1000,total:5000,credits:[{id:s.world[3].id,name:s.world[3].name,role:'writer',fee:0,share:10,agreement:'accepted',credited:true,usualShare:10}],features:[{id:s.world[4].id,name:s.world[4].name,fee:0,royaltyRate:.1,agreement:'accepted',credited:true}]};
@@ -64,4 +66,5 @@ const build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
 for(const token of ['V125_openCreditTerms','V125_sendCreditOffer','V125_offerFeature','V125_useFeatureWithoutClearance','V125_rightsDiscoveryWeek','V125_fileRightsSuit'])assert.ok(js.includes(token));
 assert.ok(css.includes('.v125-splits')&&css.includes('.v125-release-risk'));
 assert.ok(build.includes("'v125-collaboration-splits'"));
-console.log('PASS rights-chain depth remains wired while simple Studio creation stays Song / Features / Mood; songwriter/composer/producer terms, manual splits, feature terms, release risk, song-specific lawsuits and accepted royalty payouts remain covered.');
+assert.ok(build.includes("name==='v125-collaboration-splits'"),'production build must strip the retired v092 form wrapper while keeping rights-chain gameplay');
+console.log('PASS rights-chain depth remains wired through canonical v143 Song Creation: songwriter/composer/producer terms, manual splits, feature terms, release risk, song-specific lawsuits and accepted royalty payouts remain covered.');
