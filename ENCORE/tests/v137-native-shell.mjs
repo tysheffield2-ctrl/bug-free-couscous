@@ -72,7 +72,7 @@ assert.ok(compatCss.includes('.v137-menu-row strong{color:#14212a!important}'),'
 assert.ok(compatCss.includes('.v137-bottom-nav button.active:after'),'active navigation needs a persistent visual indicator');
 assert.ok(compatCss.includes('.v131-file{max-width:900px'),'Artist File must share the Native Shell width and surface family');
 assert.ok(compatCss.includes('.v131-cover,.v131-resume,.v131-spread,.v131-section'),'Artist File dossier sections must use the unified surface treatment');
-assert.ok(build.includes("const shellModules=['v137-native-shell','v137-native-shell-compat','v138-editorial-artist-file']"),'Native Shell must load the editorial Artist File after v137 compatibility');
+assert.ok(build.includes("const shellModules=['v137-native-shell','v137-native-shell-compat','v138-editorial-artist-file','v140-cohesive-career-ui']"),'Native Shell must load v140 after the editorial Artist File');
 assert.ok(html.includes('/native-shell.js'),'interactive document must load the split Native Shell asset');
 assert.ok(fs.statSync(new URL('../dist/native-shell.js',import.meta.url)).size>1000,'split Native Shell asset should be emitted');
 assert.ok(fs.statSync(new URL('../dist/game.js',import.meta.url)).size<1_480_000,'core simulation bundle must stay within deployment budget');
