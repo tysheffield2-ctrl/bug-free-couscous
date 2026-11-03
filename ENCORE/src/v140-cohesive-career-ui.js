@@ -1,6 +1,6 @@
 /* ENCORE 0.9.28 — Cohesive Career UI.
-   Presentation shell for Studio creation, feature selection and owned-label management.
-   Existing song creation, feature booking, contracts, royalties and label simulation remain authoritative. */
+   Presentation shell for genre, feature selection and owned-label management.
+   Song creation itself is owned exclusively by v143. */
 
 let V140_labelView='overview';
 let V140_labelArtistId=null;
@@ -19,25 +19,13 @@ function V140_closeGenre(){V140_genreOpen=false;V140_pendingGenre=null;render()}
 function V140_saveGenre(){const next=V140_pendingGenre||s.genre;if(next!==s.genre&&!spend(25))return;s.genre=next;V140_genreOpen=false;V140_pendingGenre=null;queueSave?.();render()}
 function V140_genreScreen(){const current=s.genre||'Pop',next=V140_pendingGenre||current;return `<article class="v140-fullscreen v140-genre"><button class="v140-back" onclick="V140_closeGenre()">‹</button><header><h1>GENRE</h1><p>Evolve your sound — trying a fresh genre is challenging but rewarding.</p></header><section><span>CURRENT GENRE</span><strong>${esc(current)}</strong><small>CHANGE GENRE</small><div class="v140-cycle"><button onclick="V140_cycleGenre(-1)">←</button><b>${esc(next)}</b><button onclick="V140_cycleGenre(1)">→</button></div></section><button class="v140-wide" onclick="V140_saveGenre()">SAVE${next!==current?' 25':''} <em>⚡</em></button></article>`}
 
-function V140_studioIdeaForm(){
- const idea=ensureStudioIdeaSchema(),pkgIndex=Math.max(0,Number(idea.package)||0),pkg=studioPackages[pkgIndex]||studioPackages[0],genre=s.genre||'Pop',albumCandidates=(s.albums||[]).filter(a=>!a.released),albumName=albumCandidates[0]?.title||'SINGLE';
- return `<article class="v140-fullscreen v140-song-create"><header class="v140-song-head"><button type="button" onclick="go('Career')">‹</button><span>⚡ ${s.energy}</span><h1>NEW SONG</h1></header><form onsubmit="newSong(event)"><input type="hidden" name="mood" value="${esc(idea.mood||directions[0].id)}"><input type="hidden" name="brief" value="${esc(idea.brief||'story')}"><input type="hidden" name="package" value="${pkgIndex}"><label class="v140-title-label">SONG NAME</label><div class="v140-title-input"><input name="songtitle" maxlength="70" value="${esc(idea.title||'')}" placeholder="Enter a song title" autocomplete="off" required><button type="button" onclick="this.previousElementSibling.value=generate('song')">✦</button></div><div class="v140-picker-block"><span>ASSIGN ALBUM</span><div class="v140-picker"><button type="button" disabled>←</button><strong>${esc(albumName)}</strong><button type="button" disabled>→</button></div></div><div class="v140-people-block"><span>ARTISTRY</span><div class="v140-picker"><button type="button" disabled>←</button><div><strong>${esc(s.name||'Artist')}</strong><small>${level('charisma')} | $0</small></div><button type="button" disabled>→</button></div><span>WRITING</span><div class="v140-picker"><button type="button" disabled>←</button><div><strong>${esc(s.name||'Artist')}</strong><small>${level('writing')} | $0</small></div><button type="button" disabled>→</button></div><span>STUDIO</span><div class="v140-picker"><button type="button" disabled>←</button><div><strong>MY STUDIO</strong><small>${level('recording')} | ${pkg.fee?money(pkg.fee):'$0'}</small></div><button type="button" disabled>→</button></div></div><div class="v140-total"><span>TOTAL COST</span><strong>${money(pkg.fee||0)}</strong></div><div class="v140-song-controls"><button type="button" class="genre" onclick="V140_openGenre()">${esc(genre)}</button><button type="button" class="clean" onclick="setCreativeDirection('explicit',ensureStudioIdeaSchema().explicit?'':'yes');render()">${idea.explicit?'EXPLICIT':'CLEAN'}</button></div><button class="v140-wide" type="submit">CREATE 10 <em>⚡</em></button><small class="v140-cash">CASH AVAILABLE: ${money(s.cash)}</small></form></article>`
-}
-
 const V140_studioBase=studio;
 studio=function(){
  if(V140_genreOpen)return V140_genreScreen();
- if(!s.draft)return V140_studioIdeaForm();
+ if(!s.draft)return V143_songCreationPage();
  let html=V140_studioBase();
  const featureButton=`<button class="v140-feature-cta" onclick="V140_openFeaturePicker()">FEATURED ARTISTS · ${guestList(s.draft).length}/6 →</button>`;
  return html.replace('<section class="v103-collab-strip">',featureButton+'<section class="v103-collab-strip">')
-};
-
-const V140_newSongBase=newSong;
-newSong=function(e){
- const explicit=!!ensureStudioIdeaSchema().explicit;
- V140_newSongBase(e);
- if(s.draft){s.draft.explicit=explicit;s.draft.creative={...(s.draft.creative||{}),explicit};queueSave?.()}
 };
 
 function V140_featureArtists(){return (s.world||[]).filter(a=>a&&a.id!==undefined).map(a=>({a,virality:V140_virality(a),rating:V140_rating(a),fee:typeof quote==='function'?quote(a):0})).sort((x,y)=>V140_featureSort==='name'?String(x.a.name).localeCompare(String(y.a.name)):V140_featureSort==='rating'?y.rating-x.rating:y.virality-x.virality)}
