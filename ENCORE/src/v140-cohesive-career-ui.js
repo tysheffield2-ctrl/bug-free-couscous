@@ -33,6 +33,13 @@ studio=function(){
  return html.replace('<section class="v103-collab-strip">',featureButton+'<section class="v103-collab-strip">')
 };
 
+const V140_newSongBase=newSong;
+newSong=function(e){
+ const explicit=!!ensureStudioIdeaSchema().explicit;
+ V140_newSongBase(e);
+ if(s.draft){s.draft.explicit=explicit;s.draft.creative={...(s.draft.creative||{}),explicit};queueSave?.()}
+};
+
 function V140_featureArtists(){return (s.world||[]).filter(a=>a&&a.id!==undefined).map(a=>({a,virality:V140_virality(a),rating:V140_rating(a),fee:typeof quote==='function'?quote(a):0})).sort((x,y)=>V140_featureSort==='name'?String(x.a.name).localeCompare(String(y.a.name)):V140_featureSort==='rating'?y.rating-x.rating:y.virality-x.virality)}
 function V140_openFeaturePicker(sort=V140_featureSort){if(!s.draft){toast?.('Start the song first, then attach features.');return}V140_featureSort=sort;modal(`<section class="v140-feature-picker"><button class="v140-modal-back" onclick="$('modal').close()">←</button><h2>FEATURED ARTISTS</h2><nav><button class="${sort==='virality'?'selected':''}" onclick="$('modal').close();V140_openFeaturePicker('virality')">VIRALITY</button><button class="${sort==='name'?'selected':''}" onclick="$('modal').close();V140_openFeaturePicker('name')">NAME</button><button class="${sort==='rating'?'selected':''}" onclick="$('modal').close();V140_openFeaturePicker('rating')">RATING</button></nav><div class="v140-feature-list">${V140_featureArtists().map(x=>`<button onclick="studioGuest(${x.a.id})"><span class="${V140_scoreClass(x.virality)}"><b>${x.virality}</b><small>TRENDING</small></span><div><strong>${esc(x.a.name)}</strong><em>${money(x.fee)}</em></div><span class="${V140_scoreClass(x.rating)}"><b>${x.rating}</b><small>RATING</small></span></button>`).join('')}</div></section>`)}
 try{featurePicker=V140_openFeaturePicker}catch{}
@@ -50,3 +57,5 @@ function V140_labelArtist(co,id){const a=s.world[id],c=V140_labelContractFor(id)
 
 const V140_companyPageBase=companyPage;
 companyPage=function(){const co=s.labelBusiness?.company;if(!co)return V140_companyPageBase();return `<article class="v140-label-suite">${V140_labelView==='artists'?V140_labelArtists(co):V140_labelView==='roi'?V140_labelROI(co):V140_labelView==='artist'?V140_labelArtist(co,V140_labelArtistId):V140_labelOverview(co)}</article>`};
+const V140_labelPageBase=labelPage;
+labelPage=function(){migrateLabelBusiness();return s.labelBusiness?.company?companyPage():V140_labelPageBase()};
