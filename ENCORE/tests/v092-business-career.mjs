@@ -2,14 +2,15 @@ import assert from 'node:assert/strict';
 import {harness} from './harness.mjs';
 
 const h=harness('/sandbox',90210);await h.run('boot()');h.run('migrateV092()');
-assert.equal(h.run("(studio().match(/Start your next record/g)||[]).length"),1);
-assert.equal(h.run("(studio().match(/SESSION 01/g)||[]).length"),1);
-assert.ok(h.run("studio().includes('>Song<')"));
-assert.ok(h.run("studio().includes('>Features<')"));
-assert.ok(h.run("studio().includes('>Mood<')"));
-assert.ok(!h.run("studio().includes('Production budget')"));
-assert.ok(!h.run("studio().includes('Hook approach')"));
-assert.ok(!h.run("studio().includes('Writing approach')"));
+const studio=h.run('studio()');
+assert.equal((studio.match(/NEW SONG/g)||[]).length,1);
+for(const token of ['v143-song-create','SONG NAME','ASSIGN ALBUM','ARTISTRY','WRITING','STUDIO','TOTAL COST','CASH AVAILABLE'])assert.ok(studio.includes(token),`canonical Song Creation missing ${token}`);
+assert.ok(!studio.includes('Start your next record'));
+assert.ok(!studio.includes('SESSION 01'));
+assert.ok(!studio.includes('studio-v092'));
+assert.ok(!studio.includes('Production budget'));
+assert.ok(!studio.includes('Hook approach'));
+assert.ok(!studio.includes('Writing approach'));
 assert.ok(h.run("V090_readableNumber('12.5',true).includes('$12.5')"));
 
 h.run('globalThis.market=V092_featureMarketValue();globalThis.c1=V092_featureBookingChance(market);globalThis.c2=V092_featureBookingChance(market*100)');
@@ -42,4 +43,4 @@ assert.equal(h.run('aw.nominees.reduce((n,x)=>n+x.votes,0)'),1000);
 assert.equal(h.run('aw.categoryCareerWin'),1);
 
 h.run('validateBundle(saveBundle())');
-console.log('PASS simple Song / Features / Mood Studio creation UI, feature pricing/splits, merch demand/on-demand mode, responsive contract clauses, uncapped sports ownership/control, and richer Honors metadata.');
+console.log('PASS canonical Song Creation ownership, feature pricing/splits, merch demand/on-demand mode, responsive contract clauses, uncapped sports ownership/control, and richer Honors metadata.');
