@@ -1,0 +1,70 @@
+/* ENCORE 0.9.28-beta.2 — Permanent light-surface contrast + mobile collision guard.
+   Contract: true white/light editorial surfaces use black ink. Dense summary blocks
+   must reflow before content can overlap. This file is intentionally loaded last. */
+
+/* Artist File: white paper, black ink, no inherited dark-shell text. */
+body:has(.v138-artist-file),
+body:has(.v138-artist-file) main,
+.v138-artist-file,
+.v138-profile-sheet,
+.v138-stats,
+.v138-stats dl,
+.v138-profile-row{background:#fff!important;color:#000!important}
+.v138-profile-sheet h1,
+.v138-profile-sheet h2,
+.v138-profile-sheet h3,
+.v138-profile-sheet p,
+.v138-profile-sheet dt,
+.v138-profile-sheet dd,
+.v138-profile-sheet span,
+.v138-profile-sheet strong,
+.v138-profile-sheet b{color:#000!important}
+.v138-e-box{background:#000!important;color:#fff!important}
+.v138-profile-kicker>button{background:#fff!important;color:#000!important;border-color:#000!important}
+.v138-rule{background:#000!important}
+.v138-stats h2,.v138-profile-links{border-color:#000!important}
+.v138-profile-links button{background:#fff!important;color:#000!important;border-color:#000!important}
+
+/* Net-worth summary: every child owns real space; never permit text collision. */
+.v138-worth,.v138-worth>div,.v138-worth aside{min-width:0!important}
+.v138-worth>div>strong{max-width:100%!important}
+.v138-worth aside{overflow-wrap:anywhere!important}
+@media(max-width:620px){
+ .v138-worth{grid-template-columns:1fr!important;gap:16px!important;align-items:start!important}
+ .v138-worth>div,.v138-worth aside{width:100%!important;max-width:none!important}
+ .v138-worth>div>strong{font-size:clamp(44px,14vw,64px)!important;line-height:.95!important;white-space:nowrap!important;letter-spacing:-.055em!important}
+ .v138-worth-delta{margin:9px 0 0!important;max-width:100%!important;font-size:clamp(16px,5vw,21px)!important}
+ .v138-worth aside{padding:14px 0 0!important;border-top:1px solid #c7c7c7!important}
+ .v138-worth aside b{font-size:18px!important}.v138-worth aside span{font-size:15px!important}
+}
+@media(max-width:360px){
+ .v138-worth>div>strong{font-size:44px!important;letter-spacing:-.06em!important}
+}
+
+/* MUSE: all white page regions are black-ink regions. Older ENCORE theme rules
+   may style generic header/strong/small elements, so these selectors deliberately
+   win the cascade. The hero remains its separate dark photographic surface. */
+.v139-muse,.v139-muse-page,.v139-muse-body{background:#fff!important;color:#000!important}
+.v139-muse-body h1,.v139-muse-body h2,.v139-muse-body h3,.v139-muse-body h4,
+.v139-muse-body p,.v139-muse-body li,.v139-muse-body dt,.v139-muse-body dd{color:#000!important}
+.v139-muse-list,.v139-muse-albums,.v139-muse-footer,.v139-muse-ranking,.v139-muse-quality{background:#fff!important;color:#000!important}
+.v139-muse-list header{background:#fff!important;color:#000!important;border-color:#ddd!important}
+.v139-muse-list header h2,.v139-muse-list header button{color:#000!important}
+.v139-muse-list>button{background:#fff!important;color:#000!important}
+.v139-muse-list>button strong,.v139-muse-list>button small,.v139-muse-list>button>b{color:#000!important}
+.v139-muse-albums h2,.v139-muse-albums p,.v139-muse-albums button,
+.v139-muse-albums button>strong,.v139-muse-albums button>span{color:#000!important}
+.v139-muse-footer small{color:#000!important}
+.v139-muse-overline{background:#fff!important;color:#000!important}
+.v139-muse-overline>strong{color:#000!important}
+.v139-muse-cards article{color:#000!important}
+.v139-muse-cards article span,.v139-muse-cards article strong,.v139-muse-cards article p{color:#000!important}
+.v139-muse-ranking>small,.v139-muse-ranking>button,.v139-muse-ranking>button>b,
+.v139-muse-ranking>button>span,.v139-muse-ranking>button>strong{color:#000!important}
+.v139-muse-quality span,.v139-muse-quality strong{color:#000!important}
+
+/* Keep intentional non-white controls readable while the white surface itself
+   remains black-only. */
+.v139-muse-footer button,.v139-muse-overline button{background:#eee!important}
+.v139-muse-range button.selected{color:#fff!important}
+.v139-muse .v139-cover b{color:#fff!important}
