@@ -1,4 +1,4 @@
-/* ENCORE Native Shell 3.2 compatibility + simplification contracts.
+/* ENCORE Native Shell 3.2.1 compatibility + simplification contracts.
    Keep established Home/onboarding/accessibility hooks while removing redundant
    navigation and deep-linking Home platform buttons to their real profiles. */
 const V137_openPlatformsBase=V137_openPlatforms;
@@ -35,6 +35,9 @@ navigationBar=function(){
 function V137_moreHub(){
  return `<article class="v137-shell v137-more">${V137_topbar()}<section class="v137-more-intro"><span>MORE</span><h1>Career & utilities</h1><p>Secondary systems without another directory wall.</p></section><section class="v137-menu-stack">${V137_menuRow('people','Representation','Managers, agents, attorneys and your professional team',"encoreOpenIconDestination('Agency')")}${V137_menuRow('contract','Legal Affairs','Disputes, counsel, exposure and legal matters',"encoreOpenIconDestination('LegalAffairs')")}${V137_menuRow('business','Label HQ','Operate and grow your owned label',"encoreOpenIconDestination('Labels')")}${V137_menuRow('finance','Finance','Income, expenses, taxes and detailed accounting',"encoreOpenIconDestination('Finances')")}${V137_menuRow('more','Settings','Game, accessibility and career preferences',"encoreOpenIconDestination('Settings')")}</section></article>`
 }
+/* `go('Menu')` renders menuPage(), not menu(). Keep both aliases so any legacy
+   caller and the live route resolve to the same simplified More hub. */
+menuPage=V137_moreHub;
 menu=V137_moreHub;
 
 const V137_nativeWealthHubBase=V137_wealthHub;
