@@ -72,8 +72,10 @@ assert.ok(compatCss.includes('.v137-menu-row strong{color:#14212a!important}'),'
 assert.ok(compatCss.includes('.v137-bottom-nav button.active:after'),'active navigation needs a persistent visual indicator');
 assert.ok(compatCss.includes('.v131-file{max-width:900px'),'Artist File must share the Native Shell width and surface family');
 assert.ok(compatCss.includes('.v131-cover,.v131-resume,.v131-spread,.v131-section'),'Artist File dossier sections must use the unified surface treatment');
-assert.ok(build.includes("const shellModules=['v137-native-shell','v137-native-shell-compat','v138-editorial-artist-file','v140-cohesive-career-ui']"),'Native Shell must load v140 after the editorial Artist File');
+const shellList=build.match(/const shellModules=\[(.*?)\];/s)?.[1]||'';
+assert.ok(shellList.includes("'v138-editorial-artist-file'")&&shellList.includes("'v140-cohesive-career-ui'")&&shellList.includes("'v142-presentation-unification'"),'Native Shell must include editorial Artist File, cohesive Career UI and v142 route presentation');
+assert.ok(shellList.indexOf("'v138-editorial-artist-file'")<shellList.indexOf("'v140-cohesive-career-ui'")&&shellList.indexOf("'v140-cohesive-career-ui'")<shellList.indexOf("'v142-presentation-unification'"),'Native Shell presentation order must be v138 → v140 → v142');
 assert.ok(html.includes('/native-shell.js'),'interactive document must load the split Native Shell asset');
 assert.ok(fs.statSync(new URL('../dist/native-shell.js',import.meta.url)).size>1000,'split Native Shell asset should be emitted');
 assert.ok(fs.statSync(new URL('../dist/game.js',import.meta.url)).size<1_480_000,'core simulation bundle must stay within deployment budget');
-console.log('PASS Native Shell 3.2.1: live Menu route uses the simplified More hub, platform-specific Home deep-links persist, mobile command layout stays safe, Wealth stays simplified and Artist File remains intact.');
+console.log('PASS Native Shell 3.2.2: live Menu route uses the simplified More hub, platform-specific Home deep-links persist, presentation layers load in order, and Artist File remains intact.');
