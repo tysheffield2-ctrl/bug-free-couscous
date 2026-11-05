@@ -48,6 +48,8 @@ h.run(`pendingAlbum={get(key){return {albumtitle:'Reflections at Dawn',price:'10
 assert.equal(h.run("s.albums.some(a=>a.title==='Reflections at Dawn'&&a.tracks.length===3)"),true,'actual three-track album publish must work');
 assert.equal(h.run('s.songs.filter(x=>x.album).length'),3,'album ownership must attach to every selected song');
 assert.match(h.run('tourPage()'),/v144-tour/);
+h.run('V137_openTouring()');
+assert.match(h.run("document.getElementById('app').innerHTML"),/v144-tour/,'Career navigation must reach the actual Touring planner');
 assert.match(h.run('tourPage()'),/ADD A SHOW/);
 h.run(`migrateTouring();saveTourStop({preventDefault(){},target:{city:'austin',week:s.week,venue:0,price:35,vip:10,production:1,security:1,opener:''}})`);
 assert.match(h.run('tourPage()'),/v144-tour-stop/);
