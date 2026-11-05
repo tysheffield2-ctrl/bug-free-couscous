@@ -65,10 +65,11 @@ function progressSong(){let d=s.draft;if(!d||d.steps>=3||!spend(15,d.steps===1?4
 function finishSong(release,confirmed=false){let d=s.draft;if(!d||d.steps!==3)return;if(release&&!confirmed){modal(`<h2>Publish this single?</h2><p>“${esc(d.title)}” will enter your released catalog. You cannot edit the finished recording afterward. Results arrive when you advance the week.</p><p>$20 · energy · 5 energy</p><div class="controls"><button class="secondary" onclick="$('modal').close()">Keep in studio</button><button class="primary" onclick="$('modal').close();finishSong(true,true)">Release single</button></div>`);return}if(release&&!spend(5,20))return;const song={...d,released:release?s.week:null,streams:0,total:0,peak:null,album:null};s.songs.push(song);s.draft=null;log('“'+song.title+'” '+(release?'is out. Results arrive at the end of this week.':'is ready for your album.'));render();toast(release?'Single released. Advance the month for results.':'Finished track saved.')}
 function releaseShelf(id,confirmed=false){let x=s.songs.find(x=>x.id===id);if(!x||x.released)return;if(!confirmed){modal(`<h2>Release “${esc(x.title)}”?</h2><p>This publishes the finished recording. Pay $20, 5 energy. Results arrive at week close.</p><button class="primary" onclick="releaseShelf(${id},true)">Publish single</button>`);return}if(!spend(5,20))return;$('modal').close();x.released=s.week;log('“'+x.title+'” is out.');render()}
 function albumForm(){
- const eligible=s.songs.filter(x=>!x.album);
+ const eligible=s.songs.filter(x=>!x.album),plan=typeof migrateV095==='function'?(migrateV095(),s.v095?.albumPlan):null;
  modal(`<article class="v144-album-maker"><header class="v144-album-head"><div><span>ENCORE / RECORDS</span><h2>NEW ALBUM</h2></div><button type="button" aria-label="Close album maker" onclick="$('modal').close()">×</button></header>
+ ${plan?`<p class="v144-album-plan">PLANNED ERA · ${esc(plan.title)} · ${Math.round(V095_hypeState('albumPlan',plan.id).value)}/100 PRE-RELEASE HYPE</p>`:''}
  <form class="form v144-album-form" onsubmit="releaseAlbum(event)">
- <label class="v144-album-title">ALBUM NAME${nameInput('albumtitle','album')}</label>
+ <label class="v144-album-title">ALBUM NAME${nameInput('albumtitle','album',plan?.title||'')}</label>
  <details class="v144-album-price"><summary>DOWNLOAD PRICE</summary>${pricingField()}</details>
  <div class="v144-album-tracks-head"><strong>TRACKLIST</strong><small>SELECT AT LEAST THREE</small></div>
  ${eligible.length>5?`<div class="v144-album-select-all"><button type="button" onclick="selectAlbumTracks(this,true)">Select all</button><button type="button" onclick="selectAlbumTracks(this,false)">Clear</button></div>`:''}
