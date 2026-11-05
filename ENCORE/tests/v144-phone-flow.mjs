@@ -10,9 +10,12 @@ h.run(shell);h.run('V137_installShell()');
 assert.match(h.run('studio()'),/v143-song-create/);
 assert.ok(!h.run('studio().includes("Start your next record")'));
 const art=h.run("V143_serviceOptions('artistry')"),writers=h.run("V143_serviceOptions('writing')");
-for(const choices of [art,writers])for(let i=1;i<choices.length;i++){
- assert.ok(choices[i].cost>=choices[i-1].cost,'higher-quality provider must not become cheaper');
- assert.ok(choices[i].quality>=choices[i-1].quality,'provider quality must grow');
+for(const choices of [art,writers]){
+ assert.equal(choices[0].cost,0,'the player can perform or write at no hiring fee');
+ for(let i=2;i<choices.length;i++){
+  assert.ok(choices[i].cost>choices[i-1].cost,'paid provider fee must increase by tier');
+  assert.ok(choices[i].quality>choices[i-1].quality,'paid provider quality must increase by tier');
+ }
 }
 h.run("V143_remember('title','Unsent Record');V143_cycleValue('artistryIndex',5,1);V143_cycleValue('writingIndex',5,2);V143_toggleExplicit()");
 assert.equal(h.run('s.studioIdea.title'),'Unsent Record');
