@@ -107,3 +107,33 @@
  .v144-tour-stop-line{flex-wrap:wrap}
  .v143-head h1{font-size:30px!important}
 }
+
+/* Native album builder: same dark editorial family as Songs, Albums and Studio. */
+.v144-album-maker{max-width:620px;margin:auto;background:#1c262c;color:#f6f6f2;padding:20px 20px 24px;border-radius:17px}
+.v144-album-head{display:flex!important;justify-content:space-between;align-items:start;gap:10px;padding:0 0 20px!important;border-bottom:1px solid #46545d;background:none!important;color:#f6f6f2!important}
+.v144-album-head>div>span{font-size:10px;letter-spacing:.16em;color:#e6ca8d;font-weight:800}
+.v144-album-head h2{font-size:clamp(29px,7vw,44px);margin:5px 0 0;color:#fff;line-height:1}
+.v144-album-head>button{border:0;background:transparent;color:#e8ebed;font-size:30px;min-width:44px;min-height:44px}
+.v144-album-form{display:grid;gap:14px;margin-top:15px;color:#e6ebee}
+.v144-album-title{display:grid;gap:7px;font-size:11px;font-weight:900;letter-spacing:.15em;color:#bac8ce}
+.v144-album-title .namefield input{background:#293941!important;color:#fff!important;border:1px solid #536773!important;border-radius:14px!important;font-size:16px!important}
+.v144-album-price{border-bottom:1px solid #46545d}
+.v144-album-price summary{padding:13px 0;cursor:pointer;color:#e9cb88;font-size:12px;font-weight:800}
+.v144-album-price fieldset{padding:6px 0;background:transparent!important;border:0!important}
+.v144-album-tracks-head{display:flex;justify-content:space-between;gap:10px}
+.v144-album-tracks-head strong{font-size:14px;letter-spacing:.1em;color:#fff}
+.v144-album-tracks-head small{font-size:10px;color:#b9c6ca}
+.v144-album-tracks{display:grid;gap:1px;background:#3e4b52;border-radius:10px;overflow:hidden}
+.v144-album-tracks>p{padding:15px;color:#c1cdd2}
+.v144-album-track{display:grid;grid-template-columns:22px minmax(0,1fr) 38px;align-items:center;gap:11px;padding:12px 13px;background:#28343b;min-width:0;cursor:pointer}
+.v144-album-track input{width:20px;height:20px;accent-color:#9fbea7}
+.v144-album-track span{display:grid;gap:4px;min-width:0}
+.v144-album-track strong{color:#fff;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v144-album-track small{font-size:9px;color:#a7b7bf}
+.v144-album-track>b{display:grid;place-items:center;border-radius:50%;width:34px;height:34px;background:#9ab9a4;color:#14252c;font-size:13px}
+.v144-album-select-all{display:flex;gap:10px}
+.v144-album-select-all button{border:1px solid #4b626b;border-radius:10px;background:#29373e;color:#f4f6f6;min-height:40px;padding:0 15px;font-size:11px}
+.v144-album-note{color:#b0bec4;font-size:12px;line-height:1.45}
+.v144-album-publish{min-height:49px;border:0;border-radius:14px;font-size:14px;font-weight:900;background:#e8c987;color:#162329}
+.v144-album-publish:disabled{opacity:.45}
+@media(max-width:620px){.v144-album-maker{padding:14px 12px 20px}.v144-album-form{gap:10px}}
