@@ -41,6 +41,12 @@ assert.equal(h.run('s.songs.some(t=>t.title==="Unsent Record"&&!t.released)'),tr
 assert.match(h.run('V142_catalogPage()'),/v144-recording-shelf/);
 assert.match(h.run('V142_catalogPage()'),/Unsent Record/);
 assert.match(h.run('V142_catalogPage()'),/BUILD ALBUM/);
+h.run(`s.songs.push({id:14452,title:'Second Reflection',steps:3,quality:78,released:null,album:null,streams:0,total:0},{id:14453,title:'Third Reflection',steps:3,quality:82,released:null,album:null,streams:0,total:0});albumForm()`);
+assert.match(h.run("document.getElementById('modal').innerHTML"),/v144-album-maker/);
+assert.match(h.run("document.getElementById('modal').innerHTML"),/NEW ALBUM/);
+h.run(`pendingAlbum={get(key){return {albumtitle:'Reflections at Dawn',price:'10'}[key]},getAll(key){return key==='track'?[String(s.songs[0].id),'14452','14453']:[]}};releaseAlbum(null,true)`);
+assert.equal(h.run("s.albums.some(a=>a.title==='Reflections at Dawn'&&a.tracks.length===3)"),true,'actual three-track album publish must work');
+assert.equal(h.run('s.songs.filter(x=>x.album).length'),3,'album ownership must attach to every selected song');
 assert.match(h.run('tourPage()'),/v144-tour/);
 assert.match(h.run('tourPage()'),/ADD A SHOW/);
 h.run(`migrateTouring();saveTourStop({preventDefault(){},target:{city:'austin',week:s.week,venue:0,price:35,vip:10,production:1,security:1,opener:''}})`);
