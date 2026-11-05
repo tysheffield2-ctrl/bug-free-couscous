@@ -144,3 +144,5 @@
 .v144-album-confirm dd{margin:0;font-size:14px;color:#fff;font-weight:850;text-align:right}
 .v144-album-confirm .v144-album-publish{width:100%;margin:12px 0}
 .v144-album-cancel{display:block;width:100%;min-height:42px;border:0;background:transparent;color:#dd9691;font-size:13px;font-weight:900}
+
+.v144-album-plan{margin:14px 0 0;padding:11px 13px;border:1px solid #746544;border-radius:10px;background:#302f29;color:#f0d28c;font-size:11px;font-weight:800;letter-spacing:.04em}
