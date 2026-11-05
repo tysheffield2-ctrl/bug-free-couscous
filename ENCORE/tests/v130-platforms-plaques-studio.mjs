@@ -41,10 +41,11 @@ h.run('studioGuest(0)');
 assert.ok(h.run("document.getElementById('modal').innerHTML.includes('FEATURE NEGOTIATION')"),'feature negotiation must remain available from the current Studio handoff');
 
 const src=fs.readFileSync(new URL('../src/v130-platforms-plaques-studio.js',import.meta.url),'utf8');
-const handoff=fs.readFileSync(new URL('../src/v130-studio-feature-handoff.js',import.meta.url),'utf8');
+const game=fs.readFileSync(new URL('../dist/game.js',import.meta.url),'utf8');
 const build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
 assert.ok(src.includes('V130_worldMap'));
 assert.ok(src.includes('V130_plaqueArt'));
-assert.ok(handoff.includes('studioGuest'));
+assert.ok(!build.includes("'v130-studio-feature-handoff'"),'the retired feature-on-create wrapper must not be in the core build');
+assert.ok(!game.includes('V130_featureSongBase'),'production must not auto-book an artist from an absent feature field');
 assert.ok(build.includes("name==='v130-platforms-plaques-studio'"),'production build must strip v130 retired Song Creation ownership');
 console.log('PASS Music Platforms 2.0, visual plaques, platform strategy and canonical v143 Studio with live feature-negotiation handoff.');
