@@ -26,4 +26,35 @@ for(const mode of ['offline','online']){
  await page.getByRole('button',{name:'Reset appearance',exact:true}).click();await page.getByRole('button',{name:'Save appearance',exact:true}).click();await page.waitForFunction(()=>lastSaved===JSON.stringify(s));await page.reload();await page.waitForFunction(()=>saveReady);assert.equal(await page.evaluate(()=>s.appearance.skin),2);
  console.log(mode+': entry, controls, save, reload, portrait, cancel, reset passed');
 }
+// Phone-width release and touring acceptance path on the same real browser harness.
+await page.evaluate(()=>{
+ s.started=true;s.energy=200;s.cash=1000000;s.draft=null;
+ s.achievements.popups=false;clearTimeout(briefingTimer);
+ document.getElementById('modal').close();titleVisible=false;renderTitle();tab='Home';render();
+});
+const homeRows=page.locator('.v137-home .v137-menu-row');
+assert.ok(await homeRows.count()>=4,'Home must show the compact career rows');
+assert.ok(await homeRows.first().locator('svg').evaluate(svg=>svg.getBoundingClientRect().width)<=24,'Home icons must fit a phone');
+await page.evaluate(()=>{tab='Create';s.studioIdea={title:'',mood:directions[0].id,package:'0'};render()});
+await page.locator('#songtitle').fill('Phone Flow Test');
+await page.getByRole('button',{name:'Next ARTISTRY'}).click();
+await page.getByRole('button',{name:'Next WRITING'}).click();
+assert.equal(await page.evaluate(()=>s.studioIdea.title),'Phone Flow Test');
+assert.equal(await page.evaluate(()=>Number(s.studioIdea.artistryIndex)),1);
+await page.locator('.v143-create').click();
+await page.waitForSelector('.v103-session');
+assert.equal(await page.evaluate(()=>s.draft.title),'Phone Flow Test');
+await page.getByRole('button',{name:/Record song/}).click();
+await page.getByRole('button',{name:/Mix song/}).click();
+await page.getByRole('button',{name:/Save for album shelf/}).click();
+assert.ok(await page.evaluate(()=>s.songs.some(x=>x.title==='Phone Flow Test'&&!x.released)));
+await page.evaluate(()=>V137_openCatalog());
+await page.waitForSelector('.v144-recording-shelf');
+assert.ok(await page.getByText('Phone Flow Test').count()>=1);
+await page.evaluate(()=>V137_openTouring());
+await page.waitForSelector('.v144-tour');
+assert.ok(await page.getByText('ADD A SHOW').count()>=1);
+assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile pages must not overflow horizontally');
+await page.screenshot({path:'phone-flow-tour.png'});
+console.log('phone flow: compact Home, title entry, selectors, recording/mixing, album shelf, touring navigation passed');
 assert.deepEqual(errors,[]);await browser.close();browser=null;server.close();})().catch(async e=>{console.error(e);try{const buttons=page?await page.getByRole('button').allTextContents():[];fs.writeFileSync('creator-failure.txt',String(e&&e.stack||e)+'\nURL: '+(page?page.url():'n/a')+'\nButtons: '+JSON.stringify(buttons,null,2)+'\n');if(page)await page.screenshot({path:'creator-mobile.png',fullPage:true})}catch(diag){console.error('diagnostic capture failed',diag)}try{if(browser)await browser.close()}catch{}server.close();process.exit(1)});
