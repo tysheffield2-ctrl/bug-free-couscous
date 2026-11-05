@@ -58,4 +58,7 @@ assert.match(h.run('tourPage()'),/REVIEW &amp; LAUNCH|REVIEW & LAUNCH/);
 const css=fs.readFileSync(new URL('../dist/index.html',import.meta.url),'utf8');
 assert.ok(css.indexOf('v144-tour')>css.indexOf('.v143-song-create{'),'phone flow theme must load after earlier Studio rules');
 assert.ok(css.includes('grid-template-columns:24px minmax(0,1fr) 14px'),'Home icon layout must use compact rows');
+const hypeSource=fs.readFileSync(new URL('../src/v095-release-hype.js',import.meta.url),'utf8');
+assert.ok(!hypeSource.includes('V095_albumFormBase'),'legacy planned-era form wrapper must stay retired');
+assert.ok(!fs.readFileSync(new URL('../dist/game.js',import.meta.url),'utf8').includes('V130_featureSongBase'),'song creation must never trigger an absent feature booking');
 console.log('PASS phone-first Studio state, provider costs, feature navigation, album shelf, touring route and final CSS contract.');
