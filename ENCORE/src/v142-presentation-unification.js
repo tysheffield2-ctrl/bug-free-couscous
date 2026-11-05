@@ -1,39 +1,9 @@
 /* ENCORE 0.9.29 — Presentation Unification.
-   Replaces visible legacy route families with the approved ENCORE visual language.
-   Simulation/economy remain authoritative; this file owns presentation and selection UX. */
+   Owns catalog, inbox, awards and luxury presentation only.
+   Song creation is no longer patched here; v143 owns it directly. */
 let V142_catalogKind='songs',V142_albumId=null,V142_collectionKind='Jewelry',V142_propertyMode='listings';
 
 function V142_num(v){const n=Number(v);return Number.isFinite(n)?n:0}
-function V142_cycleValue(key,length,dir){const idea=ensureStudioIdeaSchema(),i=Math.max(0,Math.min(length-1,Number(idea[key])||0));setCreativeDirection(key,(i+dir+length)%length);render()}
-function V142_serviceOptions(kind){
- const selfName=s.name||'You',selfQ=kind==='writing'?level('writing'):Math.round((level('recording')+level('charisma'))/2);
- const base=kind==='writing'?
-  [{name:selfName,quality:selfQ,cost:0,note:'Write it yourself'}, {name:'Independent songwriter',quality:55,cost:750,note:'Reliable outside writer'}, {name:'Professional songwriter',quality:70,cost:3500,note:'Experienced commercial writer'}, {name:'Hit-room writer',quality:84,cost:15000,note:'High-end writing room'}, {name:'Elite songwriter',quality:96,cost:60000,note:'Top-tier writing specialist'}]:
-  [{name:selfName,quality:selfQ,cost:0,note:'Perform it yourself'}, {name:'Session artist',quality:55,cost:500,note:'Reliable session performance'}, {name:'Professional vocalist',quality:70,cost:2500,note:'Polished professional performance'}, {name:'Elite performer',quality:85,cost:12000,note:'High-end performance specialist'}, {name:'A-list session artist',quality:97,cost:50000,note:'World-class performance'}];
- return base
-}
-function V142_studioOptions(){return (studioPackages||[]).map((x,i)=>({name:x.name,quality:Math.min(100,50+V142_num(x.quality)*5),cost:V142_num(x.fee),index:i,note:x.quality?`+${x.quality} production quality`:'No production bonus'}))}
-function V142_albumOptions(){return [{id:null,title:'SINGLE'},...(s.albums||[]).filter(a=>!a.released).map(a=>({id:a.id,title:a.title}))]}
-function V142_picker(label,key,options){const idea=ensureStudioIdeaSchema(),idx=Math.max(0,Math.min(options.length-1,Number(idea[key])||0)),o=options[idx];return `<div class="v142-picker-block"><span>${label}</span><div class="v142-picker"><button type="button" aria-label="Previous ${label}" onclick="V142_cycleValue('${key}',${options.length},-1)">←</button><div><strong>${esc(o.name||o.title)}</strong>${o.quality!==undefined?`<small><b>${Math.round(o.quality)}</b> QUALITY · ${o.cost?money(o.cost):'$0'}</small>`:''}${o.note?`<em>${esc(o.note)}</em>`:''}</div><button type="button" aria-label="Next ${label}" onclick="V142_cycleValue('${key}',${options.length},1)">→</button></div></div>`}
-function V142_studioTotal(){const idea=ensureStudioIdeaSchema(),a=V142_serviceOptions('artistry')[Number(idea.artistryIndex)||0]||V142_serviceOptions('artistry')[0],w=V142_serviceOptions('writing')[Number(idea.writingIndex)||0]||V142_serviceOptions('writing')[0],st=V142_studioOptions()[Number(idea.studioIndex)||0]||V142_studioOptions()[0];return V142_num(a.cost)+V142_num(w.cost)+V142_num(st?.cost)}
-function V142_applyStudioChoices(idea=ensureStudioIdeaSchema()){const a=V142_serviceOptions('artistry')[Number(idea.artistryIndex)||0]||V142_serviceOptions('artistry')[0],w=V142_serviceOptions('writing')[Number(idea.writingIndex)||0]||V142_serviceOptions('writing')[0],albums=V142_albumOptions(),album=albums[Number(idea.albumIndex)||0]||albums[0];if(!s.draft)return;const dev=s.draft.development||{};const setMin=(k,q)=>{if(!dev[k])return;const cur=typeof dev[k]==='object'?Number(dev[k].level??dev[k].value??0):Number(dev[k]);if(cur>=q)return;if(typeof dev[k]==='object')dev[k]={...dev[k],level:q};else dev[k]=q};setMin('writing',w.quality);setMin('recording',a.quality);setMin('charisma',Math.round(a.quality*.9));s.draft.sessionPlan={...(s.draft.sessionPlan||{}),artistryProvider:a.name,writingProvider:w.name,plannedAlbumId:album.id??null,serviceCost:V142_num(a.cost)+V142_num(w.cost)};s.draft.plannedAlbumId=album.id??null;ENCORE_STUDIO?.score?.(s.draft);if(typeof creativeProfile==='function')s.draft.creativeScores=creativeProfile(s.draft)}
-
-V140_studioIdeaForm=function(){
- const idea=ensureStudioIdeaSchema(),art=V142_serviceOptions('artistry'),writers=V142_serviceOptions('writing'),studios=V142_studioOptions(),albums=V142_albumOptions();
- const studioIndex=Math.max(0,Math.min(studios.length-1,Number(idea.studioIndex)||0));setCreativeDirection('package',String(studios[studioIndex]?.index||0));
- const albumIdx=Math.max(0,Math.min(albums.length-1,Number(idea.albumIndex)||0)),album=albums[albumIdx];
- const total=V142_studioTotal();
- return `<article class="v140-fullscreen v140-song-create v142-song-create"><header class="v140-song-head"><button type="button" onclick="go('Career')">‹</button><span>⚡ ${s.energy}</span><h1>NEW SONG</h1></header><form onsubmit="newSong(event)"><input type="hidden" name="mood" value="${esc(idea.mood||directions[0].id)}"><input type="hidden" name="brief" value="${esc(idea.brief||'story')}"><input type="hidden" name="package" value="${studios[studioIndex]?.index||0}"><label class="v140-title-label">SONG NAME</label><div class="v140-title-input"><input name="songtitle" maxlength="70" value="${esc(idea.title||'')}" placeholder="Enter a song title" autocomplete="off" oninput="setCreativeDirection('title',this.value)" required><button type="button" onclick="this.previousElementSibling.value=generate('song');setCreativeDirection('title',this.previousElementSibling.value)">✦</button></div><div class="v142-picker-block"><span>ASSIGN ALBUM</span><div class="v142-picker"><button type="button" onclick="V142_cycleValue('albumIndex',${albums.length},-1)">←</button><div><strong>${esc(album.title)}</strong><em>${album.id===null?'Standalone single':'Planned album placement'}</em></div><button type="button" onclick="V142_cycleValue('albumIndex',${albums.length},1)">→</button></div></div>${V142_picker('ARTISTRY','artistryIndex',art)}${V142_picker('WRITING','writingIndex',writers)}${V142_picker('STUDIO','studioIndex',studios)}<div class="v140-total"><span>TOTAL COST</span><strong>${money(total)}</strong></div><div class="v140-song-controls"><button type="button" class="genre" onclick="V140_openGenre()">${esc(s.genre||'Pop')}</button><button type="button" class="clean" onclick="setCreativeDirection('explicit',ensureStudioIdeaSchema().explicit?'':'yes');render()">${idea.explicit?'EXPLICIT':'CLEAN'}</button></div><button class="v140-wide" type="submit">CREATE 10 <em>⚡</em></button><small class="v140-cash">CASH AVAILABLE: ${money(s.cash)}</small></form></article>`
-};
-
-const V142_newSongBase=newSong;
-newSong=function(e){
- const idea={...ensureStudioIdeaSchema()},studios=V142_studioOptions(),studio=studios[Number(idea.studioIndex)||0]||studios[0],a=V142_serviceOptions('artistry')[Number(idea.artistryIndex)||0]||V142_serviceOptions('artistry')[0],w=V142_serviceOptions('writing')[Number(idea.writingIndex)||0]||V142_serviceOptions('writing')[0],extra=V142_num(a.cost)+V142_num(w.cost),total=extra+V142_num(studio?.cost);
- if(V142_num(s.cash)<total){e?.preventDefault?.();toast?.('You need '+money(total)+' for the selected song team.');return}
- V142_newSongBase(e);
- if(s.draft){if(extra>0)spend(0,extra);V142_applyStudioChoices(idea);s.draft.explicit=!!idea.explicit;s.draft.creative={...(s.draft.creative||{}),explicit:!!idea.explicit};queueSave?.();render()}
-};
-
 function V142_scoreTone(q){return q>=85?'high':q>=70?'mid':'low'}
 function V142_songQuality(x){return Math.round(V142_num(x.quality)||V142_num(x.commercial)||0)}
 function V142_albumQuality(a){const tracks=(a.tracks||[]).map(id=>(s.songs||[]).find(x=>x.id===id)).filter(Boolean);return tracks.length?Math.round(tracks.reduce((n,x)=>n+V142_songQuality(x),0)/tracks.length):Math.round(V142_num(a.cohesion)||0)}
