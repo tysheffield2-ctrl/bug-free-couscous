@@ -111,13 +111,8 @@ function V095_albumPlanCard(){
 const V095_marketingPageBase=marketingPage;
 marketingPage=function(){return V095_marketingPageBase()+V095_albumPlanCard()};
 
-const V095_albumFormBase=albumForm;
-albumForm=function(){
- V095_albumFormBase();migrateV095();
- const p=s.v095.albumPlan,input=$('albumtitle');
- if(p&&input&&!input.value){input.value=p.title}
- const form=input?.closest('form');if(form&&p){form.insertAdjacentHTML('afterbegin',`<div class="album-plan-callout-v095"><strong>Planned era · ${esc(p.title)}</strong><span>${Math.round(V095_hypeState('albumPlan',p.id).value)}/100 pre-release hype ready to transfer if the title matches.</span></div>`)}
-};
+/* Album plan identity is rendered inside the canonical albumForm in core.js.
+   Only the release settlement hook remains in this module. */
 const V095_releaseAlbumBase=releaseAlbum;
 releaseAlbum=function(e,confirmed=false){
  const before=s.albums.length,plan=s.v095?.albumPlan?{...s.v095.albumPlan}:null;

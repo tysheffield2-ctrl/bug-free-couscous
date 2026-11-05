@@ -1,0 +1,148 @@
+/* ENCORE — phone-first Studio, release shelf and Touring.
+   Styles the canonical route markup directly; no alternate screen renderers. */
+.v144-master-actions{display:flex;gap:10px;flex-wrap:wrap}
+.v144-master-actions>button{flex:1 1 185px;min-height:46px}
+.v144-recording-shelf{margin:14px 0 24px;padding:17px 18px;border:1px solid #3e535b;border-radius:16px;background:#1e2a30;color:#f7f8f7}
+.v144-recording-heading{display:flex;justify-content:space-between;gap:9px;align-items:baseline}
+.v144-recording-heading span{font-size:10px;letter-spacing:.16em;color:#9fb1ba;font-weight:800}
+.v144-recording-heading strong{font-size:12px;color:#f6f6f3}
+.v144-recording-shelf p{margin:12px 0;color:#c1cbd0;font-size:13px}
+.v144-recording-list{display:grid;gap:1px;margin:13px 0;background:#40515a}
+.v144-recording-list>div{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;background:#1e2a30;padding:12px 0}
+.v144-recording-list span{min-width:0;display:grid;gap:3px}
+.v144-recording-list b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
+.v144-recording-list small{font-size:10px;color:#b2c2ca}
+.v144-recording-list button,.v144-recording-album{border:0;border-radius:999px;padding:11px 14px;background:#a4c5ad;color:#132228;font-size:11px;font-weight:900;min-height:42px;white-space:nowrap}
+.v144-recording-album{width:100%;background:#e4c985;margin-top:10px}
+.v144-recording-album:disabled{opacity:.47;cursor:not-allowed}
+.v144-tour{max-width:760px;margin:0 auto 112px;padding:16px 18px 30px;background:#1d262d;color:#f7f8f7;font-family:Arial,Helvetica,sans-serif}
+.v144-tour button{font:inherit;cursor:pointer}
+.v144-tour-head{display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:start;gap:12px;padding:5px 0 20px;border-bottom:1px solid #3a454c;background:transparent!important}
+.v144-tour-head>button{border:0;background:none;color:#f6f6f2;font-size:37px;line-height:1;min-height:44px}
+.v144-tour-head small{display:block;color:#a0b2bc;letter-spacing:.14em;font-size:10px;font-weight:800}
+.v144-tour-head h1{font-size:clamp(33px,9vw,50px);line-height:1;margin:6px 0 0;letter-spacing:-.04em;color:#fff}
+.v144-tour-state{font-size:9px;color:#e6ca8c;border:1px solid #726346;padding:9px 8px;border-radius:999px;white-space:nowrap;font-weight:800}
+.v144-tour-overview{padding:20px 0 26px}
+.v144-tour-kicker{color:#e6c985;font-size:10px;font-weight:900;letter-spacing:.17em}
+.v144-tour-overview h2{font-size:29px;margin:9px 0 17px;color:#fff}
+.v144-tour-overview p{color:#bbc9cf;font-size:14px;line-height:1.5}
+.v144-tour-name{display:grid;gap:9px;font-size:11px;letter-spacing:.15em;font-weight:900;color:#aabdc5;margin:14px 0}
+.v144-tour-name input{height:51px;border:1px solid #52636c;border-radius:12px;padding:0 15px;background:#26333b;color:#fff;font-size:17px;width:100%;min-width:0}
+.v144-tour-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.v144-tour-metrics div{padding:14px 11px;border-radius:12px;background:#29363e;min-width:0}
+.v144-tour-metrics small{display:block;font-size:9px;letter-spacing:.08em;color:#b2c0c8}
+.v144-tour-metrics strong{display:block;font-size:clamp(15px,3.5vw,23px);margin-top:8px;overflow-wrap:anywhere}
+.v144-tour-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0 10px}
+.v144-tour-actions>button{min-width:0;min-height:49px;padding:12px 9px;border:0;border-radius:15px;font-weight:900;font-size:12px}
+.v144-tour-primary{background:#f0d08c;color:#19242a}
+.v144-tour-secondary{background:#9fbfb1;color:#17262c}
+.v144-tour-outline{background:transparent;color:#f4a59b;border:1px solid #7a6263;border-radius:12px;padding:12px;font-weight:800}
+.v144-tour-note{font-size:12px!important;color:#9faeb8!important}
+.v144-tour-section-head{display:flex;justify-content:space-between;align-items:baseline;gap:9px;padding:10px 0}
+.v144-tour-section-head h2{font-size:23px;color:#fff;line-height:1.1;margin:0}
+.v144-tour-section-head span{font-size:11px;font-weight:800;color:#9baeb9}
+.v144-tour-empty{padding:22px 18px;border-radius:13px;border:1px dashed #4a616b;color:#ced9dc}
+.v144-tour-stop{margin:10px 0;background:#29353e;border:1px solid #42525d;border-radius:14px;overflow:hidden;color:#f3f5f6}
+.v144-tour-stop>summary{cursor:pointer;list-style:none;padding:15px 16px 17px;position:relative}
+.v144-tour-stop>summary::-webkit-details-marker{display:none}
+.v144-tour-stop>summary:after{content:'⌄';position:absolute;right:15px;top:16px;color:#c1ccd2;font-size:20px}
+.v144-tour-stop[open]>summary:after{content:'⌃'}
+.v144-tour-week{font-size:10px;letter-spacing:.14em;color:#e3c98c;font-weight:900}
+.v144-tour-stop h3{margin:6px 26px 11px 0;color:#fff;font-size:20px}
+.v144-tour-stop-line{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.v144-tour-stop-line span{font-size:11px;color:#bccad1}
+.v144-tour-stop-line strong{font-size:12px;color:#add0b7;text-align:right;white-space:nowrap}
+.v144-tour-stop-body{padding:15px 16px 19px;border-top:1px solid #48575d;color:#e7edef}
+.v144-tour-stop-body>p{font-size:12px;color:#b9c7ce;margin:0 0 12px}
+.v144-tour-stop-body .rows,.v144-tour-stop-body dl{max-width:100%}
+.v144-tour-stop-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}
+.v144-tour-stop-actions button{min-height:44px;flex:1 1 130px}
+.v144-tour-extra{margin-top:14px;padding:12px 14px;border-radius:13px;border:1px solid #43545f}
+.v144-tour-extra>summary{cursor:pointer;list-style:none;color:#e7e1d4;font-size:12px;font-weight:900;letter-spacing:.07em;padding:10px 0}
+.v144-tour-extra>summary:after{content:' +';float:right}
+.v144-tour-extra[open]>summary:after{content:' –'}
+/* Stable mobile proportions; selector arrows remain minimum 44px touch targets. */
+@media(max-width:620px){
+ .v137-home .v137-menu-stack{gap:7px!important}
+ .v137-home .v137-menu-row{min-height:56px!important;border-radius:16px!important;padding:7px 12px!important;grid-template-columns:24px minmax(0,1fr) 14px!important;gap:10px!important}
+ .v137-home .v137-menu-row svg{width:20px!important;height:20px!important}
+ .v137-home .v137-menu-row strong{font-size:14px!important;line-height:1.15!important}
+ .v137-home .v137-menu-row small{font-size:10px!important;line-height:1.2!important}
+ .v137-home .v137-menu-row>b{font-size:18px!important}
+ .v143-song-create{padding:8px 14px 20px!important;max-width:100%;min-width:0}
+ .v143-song-create form{gap:8px!important}
+ .v143-head{min-height:52px!important;margin-bottom:7px!important;gap:8px!important}
+ .v143-head h1{font-size:34px!important}
+ .v143-head>button{font-size:32px!important;min-width:44px;min-height:44px}
+ .v143-head>span{font-size:15px!important}
+ .v143-title-input{min-height:49px!important;border-radius:19px!important;grid-template-columns:minmax(0,1fr) 52px!important}
+ .v143-title-input input{font-size:16px!important;padding:10px 13px!important}
+ .v143-choice{gap:2px!important}
+ .v143-picker{grid-template-columns:44px minmax(0,1fr) 44px!important;gap:2px!important;min-height:56px!important}
+ .v143-picker>button{min-height:44px!important;min-width:44px!important}
+ .v143-picker strong{font-size:16px!important;overflow-wrap:anywhere}
+ .v143-picker small{font-size:11px!important}
+ .v143-picker em{font-size:10px!important;line-height:1.2}
+ .v143-total strong{font-size:29px!important}
+ .v143-controls button,.v143-create{min-height:47px!important;border-radius:16px!important;font-size:14px!important}
+ .v143-title-label,.v143-choice>span{font-size:10px!important;letter-spacing:.15em!important}
+ .v103-studio-head{padding:15px 14px!important;gap:12px!important}
+ .v103-studio-head h1{font-size:33px!important}
+ .v103-studio-head p{font-size:12px}
+ .v103-session-rail span{padding:10px 6px!important;font-size:9px!important;gap:4px!important}
+ .v103-wave{height:50px!important}
+ .v103-room-main,.v103-session-sheet{padding:15px!important}
+ .v103-session-rail{min-width:0}
+ .v103-room-action{flex-wrap:wrap}
+ .v144-recording-shelf{margin:10px 0 16px;padding:13px}
+ .v144-recording-list>div{align-items:flex-start;flex-wrap:wrap}
+ .v144-recording-list button{margin-left:auto}
+ .v144-tour{padding:11px 14px 100px}
+ .v144-tour-overview{padding:16px 0 19px}
+}
+@media(max-width:365px){
+ .v144-tour-actions{grid-template-columns:1fr}
+ .v144-tour-metrics{grid-template-columns:1fr 1fr}
+ .v144-tour-metrics div:last-child{grid-column:1/-1}
+ .v144-tour-stop-line{flex-wrap:wrap}
+ .v143-head h1{font-size:30px!important}
+}
+
+/* Native album builder: same dark editorial family as Songs, Albums and Studio. */
+.v144-album-maker{max-width:620px;margin:auto;background:#1c262c;color:#f6f6f2;padding:20px 20px 24px;border-radius:17px}
+.v144-album-head{display:flex!important;justify-content:space-between;align-items:start;gap:10px;padding:0 0 20px!important;border-bottom:1px solid #46545d;background:none!important;color:#f6f6f2!important}
+.v144-album-head>div>span{font-size:10px;letter-spacing:.16em;color:#e6ca8d;font-weight:800}
+.v144-album-head h2{font-size:clamp(29px,7vw,44px);margin:5px 0 0;color:#fff;line-height:1}
+.v144-album-head>button{border:0;background:transparent;color:#e8ebed;font-size:30px;min-width:44px;min-height:44px}
+.v144-album-form{display:grid;gap:14px;margin-top:15px;color:#e6ebee}
+.v144-album-title{display:grid;gap:7px;font-size:11px;font-weight:900;letter-spacing:.15em;color:#bac8ce}
+.v144-album-title .namefield input{background:#293941!important;color:#fff!important;border:1px solid #536773!important;border-radius:14px!important;font-size:16px!important}
+.v144-album-price{border-bottom:1px solid #46545d}
+.v144-album-price summary{padding:13px 0;cursor:pointer;color:#e9cb88;font-size:12px;font-weight:800}
+.v144-album-price fieldset{padding:6px 0;background:transparent!important;border:0!important}
+.v144-album-tracks-head{display:flex;justify-content:space-between;gap:10px}
+.v144-album-tracks-head strong{font-size:14px;letter-spacing:.1em;color:#fff}
+.v144-album-tracks-head small{font-size:10px;color:#b9c6ca}
+.v144-album-tracks{display:grid;gap:1px;background:#3e4b52;border-radius:10px;overflow:hidden}
+.v144-album-tracks>p{padding:15px;color:#c1cdd2}
+.v144-album-track{display:grid;grid-template-columns:22px minmax(0,1fr) 38px;align-items:center;gap:11px;padding:12px 13px;background:#28343b;min-width:0;cursor:pointer}
+.v144-album-track input{width:20px;height:20px;accent-color:#9fbea7}
+.v144-album-track span{display:grid;gap:4px;min-width:0}
+.v144-album-track strong{color:#fff;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v144-album-track small{font-size:9px;color:#a7b7bf}
+.v144-album-track>b{display:grid;place-items:center;border-radius:50%;width:34px;height:34px;background:#9ab9a4;color:#14252c;font-size:13px}
+.v144-album-select-all{display:flex;gap:10px}
+.v144-album-select-all button{border:1px solid #4b626b;border-radius:10px;background:#29373e;color:#f4f6f6;min-height:40px;padding:0 15px;font-size:11px}
+.v144-album-note{color:#b0bec4;font-size:12px;line-height:1.45}
+.v144-album-publish{min-height:49px;border:0;border-radius:14px;font-size:14px;font-weight:900;background:#e8c987;color:#162329}
+.v144-album-publish:disabled{opacity:.45}
+@media(max-width:620px){.v144-album-maker{padding:14px 12px 20px}.v144-album-form{gap:10px}}
+
+.v144-album-confirm dl{display:grid;gap:0;margin:17px 0}
+.v144-album-confirm dl>div{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #3e4e57}
+.v144-album-confirm dt{font-size:11px;color:#aabdc5;font-weight:850}
+.v144-album-confirm dd{margin:0;font-size:14px;color:#fff;font-weight:850;text-align:right}
+.v144-album-confirm .v144-album-publish{width:100%;margin:12px 0}
+.v144-album-cancel{display:block;width:100%;min-height:42px;border:0;background:transparent;color:#dd9691;font-size:13px;font-weight:900}
+
+.v144-album-plan{margin:14px 0 0;padding:11px 13px;border:1px solid #746544;border-radius:10px;background:#302f29;color:#f0d28c;font-size:11px;font-weight:800;letter-spacing:.04em}
