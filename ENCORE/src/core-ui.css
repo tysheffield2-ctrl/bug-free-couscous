@@ -61,3 +61,31 @@ body.core-ui #app .core-content .core-row strong{font-weight:750!important}
 body.core-ui button.core-row>svg{stroke:#26373d;stroke-width:1.8}
 body.core-ui button.core-row>b{color:#66777d;font-weight:650}
 body.core-ui button.core-row:active{box-shadow:0 1px 0 #d2d8d5!important}
+
+/* Saved theme preference: dark surroundings, signature white action rows. */
+body.core-ui #app .core-header .core-theme-toggle{min-height:44px;padding:7px 10px;border:1px solid #586c70;border-radius:8px;background:transparent!important;color:#eef5f3!important;font-size:12px!important;letter-spacing:normal;box-shadow:none!important}
+html[data-theme=dark] body.core-ui{--ink:#eef3f2;--muted:#bac8c7;--line:#3b4b50;--paper:#162229;background:#162229!important;color:#eef3f2!important;color-scheme:dark}
+html[data-theme=dark] body.core-ui main#app{background:#162229!important;color:#eef3f2!important}
+html[data-theme=dark] body.core-ui .core-pagebar,html[data-theme=dark] body.core-ui .core-dialog-bar{background:#1d2c33!important;border-color:#3b4b50!important;color:#eef3f2!important}
+html[data-theme=dark] body.core-ui .core-pagebar h1,html[data-theme=dark] body.core-ui .core-pagebar button,html[data-theme=dark] body.core-ui .core-dialog-bar button{color:#e6f0eb!important}
+html[data-theme=dark] body.core-ui #app .core-content :is(h1,h2,h3,h4,strong,b,span,label,small,p,li,dt,dd){color:#eef3f2!important}
+html[data-theme=dark] body.core-ui #app .core-content :is(small,p,.core-note,.core-summary>span){color:#bac8c7!important}
+html[data-theme=dark] body.core-ui #app .core-content button.core-row :is(strong,b,span){color:#17242a!important}
+html[data-theme=dark] body.core-ui #app .core-content button.core-row small{color:#59676d!important}
+html[data-theme=dark] body.core-ui .core-quick button{background:#2c443c!important;color:#e5f4ed!important}
+html[data-theme=dark] body.core-ui .core-stages li{background:#2c3c44!important}
+html[data-theme=dark] body.core-ui .core-stages li.done{background:#305741!important}
+html[data-theme=dark] body.core-ui .core-form :is(input,select),html[data-theme=dark] body.core-ui .core-label input,html[data-theme=dark] body.core-ui .core-search input{background:#22323a!important;color:#eef3f2!important;border-color:#52656c!important;color-scheme:dark}
+html[data-theme=dark] body.core-ui .core-list:not(:has(>button.core-row)),html[data-theme=dark] body.core-ui .core-content .profile-facts{background:#22323a!important;border-color:#45585f!important}
+html[data-theme=dark] body.core-ui #app .core-content :is(.core-track-choice,.core-track){border-color:#45585f!important}
+html[data-theme=dark] body.core-ui>nav#nav{background:#142128!important;border-color:#3b4b50!important}
+html[data-theme=dark] body.core-ui>nav#nav>button{color:#bdcac8!important}
+html[data-theme=dark] body.core-ui>nav#nav>button[aria-current=page]{background:#29463b!important;color:#d7f3e3!important}
+html[data-theme=dark] body.core-ui dialog.core-dialog{background:#162229!important;color:#eef3f2!important}
+html[data-theme=dark] body.core-ui dialog.core-dialog::backdrop{background:#162229}
+html[data-theme=dark] body.core-ui dialog.core-dialog .core-dialog-content :is(h1,h2,h3,h4,strong,b,span,label,small,p,li,dt,dd){color:#eef3f2!important}
+html[data-theme=dark] body.core-ui dialog.core-dialog .core-dialog-content :is(.card,.highlightbox,.profile-facts){background:#22323a!important;color:#eef3f2!important;border-color:#45585f!important}
+html[data-theme=dark] body.core-ui dialog.core-dialog .core-dialog-content :is(input,select,textarea){background:#22323a!important;color:#eef3f2!important;border-color:#52656c!important;color-scheme:dark}
+/* Legacy utility cards stay light: keep their text dark rather than inheriting dark-mode ink. */
+html[data-theme=dark] body.core-ui #app .core-content :is(.card,.development-card) :is(h1,h2,h3,h4,strong,b,span,label,small,p,li,dt,dd){color:#17242a!important}
+html[data-theme=dark] body.core-ui.core-artist-file main#app{background:#fff!important;color:#111!important;color-scheme:light}
