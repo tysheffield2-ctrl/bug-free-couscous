@@ -4,7 +4,7 @@
    song draft is created. */
 const V130_featureSongBase=newSong;
 newSong=function(e){
- const data=new FormData(e.target),raw=data.get('feature'),featureId=raw===''?null:Number(raw);
+ const data=new FormData(e.target),raw=data.get('feature'),featureId=raw===null||raw===''?null:Number(raw);
  V130_featureSongBase(e);
  if(s.draft&&Number.isInteger(featureId)&&featureId>=0&&typeof studioGuest==='function')studioGuest(featureId)
 };

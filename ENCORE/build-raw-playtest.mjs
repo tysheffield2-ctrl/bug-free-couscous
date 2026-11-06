@@ -36,12 +36,14 @@ window.fetch=async function(input,init={}){
   return nativeFetch(input,init);
 };
 window.ENCORE_PLAYTEST_BUILD=true;
+window.ENCORE_PLAYTEST_QUERY_MODE=true;
 window.ENCORE_PLAYTEST_SANDBOX=isSandbox;
 })();</script>`;
 
 let html=readFileSync('dist/index.html','utf8');
 html=html.replace('</head>',shim+'</head>');
 html=html.replaceAll('src="/game.js"','src="./game.js"');
+html=html.replaceAll('src="/native-shell.js"','src="./native-shell.js"');
 html=html.replaceAll("src='/game.js'","src='./game.js'");
 html=html.replaceAll('href="/','href="./').replaceAll("href='/","href='./");
 writeFileSync(out+'/index.html',html);
