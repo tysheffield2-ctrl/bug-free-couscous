@@ -53,3 +53,11 @@ body.core-ui dialog.core-dialog .core-dialog-content button.secondary{background
 body.core-ui #app .core-save-status{display:block;background:transparent!important;border:0!important;color:#bcd2ca!important;font-size:10px!important;padding:3px 0!important;margin-top:4px;min-height:24px;text-align:left;box-shadow:none!important}body.core-ui #app .core-save-status.save-error{color:#ffbaac!important}
 
 body.core-ui #app .v138-profile-kicker .v138-e-box{background:#000!important;color:#fff!important}
+
+/* Restore the standalone raised white rows without changing the page theme. */
+body.core-ui .core-list:has(>button.core-row){display:grid;gap:10px;background:transparent;border:0;border-radius:0;overflow:visible}
+body.core-ui button.core-row{border:1px solid #d8dfdf!important;border-radius:20px!important;background:linear-gradient(180deg,#fff 0%,#f4f5f2 100%)!important;box-shadow:0 3px 0 #d2d8d5,0 5px 9px rgba(23,36,42,.06)!important}
+body.core-ui #app .core-content .core-row strong{font-weight:750!important}
+body.core-ui button.core-row>svg{stroke:#26373d;stroke-width:1.8}
+body.core-ui button.core-row>b{color:#66777d;font-weight:650}
+body.core-ui button.core-row:active{box-shadow:0 1px 0 #d2d8d5!important}
