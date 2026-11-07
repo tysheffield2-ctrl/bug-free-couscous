@@ -56,7 +56,7 @@ assert.match(h.run('V144_legalPage()'),/Contract register/,'signed agreements di
 
 const source=fs.readFileSync(new URL('../src/v144-contract-covenants.js',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v144-contract-covenants.css',import.meta.url),'utf8');
-const built=fs.readFileSync(new URL('../dist/game.js',import.meta.url),'utf8');
+const built=fs.readFileSync(new URL('../dist/contract-engine.js',import.meta.url),'utf8');
 assert.ok(source.includes('V144_quickFeature')&&source.includes('V144_customFeature')&&source.includes('V144_incomingFeature')&&source.includes('V144_creditOffer')&&source.includes('V144_opportunity'),'all paid collaboration routes must reach the signing system');
 assert.ok(source.includes('V144_standard')&&source.includes('V144_labelRoom'),'legacy contracts share a single execution room');
 assert.ok(css.includes('.v144-contract-room')&&css.includes('safe-area-inset-bottom'));
