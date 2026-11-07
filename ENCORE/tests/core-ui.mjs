@@ -81,4 +81,27 @@ assert.match(h.elements.app.innerHTML,/Global Albums 50/);
 assert.match(h.elements.app.innerHTML,/Late Light/);
 h.run('go("Songs")');
 assert.equal(h.run('s.chartBook.songs.current.length'),22,'chart navigation does not change simulation results');
+
+// Growth screens use existing simulation engines without restoring legacy menu layers.
+for(const route of ['ReleasePlan','Marketing','Pulse','PulseCompose']){
+ h.run('go('+JSON.stringify(route)+')');assert.ok(h.elements.app.innerHTML.length>200,route);
+ assert.equal(h.elements.modal.open,false,route+' should not open any modal');
+}
+h.run('go("ReleasePlan")');
+assert.match(h.elements.app.innerHTML,/Upcoming industry weeks/);
+h.run('go("Marketing")');
+assert.match(h.elements.app.innerHTML,/Weekly|Catalog|catalog/i);
+h.run('go("Pulse")');
+assert.match(h.elements.app.innerHTML,/in-game platform/);
+h.run('go("PulseCompose")');
+assert.match(h.elements.app.innerHTML,/Publish PULSE post/);
+h.run('go("Songs")');assert.ok(h.elements.app.innerHTML.length>100);
+// Drill into campaign; a fresh career cannot buy promotion without released music.
+h.run('EUI.openCampaign("grassroots")');assert.equal(h.run('tab'),'CampaignDetail');
+assert.match(h.elements.app.innerHTML,/Weekly spend/);
+h.run('EUI.back()');assert.equal(h.run('tab'),'Songs');
+// Every new page remains operable through direct UI navigation, not an overlay.
+assert.match(h.run('EUI.titles.ReleaseDetail'),/Schedule a song/);
+assert.match(h.run('EUI.titles.PulsePost'),/PULSE post/);
+assert.match(h.run('EUI.titles.Marketing'),/Marketing/);
 console.log('PASS focused UI: all routes, draft continuity, feature booking, release, ordered album persistence, tour settlement, save round-trip, modal back/close, appearance and sandbox isolation.');
