@@ -4,6 +4,8 @@ import {harness} from './harness.mjs';
 
 const h=harness('/sandbox',145001);
 await h.run('boot()');
+const shell=fs.readFileSync(new URL('../dist/native-shell.js',import.meta.url),'utf8');
+h.run(shell);h.run('V137_installShell()');
 assert.equal(h.run('s.labelBusiness?.company?.boss||null'),null,'new player state must not be added without creating a label');
 assert.equal(h.run('V145_read()'),null,'looking up Boss state is non-mutating');
 
