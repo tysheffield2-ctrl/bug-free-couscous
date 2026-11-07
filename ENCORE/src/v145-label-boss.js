@@ -110,7 +110,9 @@ function V145_approve(projectId){
 }
 function V145_setApproval(mode){
  const b=V145_state();if(!b||!labelActive()||!['manual','delegated'].includes(mode))return false;
- b.approvals=mode;V145_note('policy','Release approval set to '+mode);queueSave?.();render?.();return true
+ b.approvals=mode;V145_note('policy','Release approval set to '+mode);
+ if(mode==='delegated')for(const p of b.projects.filter(p=>p.status==='ready'))V145_release(p,true);
+ queueSave?.();render?.();return true
 }
 function V145_prepareWeek(){
  const co=s.labelBusiness?.company,b=V145_read();if(!co||!b||co.preparedWeek===s.week)return V145_prepareBase();
@@ -133,7 +135,10 @@ function V145_prepareWeek(){
 function V145_advanceProjects(){
  const co=s.labelBusiness?.company,b=V145_read();if(!co||!b||b.lastProgressWeek===s.week)return;
  b.lastProgressWeek=s.week;
- if(co.preparedWeek!==s.week||!co.staffFunded)return;
+ if(co.preparedWeek!==s.week||!co.staffFunded){
+  for(const p of b.projects)if(p.status==='active')p.pausedWeeks=(p.pausedWeeks||0)+1;
+  return
+ }
  if(V145_staff('ar')&&(!b.scoutedWeek||s.week-b.scoutedWeek>=4))V145_scout();
  for(const p of b.projects){
   if(p.status!=='active')continue;
@@ -151,6 +156,7 @@ function V145_advanceProjects(){
   V145_note('project',p.title+' progressed to '+p.stage);
   if(p.stage==='ready'){p.status='ready';p.readyWeek=s.week;if(b.approvals==='delegated')V145_release(p,true)}
  }
+ if(b.approvals==='delegated')for(const p of b.projects.filter(x=>x.status==='ready'))V145_release(p,true);
 }
 function V145_finishWeek(){
  const co=s.labelBusiness?.company,b=V145_read();if(!co||!b)return V145_settleBase();
