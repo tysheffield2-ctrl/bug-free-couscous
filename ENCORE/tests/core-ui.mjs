@@ -104,4 +104,39 @@ h.run('EUI.back()');assert.equal(h.run('tab'),'Songs');
 assert.match(h.run('EUI.titles.ReleaseDetail'),/Schedule a song/);
 assert.match(h.run('EUI.titles.PulsePost'),/PULSE post/);
 assert.match(h.run('EUI.titles.Marketing'),/Marketing/);
+
+// Premium visual skin: live data, destination parity, compact screen controls,
+// no second renderer or modal navigation, and both theme modes.
+h.run('s.name="Fictional Artist";go("Home")');
+assert.match(h.elements.app.innerHTML,/MUSIC CAREER SIMULATION/);
+assert.match(h.elements.app.innerHTML,/Fictional Artist/);
+assert.match(h.elements.app.innerHTML,/core-premium-portrait/);
+assert.match(h.elements.app.innerHTML,/core-home-list/);
+for (const label of ['Write a Song','Released Songs','Features','Albums','Release Strategy','Tours','Charts','Marketing','PULSE','Artist File']) {
+ assert.ok(h.elements.app.innerHTML.includes(label),'Missing live Home destination: '+label);
+}
+assert.match(h.elements.app.innerHTML,/class="core-header core-header-home"/);
+assert.doesNotMatch(h.elements.app.innerHTML,/Nova Lane|Avery Bloom|Solara/,'reference names must never seed gameplay');
+assert.match(h.elements.nav.innerHTML,/Calendar/);
+assert.match(h.elements.nav.innerHTML,/Studio/);
+assert.match(h.elements.nav.innerHTML,/Industry/);
+assert.match(h.elements.nav.innerHTML,/More/);
+assert.equal(h.elements.modal.open,false,'Home is an ordinary route, never a modal');
+h.run('go("ReleasePlan")');
+assert.match(h.elements.nav.innerHTML,/aria-label="Calendar" aria-current="page"/);
+assert.match(h.elements.app.innerHTML,/core-header-compact/);
+h.run('go("Songs")');
+assert.match(h.elements.nav.innerHTML,/aria-label="Studio" aria-current="page"/);
+h.run('go("Features")');
+assert.match(h.elements.nav.innerHTML,/aria-label="Industry" aria-current="page"/);
+h.run('go("Menu")');
+assert.match(h.elements.nav.innerHTML,/aria-label="More" aria-current="page"/);
+h.run('go("Home")');
+assert.match(h.elements.nav.innerHTML,/aria-label="Home" aria-current="page"/);
+assert.equal(h.run('EUI.history.at(-1).tab'),'Menu','ordinary Back history must persist');
+h.run('EUI.back()');assert.equal(h.run('tab'),'Menu');
+const premiumRow=h.run('EUI.row("song","Studio Test","All captions stay escaped","go(\\'Songs\\')")');
+assert.match(premiumRow,/core-row-art/);
+assert.match(premiumRow,/core-row-copy/);
+assert.match(h.run("EUI.row('pulse','PULSE','Industry buzz',\"go('Pulse')\")"),/data-icon="pulse"/);
 console.log('PASS focused UI: all routes, draft continuity, feature booking, release, ordered album persistence, tour settlement, save round-trip, modal back/close, appearance and sandbox isolation.');
