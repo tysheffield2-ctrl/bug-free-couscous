@@ -65,7 +65,7 @@ assert.match(h.run('V125_releaseWarning(s.draft)'),/RIGHTS NOT FULLY CLEARED/);
    song-level royalty budget. All names and catalog data are fictional. */
 h.run(`
  s.fans=1e10;s.reputation=100;s.cash=1000000;s.energy=200;
- s.world[0].relation=60;
+ s.world[0].relation=90;
  s.draft={id:801,title:'Fictional Collaboration',steps:2,features:[],credits:[],development:s.development};
  $('v125-feature-fee').value='100';
  $('v125-feature-share').value='10';
@@ -88,7 +88,7 @@ assert.equal(h.run('s.cash'),afterFee);
 assert.equal(h.run('s.energy'),afterEnergy);
 assert.equal(h.run('s.draft.features.length'),1);
 
-h.run(`s.draft.features=[];$('v125-feature-fee').value='Infinity';$('v125-feature-share').value='10'`);
+h.run(`s.draft.features=[];s.draft.feature=null;$('v125-feature-fee').value='Infinity';$('v125-feature-share').value='10'`);
 assert.equal(h.run('V125_offerFeature(0)'),false,'non-finite offers are invalid');
 h.run(`$('v125-feature-fee').value='100';$('v125-feature-share').value='7.3'`);
 assert.equal(h.run('V125_offerFeature(0)'),false,'unsupported fractional splits are invalid');
@@ -106,7 +106,7 @@ h.run(`s.draft.features=[0,1,2,3,4,5].map(id=>({id,name:'Fictional Guest '+id,ro
 assert.equal(h.run('V125_useFeatureWithoutClearance(7,false)'),false,'six-guest limit also applies to unauthorized attachment');
 assert.equal(h.run('s.draft.features.length'),6);
 
-h.run(`s.draft.features=[];$('v125-feature-share').value='0';$('v125-feature-fee').value='0';s.world[0].relation=25;Math.random=()=>1`);
+h.run(`s.draft.features=[];s.draft.feature=null;$('v125-feature-share').value='0';$('v125-feature-fee').value='0';s.world[0].relation=90;Math.random=()=>1`);
 const beforeDecline=h.run('s.world[0].relation'),beforeDeclineCash=h.run('s.cash');
 assert.equal(h.run('V125_offerFeature(0)'),false,'unattractive offers can be refused');
 assert.equal(h.run('s.world[0].relation'),beforeDecline-1,'failed negotiations affect the future relationship');
