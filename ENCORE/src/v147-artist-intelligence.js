@@ -18,6 +18,10 @@ function persona(s,id){
  const key=String(a.id)+'|'+String(a.name||'')+'|'+String(a.genre||'');
  let seed=2166136261;
  for(let i=0;i<key.length;i++){seed=Math.imul(seed^key.charCodeAt(i),16777619)>>>0}
+ // Avalanche the hash before using low bits. FNV alone over-correlates
+ // IDs and alternating genres, hiding entire artist archetypes.
+ seed^=seed>>>16;seed=Math.imul(seed,0x7feb352d);
+ seed^=seed>>>15;seed=Math.imul(seed,0x846ca68b);seed^=seed>>>16;seed>>>=0;
  const priorities=['advance','ownership','creative control','career reach'];
  const temperaments=['pragmatic','cautious','ambitious','independent'];
  const priority=priorities[seed%priorities.length],temperament=temperaments[(seed>>>5)%temperaments.length];
