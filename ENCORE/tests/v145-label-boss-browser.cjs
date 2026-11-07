@@ -22,7 +22,7 @@ let browser,page;
  });
  const originalNav=await page.locator('#nav').innerText();
  assert.match(originalNav,/Home/);assert.match(originalNav,/Songs/);assert.match(originalNav,/Artist File/);
- await page.getByRole('button',{name:'More',exact:true}).last().click();
+ await page.getByRole('button',{name:'More options'}).click();
  await page.locator('.core-row').filter({hasText:'Label Boss'}).click();
  assert.match(await page.locator('.core-pagebar h1').innerText(),/Label Boss/);
  assert.equal(await page.locator('.core-row').count(),4,'Exactly four new Label Boss destinations');
