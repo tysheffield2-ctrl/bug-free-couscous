@@ -6,6 +6,7 @@ V086_activeCampaign=function(){
 V086_startCampaign=function(id){
  const p=V086_plan(id);if(!p||!s.songs.some(x=>x.released))return;migrateV086();
  const old=V086_activeCampaign();
+ if(old?.planId===p.id&&old.autoRenew)return; // An already active tier cannot be paid for twice.
  if(old?.lastPaidWeek===s.week)s.boost=Math.max(0,s.boost-old.plan.streamBoost);
  if(!spend(5,p.cost)){if(old?.lastPaidWeek===s.week)s.boost+=old.plan.streamBoost;return}
  s.v086.catalogCampaign={planId:p.id,startedWeek:s.week,lastPaidWeek:s.week,weeksPaid:(old?.planId===p.id?(old.weeksPaid||0):0)+1,totalSpent:cents((old?.planId===p.id?(old.totalSpent||0):0)+p.cost),autoRenew:true};
