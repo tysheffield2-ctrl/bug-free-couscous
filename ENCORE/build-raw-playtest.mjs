@@ -44,6 +44,11 @@ let html=readFileSync('dist/index.html','utf8');
 html=html.replace('</head>',shim+'</head>');
 html=html.replaceAll('src="/game.js"','src="./game.js"');
 html=html.replaceAll('src="/native-shell.js"','src="./native-shell.js"');
+// GitHack serves this release below /owner/repository/branch, not site root.
+// The live Worker accepts /contract-engine.js; the static playtest must use
+// a same-directory URL so signing and Label Boss can actually initialize.
+html=html.replaceAll('src="/contract-engine.js"','src="./contract-engine.js"')
+ .replaceAll("src='/contract-engine.js'","src='./contract-engine.js'");
 html=html.replaceAll("src='/game.js'","src='./game.js'");
 html=html.replaceAll('href="/','href="./').replaceAll("href='/","href='./");
 writeFileSync(out+'/index.html',html);
