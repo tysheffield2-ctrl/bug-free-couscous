@@ -1,0 +1,45 @@
+/* Only the explicitly requested contract workflow is restyled.
+   All career navigation, Home, white rows, character art and sandbox UI stay unchanged. */
+.v144-contract-room .contract-room{width:min(960px,100%);padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+.v144-contract-room .v144-sheet{min-height:0;transform:none;box-shadow:0 14px 32px rgba(0,0,0,.28);padding:28px 30px 38px}
+.v144-contract-room .v144-sheet h2{margin:20px 0 15px;font-size:clamp(1.1rem,4vw,1.5rem)}
+.v144-contract-room .v144-sheet .legal-recital{margin-bottom:16px;font-size:.88rem}
+.v144-contract-room .v144-summary{padding:16px;border:1px solid #a99d88;background:#e8dfca;margin:16px 0 24px;color:#211c16}
+.v144-contract-room .v144-summary h3{font-family:Georgia,serif;font-size:1.1rem;margin:0 0 12px}
+.v144-contract-room .v144-summary .row{color:#25211a}
+.v144-contract-room .v144-clause{border-top:1px solid #bdb09b;padding:15px 2px 20px;break-inside:avoid}
+.v144-contract-room .v144-clause>small{font:700 .64rem/1 system-ui,sans-serif;letter-spacing:.1em;color:#60563f}
+.v144-contract-room .v144-clause h3{font:600 1.05rem/1.3 Georgia,serif;margin:9px 0;color:#231e17}
+.v144-contract-room .v144-clause p{font:.9rem/1.6 Georgia,serif;margin:6px 0;color:#27221d;overflow-wrap:anywhere}
+.v144-contract-room .v144-material{background:#e9dec3;border-left:3px solid #8e6b34;padding:9px}
+.v144-contract-room .v144-execute{margin:17px 0 0;background:#18130f;border:1px solid rgba(245,211,157,.3);color:#f5ead9;display:grid;gap:11px;padding:20px;border-radius:14px}
+.v144-contract-room .v144-execute h3{margin:0;font-family:Georgia,serif;color:#f4e6cd;font-size:1.3rem}
+.v144-contract-room .v144-execute p{margin:0;color:#e6d5bf;line-height:1.5;font-size:.85rem}
+.v144-contract-room .v144-execute>.eyebrow{color:#dfb976}
+.v144-contract-room .legal-signature-field{margin:10px 0 6px}
+.v144-contract-room .v144-execute button.primary,.v144-contract-room .v144-execute button.secondary{min-height:48px;touch-action:manipulation}
+.v144-contract-room .v144-execute button.primary{font-weight:750}
+.v144-contract-room .legal-signature-pad{height:170px;touch-action:none!important}
+.v144-contract-room .contract-room-close{min-height:44px;min-width:44px}
+.v144-contract-room .contract-folder-intro{margin-bottom:0}
+html[data-theme=dark] .v144-contract-room .v144-sheet{background:#eee6d5!important;color:#211a13!important}
+html[data-theme=dark] .v144-contract-room .v144-clause :is(h3,p){color:#27221d!important}
+html[data-theme=dark] .v144-contract-room .v144-summary{background:#e8dfca!important;color:#211c16!important}
+@media(max-width:650px){
+ .v144-contract-room .contract-room{padding:12px 9px calc(64px + env(safe-area-inset-bottom))}
+ .v144-contract-room .contract-room-header{padding:8px 0 14px}
+ .v144-contract-room .contract-room-header h1{font-size:clamp(1.35rem,6vw,1.7rem)}
+ .v144-contract-room .v144-sheet{padding:20px 15px 24px;border-radius:0}
+ .v144-contract-room .v144-sheet .legal-recital{font-size:.8rem}
+ .v144-contract-room .v144-execute{padding:15px 13px;margin:12px 0}
+ .v144-contract-room .legal-signature-pad{height:154px}
+ .v144-contract-room .v144-summary{padding:12px}
+ .v144-contract-room .v144-clause{padding:12px 0 16px}
+ .v144-contract-room .v144-clause p{font-size:.82rem}
+ .v144-contract-room .contract-folder-intro{margin:0;padding:12px}
+}
+@media(max-width:340px){
+ .v144-contract-room .contract-room{padding-left:4px;padding-right:4px}
+ .v144-contract-room .v144-sheet{padding:15px 10px}
+ .v144-contract-room .legal-signature-pad{height:145px}
+}

@@ -63,15 +63,18 @@ function moduleSource(name){
 let coreJs='const ENCORE_RELEASE_NOTES='+JSON.stringify(releaseMeta)+';\n'+sharedEngines+'\n'+modules.map(moduleSource).join('\n')+'\n';
 coreJs=coreJs.replace("const GAME_VERSION='0.7.1-beta.1'",'const GAME_VERSION='+JSON.stringify(gameVersion));
 const js=coreJs+'boot();\n';
+const contractJs=moduleSource('v144-contract-covenants');
 const shellBody=shellModules.map(moduleSource).join('\n');
 const shellExportCode='Object.assign(globalThis,{'+shellExports.join(',')+'});';
 const shellJs=`let V137_shellInstalled=false;\nfunction V137_installShell(){if(V137_shellInstalled)return;V137_shellInstalled=true;\n${shellBody}\n${shellExportCode}\nif(typeof render==='function')render()}\nif(typeof window!=='undefined'){if(document.readyState==='complete')V137_installShell();else window.addEventListener('load',V137_installShell,{once:true})}\n`;
 mkdirSync('public',{recursive:true});
 writeFileSync('dist/game.js',js);
 writeFileSync('public/game.js',js);
+writeFileSync('dist/contract-engine.js',contractJs);
+writeFileSync('public/contract-engine.js',contractJs);
 writeFileSync('dist/native-shell.js',shellJs);
 writeFileSync('public/native-shell.js',shellJs);
-const weekWorker='(function(){\n'+readFileSync('engine/worker-host.js','utf8')+'\n'+coreJs+'\n'+readFileSync('engine/worker-entry.js','utf8')+'\n})();';
+const weekWorker='(function(){\n'+readFileSync('engine/worker-host.js','utf8')+'\n'+coreJs+'\n'+contractJs+'\n'+readFileSync('engine/worker-entry.js','utf8')+'\n})();';
 writeFileSync('dist/week-engine.js',weekWorker);
 writeFileSync('public/week-engine.js',weekWorker);
 
@@ -79,9 +82,9 @@ let html=readFileSync('dist/index.html','utf8');
 html=html.replace(/<style id="encore-presentation">[\s\S]*?<\/style>/,'');
 html=html.replace(/<script[^>]+src=["']\/native-shell\.js["'][^>]*><\/script>/g,'');
 html=html.replace('<button class="primary" onclick="advance()">Advance month</button>','<button class="primary" onclick="advance()">Advance week</button>');
-const css=['presentation','v080','v081','v082','v088','v090','v092','v093','v094','v095','v096','v100','v102','v103','v103-studio','v103-release-charts','v103-world','v103-business-recap','v103-shell-industry','v104-mobile-polish','v104-artist-dossier','v104-scene-polish','v106-showcase-fidelity','v106-portraits','v107-pastel-theme','v108-recap-contrast','v108-action-contract-standard','v109-business-navigation','v112-tax-planning','v113-entities-assets','v114-music-platforms','v116-representation-market','v117-representation-relationships','v118-cohesion-core','v119-living-industry','v120-release-strategy','icon-system','v122-catalog-request-ux','v123-executive-office','v124-legal-affairs','v125-collaboration-splits','v128-directory-studio-usability','v129-character-creator','v130-platforms-plaques-studio','v131-artist-file-stats','v132-mobile-hotfix','v133-charts-stream-control','v134-platforms-living','v136-living-memory','v137-native-shell','v137-native-shell-compat','v138-editorial-artist-file','v140-cohesive-career-ui','v141-light-surface-contract','v142-presentation-unification','v143-song-creation','core-ui'].map(name=>readFileSync('src/'+name+'.css','utf8')).join('\n');
+const css=['presentation','v080','v081','v082','v088','v090','v092','v093','v094','v095','v096','v100','v102','v103','v103-studio','v103-release-charts','v103-world','v103-business-recap','v103-shell-industry','v104-mobile-polish','v104-artist-dossier','v104-scene-polish','v106-showcase-fidelity','v106-portraits','v107-pastel-theme','v108-recap-contrast','v108-action-contract-standard','v109-business-navigation','v112-tax-planning','v113-entities-assets','v114-music-platforms','v116-representation-market','v117-representation-relationships','v118-cohesion-core','v119-living-industry','v120-release-strategy','icon-system','v122-catalog-request-ux','v123-executive-office','v124-legal-affairs','v125-collaboration-splits','v128-directory-studio-usability','v129-character-creator','v130-platforms-plaques-studio','v131-artist-file-stats','v132-mobile-hotfix','v133-charts-stream-control','v134-platforms-living','v136-living-memory','v137-native-shell','v137-native-shell-compat','v138-editorial-artist-file','v140-cohesive-career-ui','v141-light-surface-contract','v142-presentation-unification','v143-song-creation','v144-contract-covenants','core-ui'].map(name=>readFileSync('src/'+name+'.css','utf8')).join('\n');
 html=html.replace('</head>','<style id="encore-presentation">'+css+'</style></head>');
-html=html.replace('</body>','<script src="/native-shell.js"></script></body>');
+html=html.replace('</body>','<script src="/contract-engine.js"></script><script src="/native-shell.js"></script></body>');
 writeFileSync('dist/index.html',html);
 
 const ui2Css=[readFileSync('ui2/ui2.css','utf8'),readFileSync('ui2/phase2.css','utf8'),readFileSync('ui2/phase3.css','utf8'),readFileSync('ui2/phase4.css','utf8'),readFileSync('ui2/phase5.css','utf8'),readFileSync('ui2/phase6-more.css','utf8'),readFileSync('ui2/phase7-polish.css','utf8'),readFileSync('ui2/phase8-career.css','utf8'),readFileSync('ui2/phase9-negotiation.css','utf8'),readFileSync('ui2/phase10-legacy.css','utf8'),readFileSync('ui2/phase11-pastel.css','utf8')].join('\n');
@@ -97,6 +100,6 @@ const routeGate=/\s*\/\/ UI2 is ENCORE's primary web presentation\.[\s\S]*?const
 const routedWorker=worker.replace(routeGate,`\n    // Safety gate: the fully interactive renderer stays on normal routes until UI2\n    // passes interaction parity for week advance, creation, stats and negotiations.\n    const ui2Paths=['/ui2','/ui2/','/preview-ui2','/preview-ui2/','/ui2/sandbox','/ui2/sandbox/','/preview-ui2/sandbox','/preview-ui2/sandbox/'];\n    const legacyPaths=['/','/index.html','/sandbox','/sandbox/','/legacy','/legacy/','/legacy/sandbox','/legacy/sandbox/','/offline','/offline/','/offline/sandbox','/offline/sandbox/'];\n    const asset=ui2Paths.includes(url.pathname)?UI2_HTML:legacyPaths.includes(url.pathname)?HTML:null;`);
 if(routedWorker===worker)throw new Error('Renderer route safety gate failed: refusing to publish a build with unverified UI2 as the default.');
 worker=routedWorker;
-worker=worker.replaceAll('__OFFLINE_VERSION__',createHash('sha256').update(html+js+shellJs+weekWorker+ui2Html+worker).digest('hex').slice(0,12));
+worker=worker.replaceAll('__OFFLINE_VERSION__',createHash('sha256').update(html+js+contractJs+shellJs+weekWorker+ui2Html+worker).digest('hex').slice(0,12));
 mkdirSync('dist/server',{recursive:true});
 writeFileSync('dist/server/index.js',worker);

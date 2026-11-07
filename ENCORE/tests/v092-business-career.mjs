@@ -15,7 +15,7 @@ assert.ok(h.run("V090_readableNumber('12.5',true).includes('$12.5')"));
 
 h.run('globalThis.market=V092_featureMarketValue();globalThis.c1=V092_featureBookingChance(market);globalThis.c2=V092_featureBookingChance(market*100)');
 assert.ok(h.run('c1>c2'));
-h.run("s.cash=1000000000;s.energy=200;s.fans=1000000;s.reputation=100;s.world[0].fans=1000;s.world[0].reputation=20;s.world[0].relation=100;s.draft={title:'Split Test',features:[],feature:null};Math.random=()=>0;V092_bookFeatureDeal(0,'royalty')");
+h.run("s.cash=1000000000;s.energy=200;s.fans=1000000;s.reputation=100;s.world[0].fans=1000;s.world[0].reputation=20;s.world[0].relation=100;s.draft={title:'Split Test',features:[],feature:null};Math.random=()=>0;V144_quickFeatureOriginal(0,'royalty')");
 assert.equal(h.run('s.draft.features.length'),1);
 assert.equal(h.run("s.draft.features[0].dealType"),'royalty');
 assert.ok(h.run('s.draft.features[0].royaltyRate>0'));

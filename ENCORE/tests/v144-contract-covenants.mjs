@@ -1,0 +1,64 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {harness} from './harness.mjs';
+
+const h=harness('/sandbox',144007);
+await h.run('boot()');
+h.run("s.started=true;s.cash=1000000;s.energy=200;s.sandbox=true;");
+h.run(`globalThis.done=0;globalThis.mounted=V108_mountStandardContract({kind:'commercial',counterparty:'Fictional Brand',documentTitle:'Fictional Sponsorship',summaryHtml:'<p>Guaranteed $2,000</p>',pages:[{title:'Payment',body:'The brand pays an agreed fee.'},{title:'Obligations',body:'Both parties must perform.'}],amount:2000,payer:'counterparty',payee:'player',basis:'fixed sponsorship',execute:()=>{done++;return true}})`);
+assert.equal(h.run('mounted'),true);
+const html=h.bodyChildren.at(-1).innerHTML;
+assert.match(html,/SINGLE CONTRACT REVIEW/);
+assert.match(html,/Guaranteed \$2,000/);
+assert.match(html,/Both parties must perform/);
+assert.match(html,/v101-signature-pad/);
+assert.match(html,/ONE SIGNATURE · NO TYPING/);
+assert.equal((html.match(/v101-signature-pad/g)||[]).length,1,'only one signature canvas');
+assert.doesNotMatch(html,/name="initials"|name="signature"|type="checkbox"|PAGE \d+ OF/,'signing must not require typed initials or separate acknowledgments');
+assert.equal(h.run('V144_execute()'),false,'blank signature cannot execute');
+assert.equal(h.run('done'),0,'blank signature cannot trigger the transaction');
+h.run("V101_signatureStrokes=[[{x:.08,y:.50,p:.4},{x:.17,y:.20,p:.5},{x:.32,y:.62,p:.6},{x:.48,y:.27,p:.7},{x:.71,y:.51,p:.6},{x:.87,y:.26,p:.5}]]");
+assert.equal(h.run('V144_execute()'),true,'hand-drawn signature executes exactly once');
+assert.equal(h.run('done'),1);
+assert.equal(h.run('V144_state().agreements.length'),1);
+assert.equal(h.run("V144_state().agreements[0].signature.kind"),'drawn');
+assert.equal(h.run("V144_state().agreements[0].signature.format"),'normalized-strokes-v1');
+assert.equal(h.run('V144_state().agreements[0].amount'),2000);
+assert.equal(h.run('V144_execute()'),false,'already-executed agreement is not payable twice');
+assert.equal(h.run('done'),1);
+
+h.run("globalThis.a=V144_state().agreements[0];globalThis.b=V144_markBreach(a.id,'counterparty','The sponsor withheld an installment',3200)");
+assert.equal(h.run('b.amount'),3200);
+assert.equal(h.run("V144_markBreach(a.id,'counterparty','Duplicate allegation',3200)"),false,'cannot open duplicate breach records');
+assert.equal(h.run('V144_fileClaim(a.id)'),true);
+assert.equal(h.run('V118_legalCases()[0].playerPlaintiff'),true,'player is the plaintiff, not defendant');
+assert.equal(h.run("V118_legalCases()[0].stage"),'PLAINTIFF CLAIM');
+const before=h.run('s.cash');
+h.run("globalThis.caseId=V118_legalCases()[0].id");
+assert.equal(h.run("V118_caseAction(caseId,'settle')"),true,'the plaintiff can recover a negotiated payment');
+assert.ok(h.run('s.cash')>before,'successful plaintiff settlement increases cash');
+assert.match(h.run('V118_legalCases()[0].outcome'),/Counterparty settled/);
+assert.equal(h.run('V144_fileClaim(a.id)'),false,'cannot file the same breach twice');
+
+h.run(`globalThis.ag2=V144_record({kind:'outgoing-feature',counterparty:'Fictional Guest',signer:'Fictional Artist',amount:300,reference:{type:'unit',id:'test-2'},obligations:[{type:'master-royalty',rate:.1}]},{kind:'drawn',format:'normalized-strokes-v1',strokes:[[0,0],[1,1]]})`);
+assert.ok(h.run('V144_markBreach(ag2.id,\'player\',\'Guest royalties were not paid\',450)'));
+h.run('s.week+=2;V144_contractWeek(s.week)');
+assert.equal(h.run("V118_openCases().some(c=>c.agreementId===ag2.id&&c.plaintiff==='Fictional Guest')"),true,'counterparty can sue player for actual recorded breach');
+h.run('V144_contractWeek(s.week)');
+assert.equal(h.run("V118_openCases().filter(c=>c.agreementId===ag2.id).length"),1,'claim issued once, not each subsequent week');
+
+h.run(`migrateV080();s.v080.commercial.contracts=[{id:'brand-contract-test',name:'Fictional Sponsorship',brand:'Fictional Brand',active:true,remaining:800,durationMonths:4,monthsPaid:0,paid:0,lifetime:false}];globalThis.brand=V144_record({kind:'commercial',counterparty:'Fictional Brand',signer:'Fictional Artist',amount:200,reference:{type:'brand',id:'brand-contract-test'},obligations:[{type:'monthly guarantee',amount:800}]},{kind:'drawn',format:'normalized-strokes-v1',strokes:[[0,0],[1,1]]});V124_roll=()=>0;`);
+h.run('V144_brandSettlement()');
+assert.equal(h.run('s.v080.commercial.contracts[0].monthsPaid'),0,'missing contractual installment is not paid');
+assert.equal(h.run('s.v080.commercial.contracts[0].active'),true,'failed payment does not delete the underlying agreement');
+assert.ok(h.run("brand.breaches.some(b=>b.against==='counterparty'&&b.amount===200)"),'actual missed guarantee creates player claim evidence');
+assert.match(h.run('V144_legalPage()'),/Contract register/,'signed agreements discoverable from Legal Affairs');
+
+const source=fs.readFileSync(new URL('../src/v144-contract-covenants.js',import.meta.url),'utf8');
+const css=fs.readFileSync(new URL('../src/v144-contract-covenants.css',import.meta.url),'utf8');
+const built=fs.readFileSync(new URL('../dist/contract-engine.js',import.meta.url),'utf8');
+assert.ok(source.includes('V144_quickFeature')&&source.includes('V144_customFeature')&&source.includes('V144_incomingFeature')&&source.includes('V144_creditOffer')&&source.includes('V144_opportunity'),'all paid collaboration routes must reach the signing system');
+assert.ok(source.includes('V144_standard')&&source.includes('V144_labelRoom'),'legacy contracts share a single execution room');
+assert.ok(css.includes('.v144-contract-room')&&css.includes('safe-area-inset-bottom'));
+assert.ok(built.includes('V144_contractWeek'));
+console.log('PASS unified single-drawn-signature contract room, compensated collaboration routing, persistent executed agreements, real missed installments, and player/counterparty civil enforcement.');
