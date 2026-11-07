@@ -5,6 +5,8 @@ const c={console,s,migrateExpansion:()=>{},money:n=>'$'+n,esc:String,profileRows
 vm.createContext(c);vm.runInContext(src,c);
 const takeover=c.__m.plans.find(x=>x.id==='takeover');assert.equal(takeover.cost,750000);assert.equal(takeover.streamBoost,.9);assert.equal(takeover.fanBoost,.25);assert.equal(c.__m.plans.length,7);
 c.__m.start('takeover');assert.equal(s.cash,9250000);assert.equal(s.finance.week.expenses,750000);assert.equal(s.boost,.9);assert.equal(s.v086.catalogCampaign.planId,'takeover');assert.equal(s.v086.catalogCampaign.weeksPaid,1);assert.equal(s.v086.catalogCampaign.totalSpent,750000);
+// Re-clicking the currently active tier must neither rebill nor inflate this week's lift.
+c.__m.start('takeover');assert.equal(s.cash,9250000);assert.equal(s.finance.week.expenses,750000);assert.equal(s.boost,.9);assert.equal(s.v086.catalogCampaign.weeksPaid,1);
 s.week=11;s.boost=0;c.beginCareerWeek();assert.equal(s.cash,8500000);assert.equal(s.finance.week.expenses,1500000);assert.equal(s.boost,.9);assert.equal(s.v086.catalogCampaign.weeksPaid,2);assert.equal(s.v086.catalogCampaign.totalSpent,1500000);assert.equal(c.__m.fan(),.25);
 s.week=12;s.cash=100;s.boost=0;c.beginCareerWeek();assert.equal(s.v086.catalogCampaign.autoRenew,false);assert.equal(s.boost,0);assert.equal(s.finance.week.expenses,1500000);
 const icon=c.__m.scales.find(x=>x.id==='icon');assert.equal(icon.weekly,2000000);assert.equal(c.__m.rolloutBoost(icon,8),1.3);assert.equal(c.__m.rolloutBoost(icon,16),1.5);
