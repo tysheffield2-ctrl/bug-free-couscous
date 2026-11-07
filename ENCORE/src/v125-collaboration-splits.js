@@ -57,10 +57,10 @@ function V125_openCreditTerms(role,id,fee=null,share=null,credited=true){
  const a=s.world?.[id],spec=V125_ROLES[role];if(!a||!spec)return;const t=V125_terms(a,role),f=fee===null?t.fee:fee,p=share===null?t.share:share;
  modal(`${personPhoto('artist-'+(a.directoryKey??a.id),a.name,true)}<span class="eyebrow">${esc(spec.name.toUpperCase())} AGREEMENT</span><h2>${esc(a.name)}</h2><p>The numbers below are their usual terms for this session. Edit either field and send a custom offer.</p>${profileRows([['Usual upfront',money(t.fee)],['Usual '+(role==='producer'?'producer points':'composition split'),t.share+'%'],['Relationship',String(Math.round(a.relation||0))],['Career leverage',t.leverage>=.35?'You have more leverage':t.leverage<=-.35?'They have more leverage':'Similar leverage']])}<div class="v125-term-grid"><label>Upfront fee ($)<input id="v125-credit-fee" type="number" min="0" step="1" value="${Math.max(0,Number(f)||0)}"></label><label>${role==='producer'?'Producer royalty points (%)':'Composition ownership (%)'}<input id="v125-credit-share" type="number" min="0" max="${spec.max}" step="0.5" value="${Math.max(0,Number(p)||0)}"></label></div><label class="v125-check"><input id="v125-credit-name" type="checkbox" ${credited?'checked':''}> Give ${esc(a.name)} an on-record credit</label><p class="fine">A free contribution can be legitimate. What matters is whether both sides agreed to the $0 / 0% terms. Removing credit after they contributed creates separate risk.</p><div class="controls"><button class="secondary" onclick="V125_openCreditPicker('${role}')">Back</button><button class="primary" onclick="V125_sendCreditOffer('${role}',${id})">Send offer</button></div>`)
 }
-function V125_sendCreditOffer(role,id){
+function V125_sendCreditOffer(role,id,terms=null){
  const a=s.world?.[id],spec=V125_ROLES[role];if(!a||!spec)return false;
- const feeRaw=$('v125-credit-fee')?.value,shareRaw=$('v125-credit-share')?.value;
- const fee=Number(feeRaw),share=Number(shareRaw),credited=!!$('v125-credit-name')?.checked;
+ const feeRaw=terms?terms.fee:$('v125-credit-fee')?.value,shareRaw=terms?terms.share:$('v125-credit-share')?.value;
+ const fee=Number(feeRaw),share=Number(shareRaw),credited=terms?!!terms.credited:!!$('v125-credit-name')?.checked;
  if(feeRaw==null||String(feeRaw).trim()===''||shareRaw==null||String(shareRaw).trim()===''||
     !V125_creditOfferAllowed(role,id,fee,share)){
   toast('Check the fee and split. Credit offers must be unique, use 0.5% steps, and fit the composition or shared master pool.');
@@ -123,11 +123,11 @@ function V125_featureSlotAvailable(id,requireAccess=true){
  if(guestList(d).length>=6||guestList(d).some(g=>Number(g.id)===Number(id)))return false;
  return !requireAccess||accessible(a)
 }
-function V125_offerFeature(id){
+function V125_offerFeature(id,terms=null){
  if(!V125_featureSlotAvailable(id))return false;
  const a=s.world[id],d=s.draft;
- const feeRaw=$('v125-feature-fee')?.value,shareRaw=$('v125-feature-share')?.value;
- const fee=Number(feeRaw),percent=Number(shareRaw),credited=!!$('v125-feature-credit')?.checked;
+ const feeRaw=terms?terms.fee:$('v125-feature-fee')?.value,shareRaw=terms?terms.share:$('v125-feature-share')?.value;
+ const fee=Number(feeRaw),percent=Number(shareRaw),credited=terms?!!terms.credited:!!$('v125-feature-credit')?.checked;
  // Reject invalid values; silently clamping a deal changes what the player agreed to.
  if(feeRaw==null||String(feeRaw).trim()===''||!Number.isSafeInteger(fee)||fee<0||
     shareRaw==null||String(shareRaw).trim()===''||!Number.isFinite(percent)||
