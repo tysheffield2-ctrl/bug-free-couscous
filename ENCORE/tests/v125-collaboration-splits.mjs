@@ -60,6 +60,59 @@ assert.equal(h.run('s.draft.features[0].agreement'),'unauthorized');
 assert.equal(h.run('s.draft.features[0].credited'),false);
 assert.match(h.run('V125_releaseWarning(s.draft)'),/RIGHTS NOT FULLY CLEARED/);
 
+
+/* Feature contracts must not bypass shared eligibility, quote terms, or the
+   song-level royalty budget. All names and catalog data are fictional. */
+h.run(`
+ s.fans=1e10;s.reputation=100;s.cash=1000000;s.energy=200;
+ s.world[0].relation=60;
+ s.draft={id:801,title:'Fictional Collaboration',steps:2,features:[],credits:[],development:s.development};
+ $('v125-feature-fee').value='100';
+ $('v125-feature-share').value='10';
+ $('v125-feature-credit').checked=true;
+ Math.random=()=>0;
+`);
+assert.equal(h.run('accessible(s.world[0])'),true,'fixture artist should be eligible for custom offers');
+const initialCash=h.run('s.cash'),initialExpenses=h.run('s.finance.week.expenses'),initialEnergy=h.run('s.energy');
+assert.equal(h.run('V125_offerFeature(0)'),true,'a valid custom deal can be accepted');
+assert.equal(h.run('s.draft.features.length'),1);
+assert.equal(h.run('s.draft.features[0].royaltyRate'),.10);
+assert.equal(h.run('s.draft.features[0].agreement'),'accepted');
+assert.equal(h.run('s.cash'),initialCash-100,'upfront fee charged once');
+assert.equal(h.run('s.finance.week.expenses'),initialExpenses+100,'fee entered in expense ledger once');
+assert.equal(h.run('s.energy'),initialEnergy-5,'accepted custom offer consumes energy once');
+const afterFee=h.run('s.cash'),afterEnergy=h.run('s.energy');
+assert.equal(h.run('V125_offerFeature(0)'),false,'cannot accept the same artist twice by resubmitting');
+assert.equal(h.run('V125_useFeatureWithoutClearance(0,false)'),false,'unauthorized path cannot double-attach the same artist');
+assert.equal(h.run('s.cash'),afterFee);
+assert.equal(h.run('s.energy'),afterEnergy);
+assert.equal(h.run('s.draft.features.length'),1);
+
+h.run(`s.draft.features=[];$('v125-feature-fee').value='Infinity';$('v125-feature-share').value='10'`);
+assert.equal(h.run('V125_offerFeature(0)'),false,'non-finite offers are invalid');
+h.run(`$('v125-feature-fee').value='100';$('v125-feature-share').value='7.3'`);
+assert.equal(h.run('V125_offerFeature(0)'),false,'unsupported fractional splits are invalid');
+assert.equal(h.run('s.cash'),afterFee,'invalid offers do not spend cash');
+assert.equal(h.run('s.energy'),afterEnergy,'invalid offers do not spend energy');
+h.run(`s.draft.features=[{id:3,name:'Fictional Guest A',royaltyRate:.5},{id:4,name:'Fictional Guest B',royaltyRate:.4}];$('v125-feature-share').value='10'`);
+assert.equal(h.run('V092_featureSplitTotal(s.draft)'),.9);
+assert.equal(h.run('V125_offerFeature(0)'),false,'custom deal cannot exceed 90% combined backend');
+assert.equal(h.run("V092_bookFeatureDeal(0,'royalty')"),false,'quick deal uses the same 90% limit');
+assert.equal(h.run('s.energy'),afterEnergy,'over-budget deals are rejected before spending energy');
+assert.equal(h.run('s.cash'),afterFee,'over-budget deals are rejected before spending cash');
+assert.equal(h.run('s.draft.features.length'),2,'rejected offers do not modify the track');
+
+h.run(`s.draft.features=[0,1,2,3,4,5].map(id=>({id,name:'Fictional Guest '+id,royaltyRate:.1}))`);
+assert.equal(h.run('V125_useFeatureWithoutClearance(7,false)'),false,'six-guest limit also applies to unauthorized attachment');
+assert.equal(h.run('s.draft.features.length'),6);
+
+h.run(`s.draft.features=[];$('v125-feature-share').value='0';$('v125-feature-fee').value='0';s.world[0].relation=25;Math.random=()=>1`);
+const beforeDecline=h.run('s.world[0].relation'),beforeDeclineCash=h.run('s.cash');
+assert.equal(h.run('V125_offerFeature(0)'),false,'unattractive offers can be refused');
+assert.equal(h.run('s.world[0].relation'),beforeDecline-1,'failed negotiations affect the future relationship');
+assert.equal(h.run('s.cash'),beforeDeclineCash,'refusal never pays an upfront fee');
+assert.equal(h.run('s.draft.features.length'),0,'declined deal does not grant a feature');
+
 const js=fs.readFileSync(new URL('../src/v125-collaboration-splits.js',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v125-collaboration-splits.css',import.meta.url),'utf8');
 const build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
