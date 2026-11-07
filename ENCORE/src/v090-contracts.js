@@ -7,8 +7,37 @@ const V090_CONTRACT_TYPES={
 };
 const V090_RIGHT_LABELS={masters:'Master recording revenue',distribution:'Distribution & release services',publishing:'Publishing / composition income',touring:'Touring income',merch:'Merchandise income',endorsements:'Endorsements & brand deals',media:'Acting & media income',syncMaster:'Master sync licensing',syncPublishing:'Publishing sync rights'};
 function V090_contractRights(type,rights){const spec=V090_CONTRACT_TYPES[type]||V090_CONTRACT_TYPES.record,out={...spec.defaults,...(rights||{})};for(const k of spec.lockedOn)out[k]=true;for(const k of spec.lockedOff)out[k]=false;return out}
-function V090_rightsInput(form,type){const f=new FormData(form),out={};for(const k of Object.keys(V090_RIGHT_LABELS))out[k]=f.get('right_'+k)==='on';return V090_contractRights(type,out)}
-function V090_rightsChecklist(type,rights={},editable=true){const spec=V090_CONTRACT_TYPES[type]||V090_CONTRACT_TYPES.record,r=V090_contractRights(type,rights);return `<div class="contract-rights"><p class="fine">${esc(spec.description)}</p>${Object.entries(V090_RIGHT_LABELS).map(([k,label])=>{const locked=spec.lockedOn.includes(k)||spec.lockedOff.includes(k);return `<label class="contract-clause"><input type="checkbox" name="right_${k}" ${r[k]?'checked':''} ${(locked||!editable)?'disabled':''}><span><strong>${r[k]?'✓':'○'} ${esc(label)}</strong><small>${locked?'Required by this deal structure':r[k]?'Included in company participation':'Artist retains / excluded'}</small></span></label>${locked&&r[k]?`<input type="hidden" name="right_${k}" value="on">`:''}`}).join('')}</div>`}
+/* Master/distribution are structural rights already represented by deal type and
+ * Label Share. Keep their legal defaults but remove their duplicate checkboxes.
+ * Only touring and merchandise currently have separate simulated participation. */
+const V090_VISIBLE_RIGHTS=Object.keys(V090_RIGHT_LABELS).filter(k=>k!=='masters'&&k!=='distribution');
+const V090_PARTICIPATION_DEFAULTS={touring:15,merch:10};
+function V090_rightsRate(rights,key){
+ const raw=rights?.rates?.[key],number=Number(raw);
+ return Number.isFinite(number)&&number>=.05&&number<=1?Math.round(number*100):V090_PARTICIPATION_DEFAULTS[key]
+}
+function V090_rightsInput(form,type){
+ const f=new FormData(form),out={},rates={};
+ for(const k of V090_VISIBLE_RIGHTS){
+  out[k]=f.get('right_'+k)==='on';
+  if(!(k in V090_PARTICIPATION_DEFAULTS))continue;
+  const raw=f.get('rate_'+k);
+  const rate=raw===null?V090_PARTICIPATION_DEFAULTS[k]:Number(raw);
+  if(out[k]&&(!Number.isInteger(rate)||rate<5||rate>100))
+   throw Error(V090_RIGHT_LABELS[k]+' participation must be between 5% and 100%.');
+  rates[k]=(Number.isInteger(rate)&&rate>=5&&rate<=100?rate:V090_PARTICIPATION_DEFAULTS[k])/100
+ }
+ return V090_contractRights(type,{...out,rates})
+}
+function V090_rightsChecklist(type,rights={},editable=true){
+ const spec=V090_CONTRACT_TYPES[type]||V090_CONTRACT_TYPES.record,r=V090_contractRights(type,rights);
+ return `<div class="contract-rights"><p class="fine">${esc(spec.description)}</p>${V090_VISIBLE_RIGHTS.map(k=>{
+  const label=V090_RIGHT_LABELS[k],locked=spec.lockedOn.includes(k)||spec.lockedOff.includes(k);
+  const rate=k in V090_PARTICIPATION_DEFAULTS?V090_rightsRate(r,k):null;
+  const rateInput=rate===null?'':`<small>Company participation · <input type="number" name="rate_${k}" aria-label="${esc(label)} participation percentage" min="5" max="100" step="5" value="${rate}" ${(!editable||locked)?'disabled':''}>%</small>`;
+  return `<label class="contract-clause"><input type="checkbox" name="right_${k}" ${r[k]?'checked':''} ${(locked||!editable)?'disabled':''}><span><strong>${r[k]?'✓':'○'} ${esc(label)}</strong><small>${locked?'Required by this deal structure':r[k]?'Included in company participation':'Artist retains / excluded'}</small>${rateInput}</span></label>${locked&&r[k]?`<input type="hidden" name="right_${k}" value="on">`:''}`
+ }).join('')}</div>`
+}
 function V090_youGiveGet(t){const r=V090_contractRights(t.type,t.rights),give=[],keep=[];for(const [k,label] of Object.entries(V090_RIGHT_LABELS))(r[k]?give:keep).push(label);const master=t.type==='distribution'?'Artist retains masters':r.masters?'Company participates in new masters':'Artist retains masters';return `<div class="contract-summary"><div><span class="eyebrow">YOU GIVE</span>${give.map(x=>`<p>✓ ${esc(x)}</p>`).join('')||'<p>No additional rights.</p>'}</div><div><span class="eyebrow">YOU KEEP</span><p>✓ ${esc(master)}</p>${keep.filter(x=>x!=='Master recording revenue').map(x=>`<p>✓ ${esc(x)}</p>`).join('')}</div></div>`}
 function V090_contractScope(t){const r=V090_contractRights(t.type,t.rights);return Object.entries(V090_RIGHT_LABELS).filter(([k])=>r[k]).map(([,v])=>v).join(', ')||'No revenue participation'}
 
