@@ -104,7 +104,7 @@ const career=()=>({
  assert.match(html,/Ask what matters/);
  assert.equal(h.run('V102_askPriorities('+id+')'),true);
  html=h.bodyChildren.at(-1).innerHTML;assert.match(html,/Known priority/);
- assert.match(html,/Trust carries into future offers/);
+ assert.match(html,/Trust affects future talks/);
  const request=h.run('rosterTerms(s.world[23],"record",.1,26).minimum');
  const proposal={type:'record',share:'10',weeks:'26',advance:String(request*6)};
  const accepted=h.run('V102_submitRosterOffer({preventDefault(){},target:'+JSON.stringify(proposal)+'},'+id+')');
