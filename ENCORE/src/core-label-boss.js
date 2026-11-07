@@ -21,7 +21,7 @@ Object.assign(EUI,{
   if(!V145_staff('ar'))return '<p class="core-note">Hire an A&R scout to find and evaluate prospects.</p>'+EUI.row('people','Recruit a scout','An executed employment agreement is required',"go('LabelStaff')");
   const candidates=b.prospects.map(id=>s.world?.[id]).filter(a=>a&&!ownerContracts().some(c=>c.artist===a.id));
   return '<p class="core-note">A&R delivers candidates every four fully funded weeks. Signing is negotiated through ENCORE’s existing artist-contract engine.</p><h2>Prospects <small>'+candidates.length+'</small></h2><div class="core-list">'+
-   (candidates.map(a=>EUI.row('people',a.name,esc(a.genre)+' · '+compact(a.fans)+' fans · Skill '+Math.round(a.skill||0),'rosterOfferForm('+a.id+')')).join('')||EUI.empty('Advance one funded week for the first scouting report.'))+'</div>';
+   (candidates.map(a=>{const report=b.scoutingReports?.[a.id];const range=report?' · A&R estimates '+report.min+'–'+report.max+' / 100 · '+report.confidence+'% confidence':' · Awaiting A&R evaluation';return EUI.row('people',a.name,esc(a.genre)+' · '+compact(a.fans)+' fans'+range,'rosterOfferForm('+a.id+')')}).join('')||EUI.empty('Advance one funded week for the first scouting report.'))+'</div>';
  },
  labelRoster(){
   const b=V145_read();if(!b)return EUI.empty('Form a label first.');

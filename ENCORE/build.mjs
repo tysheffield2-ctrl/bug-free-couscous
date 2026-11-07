@@ -63,7 +63,7 @@ function moduleSource(name){
 let coreJs='const ENCORE_RELEASE_NOTES='+JSON.stringify(releaseMeta)+';\n'+sharedEngines+'\n'+modules.map(moduleSource).join('\n')+'\n';
 coreJs=coreJs.replace("const GAME_VERSION='0.7.1-beta.1'",'const GAME_VERSION='+JSON.stringify(gameVersion));
 const js=coreJs+'boot();\n';
-const contractJs=moduleSource('v144-contract-covenants')+'\n'+moduleSource('v145-label-boss');
+const contractJs=moduleSource('v144-contract-covenants')+'\n'+moduleSource('v145-label-boss')+'\n'+moduleSource('v147-artist-intelligence');
 const shellBody=shellModules.map(moduleSource).join('\n');
 const shellExportCode='Object.assign(globalThis,{'+shellExports.join(',')+'});';
 const shellJs=`let V137_shellInstalled=false;\nfunction V137_installShell(){if(V137_shellInstalled)return;V137_shellInstalled=true;\n${shellBody}\n${shellExportCode}\nif(typeof render==='function')render()}\nif(typeof window!=='undefined'){if(document.readyState==='complete')V137_installShell();else window.addEventListener('load',V137_installShell,{once:true})}\n`;
