@@ -15,6 +15,7 @@ function V144_record(spec,evidence){
  const state=V144_state(),reference=spec.reference||null;
  const entry={id:'enc-contract-'+state.next++,week:s.week,kind:String(spec.kind||'agreement'),counterparty:String(spec.counterparty||'Counterparty'),signer:String(spec.signer||s.name||'Artist'),title:String(spec.documentTitle||'Agreement'),amount:cents(Math.max(0,Number(spec.amount)||0)),payer:spec.payer||'none',payee:spec.payee||'none',basis:spec.basis||'contracted services',reference,obligations:Array.isArray(spec.obligations)?spec.obligations.map(x=>({...x})):[],signature:evidence,counterpartyAcceptance:'confirmed by simulated execution',status:'signed',breaches:[],caseIds:[],history:[{week:s.week,kind:'signed',detail:'Agreement executed with drawn signature'}]};
  state.agreements.unshift(entry);
+ V144_bindRecordedAgreement(entry);
  if(state.agreements.length>120)state.agreements.length=120;
  V118_event?.('contract-signed','Contract signed: '+entry.title,entry.counterparty,{agreementId:entry.id,playerInvolved:true});
  queueSave?.();
@@ -95,3 +96,100 @@ V108_mountStandardContract=V144_standard;
 const V144_labelRoomBase=V101_mountContractRoom;
 
 V101_mountContractRoom=V144_labelRoom;
+
+function V144_quickFeature(id,mode){
+ const a=s.world?.[id],track=s.draft,t=a&&V092_outgoingFeatureTerms(a)?.[mode];
+ if(!a||!track||!t||!V125_featureSlotAvailable(id)||!V092_featureSplitFits(track,t.rate))return false;
+ return V144_mount({kind:'outgoing-feature',counterparty:a.name,documentTitle:'Guest Recording & Royalty Agreement',summaryTitle:'Feature offer',summaryHtml:profileRows([['Guest artist',a.name],['Upfront fee',money(t.upfront)],['Master royalties',(t.rate*100).toFixed(1)+'%'],['Offer acceptance',Math.round(t.chance*100)+'% (not guaranteed)']]),pages:[
+ {title:'Performance & master',body:a.name+' agrees to appear on “'+track.title+'” if the proposal is accepted. The master credit is attached to this recording only.'},
+ {title:'Compensation',body:'An upfront payment of '+money(t.upfront)+' is due only if the guest accepts. They earn '+(t.rate*100).toFixed(1)+'% of this master’s simulated artist royalties after release.'},
+ {title:'Obligations & disputes',body:'Player must honor the fee, royalties and agreed credit. Unauthorized use, withheld agreed payments, or false credit can form a documented legal claim.'}
+ ],amount:t.upfront,payer:'player',payee:'counterparty',basis:(t.rate*100).toFixed(1)+'% master royalty + upfront fee',reference:{type:'feature',id:String(track.id||'draft')+':'+id},obligations:[{type:'upfront',amount:t.upfront,due:'when guest accepts'},{type:'master-royalty',rate:t.rate,due:'weekly after release'}],execute:()=>V144_quickFeatureOriginal(id,mode)===true});
+}
+
+function V144_customFeature(id,terms=null){
+ if(terms)return V144_customFeatureOriginal(id,terms);
+ const a=s.world?.[id],track=s.draft;if(!a||!track||!V125_featureSlotAvailable(id))return false;
+ const offer={fee:$('v125-feature-fee')?.value,share:$('v125-feature-share')?.value,credited:!!$('v125-feature-credit')?.checked},fee=Number(offer.fee),rate=Number(offer.share)/100;
+ if(offer.fee==null||String(offer.fee).trim()===''||!Number.isSafeInteger(fee)||fee<0||!V092_featureSplitFits(track,rate)){
+  toast?.('Review the feature fee and available royalty shares before signing.');return false
+ }
+ return V144_mount({kind:'outgoing-feature',counterparty:a.name,documentTitle:'Custom Feature Agreement',summaryHtml:profileRows([['Upfront payment',money(fee)],['Master royalty',(rate*100).toFixed(1)+'%'],['Release credit',offer.credited?'Required':'Not required']]),pages:[
+ {title:'Recording use',body:'The offer applies to “'+track.title+'” only, including the agreed feature appearance and credit status.'},
+ {title:'Payment & royalty rights',body:'The upfront payment is '+money(fee)+'. After release, master royalties are '+(rate*100).toFixed(1)+'%. Payment is due only upon acceptance.'},
+ {title:'Breach & enforcement',body:'Approved payment, usage and credit clauses remain enforceable in the simulation. A rejected offer is not an executed agreement.'}
+ ],amount:fee,payer:'player',payee:'counterparty',basis:offer.share+'% master royalty',reference:{type:'feature',id:String(track.id||'draft')+':'+id},obligations:[{type:'upfront',amount:fee,due:'on acceptance'},{type:'master-royalty',rate,due:'weekly after release'}],execute:()=>V144_customFeatureOriginal(id,offer)===true});
+}
+
+function V144_creditOffer(role,id,terms=null){
+ if(terms)return V144_creditOfferOriginal(role,id,terms);
+ const a=s.world?.[id],spec=V125_ROLES[role];if(!a||!spec)return false;
+ const offer={fee:$('v125-credit-fee')?.value,share:$('v125-credit-share')?.value,credited:!!$('v125-credit-name')?.checked},fee=Number(offer.fee),share=Number(offer.share);
+ if(offer.fee==null||String(offer.fee).trim()===''||offer.share==null||String(offer.share).trim()===''||!V125_creditOfferAllowed(role,id,fee,share)){
+  toast?.('This composition or production agreement does not fit the available rights or payment terms.');return false
+ }
+ const song=V125_idea().title||s.draft?.title||'Untitled master',pool=role==='producer'?'master':'composition';
+ return V144_mount({kind:'studio-contributor',counterparty:a.name,documentTitle:spec.name+' Contribution Agreement',summaryTitle:'Contributor terms',summaryHtml:profileRows([['Contribution',spec.name],['Upfront fee',money(fee)],['Rights pool',pool],['Royalty share',share.toFixed(1)+'%'],['Credit on release',offer.credited?'Yes':'No']]),pages:[
+ {title:'Services',body:a.name+' is offered a '+spec.name.toLowerCase()+' contribution to “'+song+'”. Actual contribution is subject to artist acceptance.'},
+ {title:'Fee and rights',body:'Fee of '+money(fee)+' is payable when the music session begins. The agreed '+share.toFixed(1)+'% share applies to the '+pool+' pool only, not both pools.'},
+ {title:'Performance & rights enforcement',body:'No contract exists if the other party declines. Failure to credit, unauthorized reuse or withholding agreed compensation can support a civil dispute.'}
+ ],amount:fee,payer:'player',payee:'counterparty',basis:share+'% '+pool+' rights',reference:{type:'studio-credit',id:role+':'+id+':'+s.week},obligations:[{type:'contribution',role,due:'at recording'},{type:'fee',amount:fee,due:'when recording begins'},{type:'royalty',pool,rate:share/100,due:'weekly after release'}],execute:()=>V144_creditOfferOriginal(role,id,offer)===true});
+}
+
+function V144_incomingFeature(id,mode){
+ migrateV092();
+ const o=s.v081?.creative?.offers?.find(x=>x.id===id&&x.status==='open'),a=o&&s.world?.[o.artist];
+ if(!o||!a||!['cash','hybrid','royalty'].includes(mode))return false;
+ const ask=s.v092.feature.price,budget=o.artistBudget??Math.max(100,baseFee(a)),offer=clamp(o.royaltyOffer||.08,.02,.2);
+ const fee=mode==='cash'?Math.min(ask,budget):mode==='hybrid'?Math.min(budget,Math.round(ask*.35)):0;
+ const rate=mode==='cash'?0:mode==='hybrid'?clamp(offer*.6,.02,.12):offer;
+ if(mode==='cash'&&budget<ask){toast?.('The artist cannot cover your cash quote.');return false}
+ return V144_mount({kind:'incoming-feature',counterparty:a.name,documentTitle:'Guest Artist Appearance Agreement',summaryHtml:profileRows([['You receive at signing',money(fee)],['Artist royalty share',(rate*100).toFixed(1)+'%'],['Maximum royalty term','26 weeks']]),pages:[
+ {title:'Guest performance',body:'You will be credited on a new recording released by '+a.name+'. The appearance occurs when both sides sign.'},
+ {title:'Payment and royalties',body:a.name+' owes the agreed '+money(fee)+' upfront, and '+(rate*100).toFixed(1)+'% royalties from this song for up to 26 simulated weeks.'},
+ {title:'Enforcement',body:'Late, missing or incorrect payments may support a claim in Legal Affairs. Misrepresentation or failure to perform may create liability for the guest.'}
+ ],amount:fee,payer:'counterparty',payee:'player',basis:rate+' master royalty',reference:{type:'incoming-feature',id:String(id)},obligations:[{type:'upfront',amount:fee,due:'on execution'},{type:'royalty',rate,due:'following 26 weeks'}],execute:()=>{
+  const before=o.status;V144_incomingFeatureOriginal(id,mode);
+  return before==='open'&&o.status==='accepted'
+ }});
+}
+
+function V144_opportunity(id,confirmed=false){
+ const o=s.expansion?.opportunities?.find(x=>x.id===id&&!x.done&&x.expires>=s.week);
+ if(!o)return false;
+ if(confirmed)return V144_opportunityOriginal(id,true);
+ return V144_mount({kind:'appearance',counterparty:o.name,documentTitle:o.type+' Paid Engagement',summaryHtml:profileRows([['Guaranteed fee',money(o.fee)],['Energy cost','15'],['Engagement',o.type]]),pages:[
+ {title:'Performance',body:'The artist agrees to complete the '+o.type.toLowerCase()+' engagement with '+o.name+' when this agreement is signed.'},
+ {title:'Payment',body:o.name+' owes '+money(o.fee)+' on successful completion. The fee is settled through the existing career income ledger.'},
+ {title:'Breach & consequences',body:'A failure to perform, a cancelled engagement or a withheld agreed fee may become a legal claim with evidence and deadlines.'}
+ ],amount:o.fee,payer:'counterparty',payee:'player',basis:'paid appearance',reference:{type:'appearance',id:String(o.id)},obligations:[{type:'performance',due:'on execution'},{type:'fee',amount:o.fee,due:'on performance completion'}],execute:()=>{
+  const wasDone=!!o.done;V144_opportunityOriginal(id,true);return !wasDone&&!!o.done
+ }});
+}
+
+function V144_bindRecordedAgreement(entry){
+ const ref=entry.reference;
+ if(ref?.type==='brand'){
+  const c=s.v080?.commercial?.contracts?.find(x=>String(x.id)===String(ref.id));
+  if(c)c.agreementId=entry.id;
+ }else if(ref?.type==='feature'){
+  const guestId=Number(String(ref.id).split(':').at(-1));
+  const g=guestList(s.draft).find(x=>Number(x.id)===guestId&&!x.agreementId);
+  if(g)g.agreementId=entry.id;
+ }else if(ref?.type==='studio-credit'){
+  const [role,id]=String(ref.id).split(':');
+  const x=V125_idea().credits.find(y=>y.role===role&&Number(y.id)===Number(id)&&!y.agreementId);
+  if(x)x.agreementId=entry.id;
+ }
+}
+
+const V144_quickFeatureOriginal=V092_bookFeatureDeal;
+V092_bookFeatureDeal=V144_quickFeature;
+const V144_customFeatureOriginal=V125_offerFeature;
+V125_offerFeature=V144_customFeature;
+const V144_creditOfferOriginal=V125_sendCreditOffer;
+V125_sendCreditOffer=V144_creditOffer;
+const V144_incomingFeatureOriginal=V092_acceptIncomingFeature;
+V092_acceptIncomingFeature=V144_incomingFeature;
+const V144_opportunityOriginal=acceptOpportunity;
+acceptOpportunity=V144_opportunity;
