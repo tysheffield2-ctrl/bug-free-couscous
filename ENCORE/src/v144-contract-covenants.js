@@ -55,11 +55,11 @@ function V144_execute(){
  if(!spec||spec.busy)return false;
  if(!V101_signatureHasInk()){toast?.('Draw a signature with your finger or stylus before signing.');return false}
  spec.busy=true;
- const evidence=V144_evidence(spec.signer),before=V144_state().agreements.length;
+ const evidence=V144_evidence(spec.signer),before=s.v144?.agreements?.length||0;
  let completed=false;
  try{completed=typeof spec.execute==='function'&&spec.execute({signature:evidence})!==false}catch(err){spec.busy=false;toast?.('Contract execution could not be completed.');return false}
  if(completed){
-  if(V144_state().agreements.length===before)V144_record(spec,evidence);
+  if((s.v144?.agreements?.length||0)===before)V144_record(spec,evidence);
   V144_close();render?.();return true
  }
  spec.busy=false;
@@ -86,7 +86,7 @@ function V144_labelRoom({id,label,terms,artistName=s.name,mode='artist',buyout=0
 }
 
 function V144_findAgreement(kind,id){
- return V144_state().agreements.find(x=>x.kind===kind&&String(x.reference?.id)===String(id))||null;
+ return s.v144?.agreements?.find(x=>x.kind===kind&&String(x.reference?.id)===String(id))||null;
 }
 
 const V144_contractRoomBase=V108_mountStandardContract;
@@ -271,7 +271,7 @@ function V144_openAgreement(id){
 }
 
 function V144_legalPage(){
- const html=V144_legalPageBase(),agreements=V144_state().agreements;if(!agreements.length)return html;
+ const html=V144_legalPageBase(),agreements=s.v144?.agreements||[];if(!agreements.length)return html;
  const rows=agreements.slice(0,30).map(a=>{
   const breached=a.breaches.some(x=>x.status==='open');
   return `<button class="v118-docket-card" onclick="V144_openAgreement('${a.id}')"><span><small>${esc(a.kind.toUpperCase())} · WEEK ${a.week}</small><strong>${esc(a.title)}</strong><em>${esc(a.counterparty)} · ${breached?'Breach on record':'Executed'}</em></span><b>VIEW →</b></button>`
@@ -310,7 +310,7 @@ function V144_closeFinances(royalties,rate){
 }
 
 function V144_contractWeek(completed=s.week){
- for(const a of V144_state().agreements){
+ for(const a of s.v144?.agreements||[]){
   for(const b of a.breaches){
    if(b.against!=='player'||b.caseId||b.status!=='open'||completed-b.week<2||V118_openCases().length>=4)continue;
    const claim=cents(Math.max(1000,b.amount*1.5));
