@@ -58,7 +58,7 @@ const ownAlbumId=Number(h.run('s.albums[0].id'));
 const aiEntries=Array.from({length:21},(_,i)=>({key:'npc:s:'+i,id:i,title:'Fiction Track '+i,artist:'Fictional Artist '+i,you:false,rank:i+2,last:i+3,peak:i+2,weeks:2,streams:390000-i*1000,movement:'UP'}));
 const chartBook={version:1,sinceWeek:1,issuedWeek:7,songs:{current:[{key:'you:s:'+ownSongId,id:ownSongId,title:'Afterglow',artist:'Fictional Player',you:true,rank:1,last:4,peak:1,weeks:3,streams:600000,movement:'UP'},...aiEntries],previous:[],records:{}},albums:{current:[{key:'you:a:'+ownAlbumId,id:ownAlbumId,title:'Late Light',artist:'Fictional Player',you:true,rank:5,last:null,peak:5,weeks:1,units:10000,movement:'NEW'}],previous:[],records:{}}};
 for(const kind of ['songs','albums'])for(const row of chartBook[kind].current)chartBook[kind].records[row.key]={title:row.title,artist:row.artist,you:row.you,id:row.id,peak:row.peak,weeks:row.weeks,partial:false,debutRank:row.rank,debutWeek:7,numberOneWeeks:0,history:[{week:7,rank:row.rank}]};
-h.run('s.chartBook='+JSON.stringify(chartBook)+';go("Charts")');
+h.run('s.chartBook='+JSON.stringify(chartBook)+';render()');
 assert.match(h.elements.app.innerHTML,/Global Top 100/);
 assert.match(h.elements.app.innerHTML,/#1 Afterglow/);
 assert.match(h.elements.app.innerHTML,/↑ 3/);
