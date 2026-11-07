@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import {harness} from './harness.mjs';
 
-const code=fs.readFileSync(new URL('../engine/roster-negotiation.js',import.meta.url),'utf8');
+const code=fs.readFileSync(new URL('../engine/roster-negotiation.js',import.meta.url),'utf8')+'\n'+fs.readFileSync(new URL('../src/v147-artist-intelligence.js',import.meta.url),'utf8');
 const sandbox={console,Math,BigInt,structuredClone};
 sandbox.globalThis=sandbox;vm.createContext(sandbox);vm.runInContext(code,sandbox);
 const E=sandbox.ENCORE_ROSTER_NEGOTIATION;
