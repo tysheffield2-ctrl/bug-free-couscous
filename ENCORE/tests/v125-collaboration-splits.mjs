@@ -135,6 +135,7 @@ assert.equal(h.run('s.energy'),paidEnergy,'duplicate offer must not consume ener
 assert.equal(h.run('s.cash'),paidCash,'duplicate offer must not create charges');
 h.run(`s.draft.features=[{id:11,name:'Fictional Guest',royaltyRate:.5}];$('v125-credit-share').value='20'`);
 assert.equal(h.run("V125_sendCreditOffer('producer',1)"),false,'master producer points must share cap with booked features');
+h.run('s.draft.credits=V125_idea().credits.map(x=>({...x}))'); // A created master carries its accepted studio credits.
 assert.equal(h.run('V092_featureSplitFits(s.draft,.15)'),true,'15% more fits 90% including producer points');
 assert.equal(h.run('V092_featureSplitFits(s.draft,.20)'),false,'20% more would exceed 90% master rights');
 assert.equal(h.run('V125_idea().credits.length'),1);
