@@ -193,3 +193,57 @@ const V144_incomingFeatureOriginal=V092_acceptIncomingFeature;
 V092_acceptIncomingFeature=V144_incomingFeature;
 const V144_opportunityOriginal=acceptOpportunity;
 acceptOpportunity=V144_opportunity;
+
+function V144_markBreach(agreementId,against,reason,amount){
+ const a=V144_state().agreements.find(x=>x.id===agreementId);
+ if(!a||!['player','counterparty'].includes(against)||a.breaches.some(b=>b.against===against&&b.status==='open'))return false;
+ const b={id:'breach-'+a.id+'-'+(a.breaches.length+1),week:s.week,against,reason:String(reason||'Contract obligation was not fulfilled'),amount:cents(Math.max(0,Number(amount)||0)),status:'open',caseId:null};
+ a.breaches.push(b);a.history.unshift({week:s.week,kind:'breach',detail:b.reason});
+ V118_event?.('contract-breach','Contract breach: '+a.title,b.reason,{agreementId:a.id,playerInvolved:true});
+ addBriefing?.('breach:'+b.id,'Legal',against==='player'?'Contract payment at risk':'Counterparty missed a contractual obligation',a.counterparty+' · '+b.reason);
+ queueSave?.();return b
+}
+
+function V144_fileClaim(agreementId){
+ const a=V144_state().agreements.find(x=>x.id===agreementId),b=a?.breaches.find(x=>x.against==='counterparty'&&x.status==='open'&&!x.caseId);
+ if(!a||!b||V118_openCases().length>=4)return false;
+ const c=V118_fileCase({title:String(s.name||'Artist')+' v. '+a.counterparty,issue:b.reason,plaintiff:String(s.name||'Artist'),defendant:a.counterparty,claim:cents(Math.max(1000,b.amount)),agreementId:a.id,clauses:['Payment','Performance','Contract enforcement'],strength:72,category:'Contract',matterType:'breach',triggerDetail:'Signed Week '+a.week+' · '+b.reason,generatedBy:'signed-contract'});
+ if(!c)return false;
+ c.playerPlaintiff=true;c.stage='PLAINTIFF CLAIM';c.deadlineWeek=s.week+6;c.playerEvidence=a.signature?80:50;
+ c.history.unshift({week:s.week,text:'Player filed a claim supported by the signed agreement and recorded breach.'});
+ b.caseId=c.id;a.caseIds.push(c.id);queueSave?.();render?.();return true
+}
+
+function V144_playerLegalAction(id,action){
+ const c=V118_legalCases().find(x=>x.id===id&&x.status==='open'&&x.playerPlaintiff);
+ if(!c)return V144_caseActionBase(id,action);
+ if(action==='pursue'&&c.stage==='PLAINTIFF CLAIM'){
+  const fee=cents(clamp(c.claim*.025,250,25000));
+  if(!spend(10,fee))return false;
+  c.stage='EVIDENCE FILED';c.reviewWeek=s.week+3;
+  c.history.unshift({week:s.week,text:'Player submitted evidence and paid '+money(fee)+' in legal costs.'});
+  queueSave?.();V118_openDocketCase(id);return true
+ }
+ if(action==='settle'){
+  const amount=V118_caseSettlement(c);
+  changeCash(amount);recordIncome('other',amount);moneyEvent?.('Contract claim settlement',amount);
+  V118_closeCase(c,'Counterparty settled claim',0,1);queueSave?.();render?.();return true
+ }
+ return false
+}
+
+function V144_playerLegalWeek(completed=s.week){
+ for(const c of V118_openCases().filter(x=>x.playerPlaintiff)){
+  if(c.stage==='PLAINTIFF CLAIM'&&completed>=c.deadlineWeek){
+   V118_closeCase(c,'Claim withdrawn after missed filing deadline',0,0);continue
+  }
+  if(c.stage!=='EVIDENCE FILED'||completed<c.reviewWeek)continue;
+  const chance=clamp(.35+(c.plaintiffStrength||55)/250+(c.playerEvidence||50)/500+((c.attorneySkill||0)/100)*.09,.28,.91);
+  const roll=typeof V124_roll==='function'?V124_roll('plaintiff:'+c.id):Math.random();
+  if(roll<chance){
+   const award=cents(c.claim*clamp(.65+(c.plaintiffStrength||55)/350,.55,1));
+   changeCash(award);recordIncome('other',award);moneyEvent?.('Contract claim award',award);
+   V118_closeCase(c,'Plaintiff prevailed; award collected',0,1)
+  }else V118_closeCase(c,'Counterparty defended claim successfully',0,-1)
+ }
+}
