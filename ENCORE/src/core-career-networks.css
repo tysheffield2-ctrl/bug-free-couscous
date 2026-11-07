@@ -1,0 +1,28 @@
+/* Charts and PULSE: dense iPhone-first editorial surfaces, never separate overlays. */
+body.core-ui .core-tabstrip{display:flex;gap:8px;margin:12px 0;min-width:0}
+body.core-ui .core-tabstrip button{flex:1;min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--line)!important;background:transparent!important;color:var(--ink)!important;border-radius:10px;font-size:13px!important;font-weight:700!important;box-shadow:none!important}
+body.core-ui .core-tabstrip button[aria-pressed=true]{background:#2c6650!important;border-color:#2c6650!important;color:#fff!important}
+body.core-ui .core-metric-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0 16px}
+body.core-ui .core-metric-strip>div{min-width:0;padding:11px 8px;border:1px solid var(--line);background:#fff;border-radius:11px}
+body.core-ui .core-metric-strip small{display:block;color:#59676d;font-size:11px!important;line-height:1.25;overflow-wrap:anywhere}
+body.core-ui .core-metric-strip strong{display:block;color:#17242a;font-size:18px!important;line-height:1.3;margin-top:4px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+body.core-ui .core-chart-filter{margin-top:20px}
+body.core-ui .core-chart-history{padding:0;list-style:none;margin:8px 0 16px}
+body.core-ui .core-chart-history li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 4px;border-bottom:1px solid var(--line);font-size:13px}
+body.core-ui .core-chart-history strong{font-weight:800;font-size:14px}
+body.core-ui .core-social-feed{display:grid;gap:14px;margin-top:12px}
+body.core-ui .core-social-post{padding:12px 0 14px;border-bottom:1px solid var(--line);min-width:0}
+body.core-ui .core-social-post p{margin:8px 0;overflow-wrap:anywhere;white-space:normal}
+body.core-ui .core-social-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+body.core-ui .core-social-head strong{font-size:14px}
+body.core-ui .core-social-head small{font-size:11px;color:var(--muted);text-align:right}
+body.core-ui .core-social-counts{font-weight:650;font-size:12px!important;line-height:1.65}
+body.core-ui .core-social-reaction{font-style:italic;border-left:2px solid var(--line);padding-left:10px;font-size:12px!important}
+body.core-ui .core-pulse-compose{margin:12px 0 20px;border-top:1px solid var(--line);padding-top:14px}
+body.core-ui .core-pulse-compose textarea{display:block;width:100%;min-height:96px;padding:12px;border:1px solid var(--line)!important;border-radius:8px;font:inherit;font-size:16px!important;resize:vertical;max-height:260px;overflow:auto}
+body.core-ui .core-social-post .core-secondary{width:100%;margin:8px 0 0;min-height:44px}
+html[data-theme=dark] body.core-ui .core-metric-strip>div{background:#22323a!important;border-color:#45585f!important}
+html[data-theme=dark] body.core-ui #app .core-content .core-metric-strip :is(strong,small){color:#eef3f2!important}
+html[data-theme=dark] body.core-ui .core-tabstrip button:not([aria-pressed=true]){color:#eef3f2!important;border-color:#52656c!important}
+html[data-theme=dark] body.core-ui .core-pulse-compose textarea{background:#22323a!important;color:#eef3f2!important;border-color:#52656c!important;color-scheme:dark}
+@media(max-width:360px){body.core-ui .core-metric-strip{gap:5px}body.core-ui .core-metric-strip>div{padding:8px 6px}body.core-ui .core-metric-strip strong{font-size:16px!important}body.core-ui .core-tabstrip button{padding:7px 6px;font-size:12px!important}}
