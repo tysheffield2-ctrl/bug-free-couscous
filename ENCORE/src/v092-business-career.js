@@ -59,7 +59,11 @@ function V092_featureSplitTotal(track){
 }
 function V092_featureSplitFits(track,rate){
  const n=Number(rate);
- return Number.isFinite(n)&&n>=0&&n<=.5&&V092_featureSplitTotal(track)+n<=V092_FEATURE_MAX_SPLIT+1e-9
+ // Producer points and guest features share the master royalty pool.
+ // The rights helper is loaded by the studio module; legacy/UI2 callers
+ // without it still receive the feature-only safety limit.
+ const used=typeof V125_masterCommitment==='function'?V125_masterCommitment(track):V092_featureSplitTotal(track);
+ return Number.isFinite(n)&&n>=0&&n<=.5&&used+n<=V092_FEATURE_MAX_SPLIT+1e-9
 }
 function V092_bookFeatureDeal(id,mode){
  const a=s.world?.[id],d=s.draft,terms=a&&V092_outgoingFeatureTerms(a),t=terms?.[mode];
@@ -67,7 +71,7 @@ function V092_bookFeatureDeal(id,mode){
  if(!V092_featureSplitFits(d,t.rate)){toast('That split would exceed the song’s 90% combined feature royalty limit. Try a cash or smaller royalty offer.');return false}
  if(s.cash<t.upfront){toast('You do not have enough cash for that structure.');return false}
  if(!spend(5))return false;
- if(Math.random()>t.chance){toast(a.name+' passed on that split. Try a stronger offer or build more leverage.');return false}
+ if(Math.random()>t.chance){a.relation=clamp((Number(a.relation)||0)-1,-100,100);queueSave?.();toast(a.name+' passed on that split. Try a stronger offer or build more leverage.');return false}
  if(t.upfront){changeCash(-t.upfront);s.finance.week.expenses=cents(V092_num(s.finance.week.expenses)+t.upfront);moneyEvent(a.name+' feature fee',-t.upfront)}
  d.features=[...guestList(d),{id:a.id,name:a.name,fans:a.fans,fee:t.upfront,dealType:mode,royaltyRate:t.rate}];
  d.feature=d.features[0];
