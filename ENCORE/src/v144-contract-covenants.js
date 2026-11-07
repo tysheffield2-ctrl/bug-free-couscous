@@ -247,3 +247,88 @@ function V144_playerLegalWeek(completed=s.week){
   }else V118_closeCase(c,'Counterparty defended claim successfully',0,-1)
  }
 }
+
+
+function V144_openLegalCase(id){
+ const c=V118_legalCases().find(x=>x.id===id);
+ if(!c?.playerPlaintiff)return V144_openLegalCaseBase(id);
+ const fee=cents(clamp(c.claim*.025,250,25000));
+ const history=c.history.map(x=>`<p><b>Week ${x.week}</b> · ${esc(x.text)}</p>`).join('');
+ const actions=c.status==='open'?`<div class="v118-request-actions">${c.stage==='PLAINTIFF CLAIM'?`<button class="primary" onclick="V118_caseAction('${c.id}','pursue')">Pursue claim · ${money(fee)} + 10 energy</button>`:''}<button class="secondary" onclick="V118_caseAction('${c.id}','settle')">Accept settlement · ${money(V118_caseSettlement(c))}</button></div>`:'';
+ modal(`<article class="v118-docket-paper"><header><span>ENCORE CONTRACT CLAIM</span><b>${esc(c.number)}</b></header><div class="v118-docket-stamp">${esc(c.stage)}</div><h2>${esc(c.title)}</h2>${profileRows([['Your role','Plaintiff'],['Claim against',c.defendant],['Claim amount',money(c.claim)],['Signed agreement',c.agreementId||'None'],['Filing deadline','Week '+c.deadlineWeek],['Outcome',c.outcome||'Pending']])}<section class="v118-case-history"><h3>Claim history</h3>${history}</section>${actions}<p class="fine">This is your claim against the counterparty. Winning pays damages; losing may still cost the legal fees you spent pursuing it.</p></article>`);
+ return true
+}
+
+function V144_openAgreement(id){
+ const a=V144_state().agreements.find(x=>x.id===id);if(!a)return false;
+ const b=a.breaches||[],claim=b.find(x=>x.against==='counterparty'&&x.status==='open'&&!x.caseId);
+ const obligations=(a.obligations||[]).map(x=>`<p>${esc(x.type||'Obligation')} · ${esc(String(x.due||''))}${x.amount?' · '+money(x.amount):''}${x.rate?' · '+(x.rate*100).toFixed(1)+'%':''}</p>`).join('');
+ const breaches=b.map(x=>`<p>${esc(x.reason)} · ${money(x.amount)}${x.caseId?' · legal case filed':' · unresolved'}</p>`).join('')||'<p>No recorded contractual breach.</p>';
+ const file=claim?`<button class="primary" onclick="V144_fileClaim('${a.id}')">Sue for documented breach</button>`:'';
+ const sandbox=s.sandbox?`<p class="fine">Sandbox legal testing</p><button class="secondary" onclick="V144_markBreach('${a.id}','counterparty','Missed contractual payment (sandbox)',${Math.max(1000,a.amount)})">Simulate missed payment</button>`:'';
+ modal(`<span class="eyebrow">EXECUTED AGREEMENT · WEEK ${a.week}</span><h2>${esc(a.title)}</h2>${profileRows([['Counterparty',a.counterparty],['Signing artist',a.signer],['Agreement ID',a.id],['Type',a.kind],['Upfront amount',money(a.amount)],['Payment basis',a.basis],['Signature',a.signature?.kind==='drawn'?'Drawn proof stored':'Imported / historical']])}<h3>Contract obligations</h3>${obligations}<h3>Breach record</h3>${breaches}${file}${sandbox}<p class="fine">${a.caseIds?.length||0} linked legal matter(s). Filing does not guarantee a favorable outcome.</p>`);
+ return true
+}
+
+function V144_legalPage(){
+ const html=V144_legalPageBase(),agreements=V144_state().agreements;if(!agreements.length)return html;
+ const rows=agreements.slice(0,30).map(a=>{
+  const breached=a.breaches.some(x=>x.status==='open');
+  return `<button class="v118-docket-card" onclick="V144_openAgreement('${a.id}')"><span><small>${esc(a.kind.toUpperCase())} · WEEK ${a.week}</small><strong>${esc(a.title)}</strong><em>${esc(a.counterparty)} · ${breached?'Breach on record':'Executed'}</em></span><b>VIEW →</b></button>`
+ }).join('');
+ return html+`<section class="card"><span class="eyebrow">EXECUTED AGREEMENTS</span><h2>Contract register</h2><p>Signed terms and documented breaches live here. Open an agreement to review obligations or file a supported claim.</p>${rows}</section>`;
+}
+
+function V144_brandSettlement(){
+ migrateV080();
+ const contracts=s.v080?.commercial?.contracts||[],skipped=[];
+ for(const c of contracts){
+  const a=V144_findAgreement('commercial',c.id),due=c.remaining/Math.max(1,(c.durationMonths||120)-(c.monthsPaid||0));
+  if(!c.active||!a||due<=0||a.breaches.some(b=>b.against==='counterparty'&&b.status==='open'))continue;
+  const chance=s.sandbox?.12:.025;
+  const roll=typeof V124_roll==='function'?V124_roll('commercial-default:'+c.id+':'+(s.empire?.month||0)):Math.random();
+  if(roll>=chance)continue;
+  c.active=false;skipped.push({c,a,due:cents(due)});
+ }
+ let result;
+ try{result=V144_brandSettlementBase()}finally{
+  for(const {c,a,due} of skipped){
+   c.active=true;
+   V144_markBreach(a.id,'counterparty','Guaranteed commercial installment was not paid when due',due)
+  }
+ }
+ return result
+}
+
+function V144_closeFinances(royalties,rate){
+ const report=V144_financesBase(royalties,rate);
+ if(Number(s.cash)<0&&Number(report?.featureRoyalty)>0){
+  const a=V144_state().agreements.find(x=>x.kind==='outgoing-feature'&&x.obligations?.some(o=>o.type==='master-royalty'&&o.rate>0)&&!x.breaches.some(b=>b.against==='player'&&b.status==='open'));
+  if(a)V144_markBreach(a.id,'player','Insufficient funds to meet contracted guest royalties',Math.min(report.featureRoyalty,Math.abs(s.cash)));
+ }
+ return report
+}
+
+function V144_contractWeek(completed=s.week){
+ for(const a of V144_state().agreements){
+  for(const b of a.breaches){
+   if(b.against!=='player'||b.caseId||b.status!=='open'||completed-b.week<2||V118_openCases().length>=4)continue;
+   const claim=cents(Math.max(1000,b.amount*1.5));
+   const c=V118_fileCase({title:a.counterparty+' v. '+(s.labelBusiness?.company?.name||s.name),issue:b.reason,plaintiff:a.counterparty,claim,agreementId:a.id,clauses:['Payment','Royalty breach'],strength:65,matterType:'contract',category:'Contract',triggerDetail:b.reason,generatedBy:'signed-contract'});
+   if(c){b.caseId=c.id;a.caseIds.push(c.id);queueSave?.()}
+  }
+ }
+}
+
+const V144_caseActionBase=V118_caseAction;
+V118_caseAction=V144_playerLegalAction;
+const V144_openLegalCaseBase=V118_openDocketCase;
+V118_openDocketCase=V144_openLegalCase;
+const V144_legalPageBase=V118_legalAffairsPage;
+V118_legalAffairsPage=V144_legalPage;
+const V144_advanceLegalBase=V118_advanceLegal;
+V118_advanceLegal=function(completed){const result=V144_advanceLegalBase(completed);V144_playerLegalWeek(completed);V144_contractWeek(completed);return result};
+const V144_brandSettlementBase=settleCommercialContracts080;
+settleCommercialContracts080=V144_brandSettlement;
+const V144_financesBase=closeFinances;
+closeFinances=V144_closeFinances;
