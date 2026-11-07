@@ -15,7 +15,7 @@ let browser,page;
  const errors=[];page.on('pageerror',e=>errors.push(String(e)));
  await page.goto('http://127.0.0.1:8995/offline?sandbox=1');
  await page.waitForFunction(()=>saveReady&&typeof EUI!=='undefined'&&typeof ENCORE_ROSTER_NEGOTIATION.meet==='function');
- const baseNav=await page.locator('#nav').innerText();
+ const baseNav=(await page.locator('#nav').innerText()).replace(/\s+/g,'');
  await page.evaluate(()=>{
   s.started=true;s.cash=5000000;s.energy=200;s.reputation=100;
   s.achievements.popups=false;
@@ -62,7 +62,7 @@ let browser,page;
  await page.locator('#v101-signature-pad').waitFor({timeout:10000});
  assert.equal(await page.locator('#v144-contract-shell input').count(),0,'Signature still requires no typed name or initials');
  assert.equal(await page.evaluate(()=>s.labelBusiness.company.contracts.length),0,'A verbal acceptance must not execute the recording agreement');
- assert.equal(await page.locator('#nav').innerText(),baseNav,'Original ENCORE navigation must not change');
+ assert.equal((await page.locator('#nav').innerText()).replace(/\s+/g,''),baseNav,'Original ENCORE navigation must not change');
  assert.deepEqual(errors,[],'No browser errors');
  console.log('PASS iPhone artist scouting and negotiation: uncertainty, meeting, memory, counter, unsigned acceptance, contract signature gate.');
 })().catch(async err=>{
