@@ -26,7 +26,7 @@ let browser,page;
  await page.evaluate(()=>{
   s.started=true;s.cash=200000;s.energy=200;
   s.labelBusiness.company={name:'Fictional Venture Music',started:s.week,staff:{manager:false,marketing:false,ar:false},contracts:[],receipts:0,last:null,preparedWeek:0,settledWeek:0};
-  V145_state();document.getElementById('modal')?.close();render();
+  V145_state();document.getElementById('modal')?.close();titleVisible=false;renderTitle();go('Home');
  });
  await page.getByRole('button',{name:'More options'}).click();
  await page.locator('.core-row').filter({hasText:'Label Boss'}).click();
