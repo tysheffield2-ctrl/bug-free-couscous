@@ -47,7 +47,34 @@ beginCareerWeek=function(){V092_beginCareer091();V092_settleIncomingFeatureRoyal
 
 function V092_outgoingFeatureTerms(a){const fee=quote(a),relation=Math.max(-40,a.relation||0),relative=Math.log10(1+s.fans)-Math.log10(1+a.fans),baseAccept=clamp(.5+relative*.16+relation/240+s.reputation/400,.08,.96);return {fee,cash:{upfront:fee,rate:0,chance:baseAccept},hybrid:{upfront:Math.round(fee*.30),rate:.075,chance:clamp(baseAccept+.08,.08,.98)},royalty:{upfront:0,rate:.15,chance:clamp(baseAccept+(relation>=50?.15:0)-(a.fans>s.fans*10?.15:0),.05,.95)}}}
 studioGuest=function(id){const a=s.world[id],d=s.draft;if(!a||!d||guestList(d).some(g=>g.id===id)||guestList(d).length>=6)return;const terms=V092_outgoingFeatureTerms(a);modal(`${personPhoto('artist-'+(a.directoryKey??a.id),a.name,true)}<span class="eyebrow">FEATURE NEGOTIATION</span><h2>${esc(a.name)} · ${compact(a.fans)} fans</h2><p>Choose how to compensate the guest. Bigger artists can reject backend-only deals when your audience is not large enough to justify the risk.</p><div class="feature-deal-grid"><button class="feature-deal" onclick="V092_bookFeatureDeal(${id},'cash')"><strong>Cash fee</strong><span>${money(terms.cash.upfront)}</span><small>Est. acceptance ${Math.round(terms.cash.chance*100)}%</small></button><button class="feature-deal" onclick="V092_bookFeatureDeal(${id},'hybrid')"><strong>Hybrid</strong><span>${money(terms.hybrid.upfront)} + ${(terms.hybrid.rate*100).toFixed(1)}%</span><small>Est. acceptance ${Math.round(terms.hybrid.chance*100)}%</small></button><button class="feature-deal" onclick="V092_bookFeatureDeal(${id},'royalty')"><strong>Royalty split</strong><span>${(terms.royalty.rate*100).toFixed(0)}% of this song's artist royalties</span><small>Est. acceptance ${Math.round(terms.royalty.chance*100)}%</small></button></div>${featureRequirements(a)}<p class="fine">The royalty share applies only to this song and ends when you no longer receive simulated artist royalties from it.</p>`)};
-function V092_bookFeatureDeal(id,mode){const a=s.world[id],d=s.draft,terms=a&&V092_outgoingFeatureTerms(a),t=terms?.[mode];if(!a||!d||!t||guestList(d).some(g=>g.id===id)||guestList(d).length>=6||!accessible(a))return;if(s.cash<t.upfront){toast('You do not have enough cash for that structure.');return}if(!spend(5))return;if(Math.random()>t.chance){toast(a.name+' passed on that split. Try a stronger offer or build more leverage.');return}if(t.upfront){changeCash(-t.upfront);s.finance.week.expenses=cents(V092_num(s.finance.week.expenses)+t.upfront);moneyEvent(a.name+' feature fee',-t.upfront)}d.features=[...guestList(d),{id,name:a.name,fans:a.fans,fee:t.upfront,dealType:mode,royaltyRate:t.rate}];d.feature=d.features[0];a.relation=clamp(a.relation+5,-100,100);a.discount=0;V092_gainBusiness('Negotiation',10);log(a.name+' joined '+d.title+' on a '+mode+' feature deal.');$('modal').close();render()}
+/* Keep feature royalties within 90% of a master so the player retains
+   at least 10% of artist royalties. Existing signed saves remain unchanged.
+   This guard is shared by quick and custom offers, never recalculated on render. */
+const V092_FEATURE_MAX_SPLIT=.90;
+function V092_featureSplitTotal(track){
+ return guestList(track).reduce((sum,guest)=>{
+  const rate=Number(guest?.royaltyRate);
+  return sum+(Number.isFinite(rate)?Math.max(0,Math.min(.5,rate)):0)
+ },0)
+}
+function V092_featureSplitFits(track,rate){
+ const n=Number(rate);
+ return Number.isFinite(n)&&n>=0&&n<=.5&&V092_featureSplitTotal(track)+n<=V092_FEATURE_MAX_SPLIT+1e-9
+}
+function V092_bookFeatureDeal(id,mode){
+ const a=s.world?.[id],d=s.draft,terms=a&&V092_outgoingFeatureTerms(a),t=terms?.[mode];
+ if(!a||!d||!t||guestList(d).some(g=>Number(g.id)===Number(id))||guestList(d).length>=6||!accessible(a))return false;
+ if(!V092_featureSplitFits(d,t.rate)){toast('That split would exceed the song’s 90% combined feature royalty limit. Try a cash or smaller royalty offer.');return false}
+ if(s.cash<t.upfront){toast('You do not have enough cash for that structure.');return false}
+ if(!spend(5))return false;
+ if(Math.random()>t.chance){toast(a.name+' passed on that split. Try a stronger offer or build more leverage.');return false}
+ if(t.upfront){changeCash(-t.upfront);s.finance.week.expenses=cents(V092_num(s.finance.week.expenses)+t.upfront);moneyEvent(a.name+' feature fee',-t.upfront)}
+ d.features=[...guestList(d),{id:a.id,name:a.name,fans:a.fans,fee:t.upfront,dealType:mode,royaltyRate:t.rate}];
+ d.feature=d.features[0];
+ a.relation=clamp((Number(a.relation)||0)+5,-100,100);a.discount=0;
+ V092_gainBusiness('Negotiation',10);log(a.name+' joined '+d.title+' on a '+mode+' feature deal.');$('modal').close();queueSave?.();render();
+ return true
+}
 function V092_featureRoyaltyExpense(){let due=0;for(const track of s.songs||[]){if(!track.released||!track.streams)continue;for(const g of guestList(track)){const rate=clamp(V092_num(g.royaltyRate),0,.5);if(rate>0)due+=track.streams*.50*rate}}return cents(due)}
 const V092_closeFinances091=closeFinances;
 closeFinances=function(royalties,rate){const featureRoyalty=V092_featureRoyaltyExpense();if(featureRoyalty>0){changeCash(-featureRoyalty);s.finance.week.expenses=cents(V092_num(s.finance.week.expenses)+featureRoyalty);moneyEvent('Guest feature royalties',-featureRoyalty)}const report=V092_closeFinances091(royalties,rate);report.featureRoyalty=featureRoyalty;return report};
