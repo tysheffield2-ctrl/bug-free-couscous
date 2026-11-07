@@ -64,15 +64,25 @@ function V145_fire(role){
  V145_note('exit',person+' left the label');queueSave?.();render?.();return true
 }
 function V145_scout(){
- const co=s.labelBusiness?.company,b=V145_read();if(!co||!b||!V145_staff('ar')||!co.staffFunded)return false;
- const roster=new Set(ownerContracts().map(c=>c.artist));
- const pool=(s.world||[]).filter(a=>a&&a.aiCareer?.status!=='retired'&&!roster.has(a.id)&&a.relation>-40);
- pool.sort((a,c)=>(Number(c.skill)||0)+(Number(c.relation)||0)*.25+(Math.log10(1+Number(c.fans)||0))*6-
- ((Number(a.skill)||0)+(Number(a.relation)||0)*.25+(Math.log10(1+Number(a.fans)||0))*6));
- const offset=Math.floor(s.week/4)%Math.max(1,pool.length);
- b.prospects=pool.slice(offset,offset+8).map(a=>a.id);
- if(b.prospects.length<8)b.prospects.push(...pool.slice(0,8-b.prospects.length).map(a=>a.id));
- b.scoutedWeek=s.week;V145_note('scout','A&R delivered '+b.prospects.length+' prospects');
+ const co=s.labelBusiness?.company,b=V145_read();
+ if(!co||!b||!V145_staff('ar')||!co.staffFunded||b.scoutedWeek===s.week)return false;
+ const roster=new Set(ownerContracts().map(c=>Number(c.artist)));
+ const pool=(s.world||[]).filter(a=>a&&a.aiCareer?.status!=='retired'&&!roster.has(Number(a.id))&&(Number(a.relation)||0)>-40);
+ const scoutQuality=Number(b.team?.ar?.skill)||55;
+ const reports=pool.map(a=>({artist:a,report:ENCORE_ROSTER_NEGOTIATION.scoutReport(s,a.id,scoutQuality,s.week)}))
+  .filter(x=>x.report);
+ // Staff act on imperfect estimates. Higher scout skill narrows uncertainty,
+ // while fan counts and reputation remain publicly visible.
+ const score=x=>x.report.estimated+(Number(x.artist.relation)||0)*.20+
+  Math.log10(1+Math.max(0,Number(x.artist.fans)||0))*5;
+ reports.sort((a,c)=>score(c)-score(a));
+ const offset=Math.floor(s.week/4)%Math.max(1,reports.length);
+ const selected=reports.slice(offset,offset+8);
+ if(selected.length<8)selected.push(...reports.slice(0,8-selected.length));
+ b.prospects=[...new Set(selected.map(x=>Number(x.artist.id)))];
+ b.scoutingReports=Object.fromEntries(selected.map(x=>[String(x.artist.id),x.report]));
+ b.scoutedWeek=s.week;
+ V145_note('scout','A&R submitted '+b.prospects.length+' talent reports ('+Math.round(clamp(34+scoutQuality*.59,34,93))+'% scouting confidence)');
  return true
 }
 function V145_assignProject(artistId){
