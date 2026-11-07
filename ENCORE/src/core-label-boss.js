@@ -57,7 +57,7 @@ Object.assign(EUI,{
   const co=s.labelBusiness?.company,b=V145_read();if(!co||!b)return EUI.empty('Form a label first.');
   return '<p class="core-note">This is a separate departmental statement, not a separate bank account. Cash and payroll settle in the existing artist-career wallet exactly once.</p>'+
    profileRows([['Label receipts',money(co.receipts)],['Studio budgets paid',money(b.totalInvested||0)],['Weekly payroll',money(V145_payroll())],['Statement history',b.statements.length]])+
-   '<h2>Weekly statements</h2><div class="core-list">'+(b.statements.slice(0,16).map(x=>EUI.row('chart','Week '+x.week,'Receipts '+money(x.receipts)+' · Payroll '+money(x.payroll)+' · Net '+money(x.net),"go('LabelFinance')")).join('')||EUI.empty('Close a week to receive a statement.'))+'</div>';
+   '<h2>Weekly statements</h2><div class="core-list">'+(b.statements.slice(0,16).map(x=>EUI.row('chart','Week '+x.week,'Receipts '+money(x.receipts)+' · Payroll '+money(x.payroll)+' · Studio '+money(x.production||0)+' · Net '+money(x.net),"go('LabelFinance')")).join('')||EUI.empty('Close a week to receive a statement.'))+'</div>';
  }
 });
 const V145_moreOriginal=EUI.more;
