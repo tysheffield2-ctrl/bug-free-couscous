@@ -13,9 +13,9 @@ const V145_STAGES={development:{role:'development',weeks:2,next:'recording'},rec
 function V145_read(){return s.labelBusiness?.company?.boss||null}
 function V145_state(){
  const co=s.labelBusiness?.company;if(!co)return null;
- if(!co.boss||typeof co.boss!=='object')co.boss={version:1,team:{},projects:[],prospects:[],approvals:'manual',nextId:1,lastProgressWeek:0,lastStatementWeek:0,unfundedWeeks:0,statements:[],history:[],totalInvested:0};
+ if(!co.boss||typeof co.boss!=='object')co.boss={version:1,team:{},projects:[],prospects:[],approvals:'manual',nextId:1,lastProgressWeek:0,lastStatementWeek:0,unfundedWeeks:0,statements:[],investments:[],history:[],totalInvested:0};
  const b=co.boss;
- b.team??={};b.projects??=[];b.prospects??=[];b.statements??=[];b.history??=[];
+ b.team??={};b.projects??=[];b.prospects??=[];b.statements??=[];b.investments??=[];b.history??=[];
  b.approvals=b.approvals==='delegated'?'delegated':'manual';
  return b
 }
@@ -80,7 +80,7 @@ function V145_assignProject(artistId){
  if(!labelActive()||!co||!b||!c||!a||a.aiCareer?.status==='retired'||b.projects.some(p=>p.artist===id&&!['released','cancelled'].includes(p.status)))return false;
  const budget=4000;if(!spend(5,budget))return false;
  const p={id:b.nextId++,artist:id,title:generate('song'),stage:'development',progress:0,status:'active',spent:budget,createdWeek:s.week,quality:0,pausedWeeks:0};
- b.projects.unshift(p);b.projects=b.projects.slice(0,48);b.totalInvested=cents((b.totalInvested||0)+budget);
+ b.projects.unshift(p);b.projects=b.projects.slice(0,48);b.investments.unshift({week:s.week,projectId:p.id,amount:budget});b.investments=b.investments.slice(0,80);b.totalInvested=cents((b.totalInvested||0)+budget);
  V145_note('project','Commissioned '+p.title+' for '+a.name+' at '+money(budget));
  moneyEvent?.('Label studio project · '+a.name,-budget);
  queueSave?.();render?.();return true
@@ -164,8 +164,9 @@ function V145_finishWeek(){
  const result=V145_settleBase();
  if(co.settledWeek===s.week&&b.lastStatementWeek!==s.week){
   b.lastStatementWeek=s.week;
-  const statement={week:s.week,receipts:cents(co.last?.income||0),payroll:cents(co.last?.payroll||0),recording:cents(co.last?.recording||0),live:cents(co.last?.other||0)};
-  statement.net=cents(statement.receipts-statement.payroll);
+  const production=cents((b.investments||[]).filter(x=>x.week===s.week).reduce((n,x)=>n+x.amount,0));
+  const statement={week:s.week,receipts:cents(co.last?.income||0),payroll:cents(co.last?.payroll||0),production,recording:cents(co.last?.recording||0),live:cents(co.last?.other||0)};
+  statement.net=cents(statement.receipts-statement.payroll-production);
   b.statements.unshift(statement);b.statements=b.statements.slice(0,52);
  }
  return result
