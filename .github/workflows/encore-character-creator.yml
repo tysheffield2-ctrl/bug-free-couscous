@@ -18,7 +18,7 @@ jobs:
           node-version: '24'
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: npx playwright install --with-deps chromium
-      - run: npm run build && node tests/v129-character-creator.mjs && node tests/character-creator-browser.cjs && node tests/v144-contract-browser.cjs
+      - run: npm run build && node tests/v129-character-creator.mjs && node tests/character-creator-browser.cjs && node tests/v144-contract-browser.cjs && node tests/v145-label-boss-browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -29,4 +29,6 @@ jobs:
             ENCORE/encore-contract-signature.png
             ENCORE/contract-signature-failure.png
             ENCORE/contract-signature-failure.txt
+            ENCORE/label-boss-browser-failure.txt
+            ENCORE/label-boss-browser-failure.png
           if-no-files-found: ignore
