@@ -1,20 +1,23 @@
-# FINAL CUT v0.3 — Cloudflare Workers (separate from ENCORE)
+# FINAL CUT — Entertainment Empire Simulator
+Version 0.4.0 — Acting Career Expansion
 
-The standalone game is at `FINAL-CUT/public/index.html`. Cloudflare Workers static assets configuration is `FINAL-CUT/wrangler.jsonc`, with Worker name `final-cut-entertainment`.
+This is an original playable browser game. The published release is self-contained at `FINAL-CUT/public/index.html`; it keeps the existing `finalcut.save.v3` browser save key so users retain earlier career progress.
 
-## Git-connected Cloudflare Worker
+## v0.4 features
+- Casting-call self-tape preparation (12 energy; one per week), and fictional applicants competing for roles
+- Natural/Bold/Precise callback choices; competition and studio trust influence selection
+- A new contractual counteroffer for extra residual periods, subject to negotiation risk
+- Filming choices: support crew, focus with director, or attempt risky improvisation
+- Occasional limited production delays and career-long studio relationship memory
+- Strong contacts may recommend you for new auditions
+- New Industry Relationships screen, compact navigation, existing dark palette and white rows
+- Existing film investment, studio production, TV renewals, finances, guild system and sandbox mode retained
 
-Use the existing GitHub repository `tysheffield2-ctrl/bug-free-couscous`, but set up a **new Worker project** named `final-cut-entertainment`.
+## Deployment
+Cloudflare Worker name: `final-cut-entertainment`.
+GitHub repository: `tysheffield2-ctrl/bug-free-couscous`, production branch `main`.
+Build command: blank. Deploy command: `npx wrangler deploy --config FINAL-CUT/wrangler.jsonc`.
+The Worker static assets point to `FINAL-CUT/public`, so ENCORE files are not served from this Worker.
 
-For the Worker setup screen:
-- Project name: `final-cut-entertainment`
-- Build command: leave blank (no compilation required)
-- Deploy command: `npx wrangler deploy --config FINAL-CUT/wrangler.jsonc`
-- Preview command: `npx wrangler preview --config FINAL-CUT/wrangler.jsonc`
-- Preview builds: leave disabled until production deployment works
-
-CRITICAL: Set this Worker's production branch to `final-cut-cloudflare` in **Settings → Build → Branch control**. Cloudflare may initially default to the GitHub repository's `main` branch; that does not contain the FINAL CUT Worker config and cannot deploy FINAL CUT. After changing the production branch, run the deployment from the new branch (for example by committing a safe documentation update). Do not deploy FINAL CUT's Worker as ENCORE or change ENCORE's existing Worker project.
-
-The two games have separate Cloudflare Worker names and independent deployment branches. This branch contains copies of ENCORE from main because it is a Git branch, but the FINAL CUT deploy command points only to `FINAL-CUT/wrangler.jsonc`.
-
-Game saves persist in local storage per domain. Export a backup before changing game domains.
+## Save and testing
+Keep browser-local saves and export a backup before changing devices. v0.2 and v0.3 save migration remains intact. Regression coverage: core engine + v0.3 career + v0.4 career, and iPhone viewport smoke tests at 320, 375, 390 and 430 CSS pixels. Game figures and union requirements are fictional and intentionally simplified.
