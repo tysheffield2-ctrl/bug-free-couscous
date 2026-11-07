@@ -100,3 +100,16 @@ body.core-ui .core-chart-history strong{font-size:13px}
 html[data-theme=dark] body.core-ui .core-chart-switch button{background:#24373e;color:#e6f2ed;border-color:#465d62}
 html[data-theme=dark] body.core-ui .core-chart-switch button[aria-pressed=true]{background:#37795b;color:#fff;border-color:#37795b}
 html[data-theme=dark] body.core-ui .core-chart-history,html[data-theme=dark] body.core-ui .core-chart-history p{border-color:#405157}
+
+/* Compact growth screens share the established white-row aesthetic. */
+body.core-ui .core-growth-feed{border-top:1px solid #d8dfdf;margin:10px 0 18px}
+body.core-ui .core-growth-feed>p{padding:11px 2px;margin:0;border-bottom:1px solid #d8dfdf;font-size:13px}
+body.core-ui .core-growth-feed strong,body.core-ui .core-growth-feed span{display:block;overflow-wrap:anywhere}
+body.core-ui .core-growth-feed span{font-size:12px;margin-top:3px;color:#59676d}
+body.core-ui .core-growth-active{padding:12px;border:1px solid #d8dfdf;border-radius:10px;background:#fff;margin:12px 0}
+body.core-ui .core-growth-active p{margin:5px 0}
+body.core-ui .core-form textarea{width:100%;min-width:0;min-height:110px;resize:vertical;border:1px solid #bdcbc3;border-radius:6px;padding:10px;background:#fff;color:#17242a;font-size:16px;font-family:inherit}
+html[data-theme=dark] body.core-ui .core-growth-feed,html[data-theme=dark] body.core-ui .core-growth-feed>p{border-color:#45585f}
+html[data-theme=dark] body.core-ui .core-growth-feed span{color:#bac8c7!important}
+html[data-theme=dark] body.core-ui .core-growth-active{background:#22323a;border-color:#45585f}
+html[data-theme=dark] body.core-ui .core-form textarea{background:#22323a;color:#eef3f2;border-color:#52656c;color-scheme:dark}
