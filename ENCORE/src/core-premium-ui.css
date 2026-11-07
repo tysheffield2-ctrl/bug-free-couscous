@@ -244,3 +244,47 @@ html[data-theme=dark] body.core-ui .core-recent p{border-color:rgba(235,217,255,
  body.core-ui button.core-row .core-row-badge{font-size:8px;max-width:58px}
 }
 @media(prefers-reduced-motion:reduce){body.core-ui button.core-row:active{transform:none}}
+
+/* Final specificity boundary: legacy core CSS deliberately had #app overrides.
+ * Premium owns outer surfaces; internal white cards retain their dark ink. */
+body.core-ui #app.core-app .core-header{
+ display:block!important;position:relative!important;isolation:isolate!important;
+ background:radial-gradient(ellipse 75% 120% at 95% -10%,rgba(55,151,104,.35),transparent 76%),
+ linear-gradient(145deg,#123c2d 0%,#092b23 64%,#082d24 100%)!important;
+ padding:15px 14px 10px!important;padding-top:max(14px,env(safe-area-inset-top))!important;
+ color:#f6fff8!important
+}
+html[data-theme=dark] body.core-ui #app.core-app .core-header{
+ background:radial-gradient(ellipse 75% 120% at 95% -10%,rgba(131,92,200,.38),transparent 76%),
+ linear-gradient(145deg,#201e4d 0%,#151b38 66%,#171b40 100%)!important
+}
+body.core-ui #app .core-content .core-home-heading h2,
+body.core-ui #app .core-content .core-home-heading span{
+ color:#eafbef!important;text-shadow:none!important
+}
+body.core-ui #app .core-content .core-home-heading span{color:#b6e2c4!important}
+html[data-theme=dark] body.core-ui #app .core-content .core-home-heading span{color:#dbc9ff!important}
+body.core-ui #app .core-content >:is(h1,h2,h3,h4,p,.core-note),
+body.core-ui #app .core-content .core-summary :is(h1,h2,h3,h4,p,span),
+body.core-ui #app .core-content .core-recent :is(h2,p,small),
+body.core-ui #app .core-content .core-growth-feed :is(p,span,strong),
+body.core-ui #app .core-content .core-chart-history :is(p,span,strong){
+ color:#eaf8f1!important
+}
+body.core-ui #app .core-content .core-summary>span,
+body.core-ui #app .core-content >.core-note,
+body.core-ui #app .core-content .core-growth-feed span{color:#c3ddcf!important}
+body.core-ui #app .core-content .core-form label,
+body.core-ui #app .core-content .core-label{color:#effaf2!important}
+body.core-ui #app .core-content .core-form label.core-track-choice,
+body.core-ui #app .core-content .core-growth-active :is(h1,h2,h3,h4,p,span,strong,small),
+body.core-ui #app .core-content .profile-facts :is(h1,h2,h3,h4,p,span,strong,small,dt,dd){
+ color:#1d3027!important
+}
+html[data-theme=dark] body.core-ui #app .core-content .core-growth-active :is(h1,h2,h3,h4,p,span,strong,small),
+html[data-theme=dark] body.core-ui #app .core-content .profile-facts :is(h1,h2,h3,h4,p,span,strong,small,dt,dd){
+ color:#eaf4f0!important
+}
+body.core-ui #app .core-content .core-quick button small{color:#cfebd8!important}
+body.core-ui #app .core-content .core-row-badge{color:#235039!important}
+body.core-ui #app .core-content .core-pagebar :is(h1,h2,span){color:#fff!important}
