@@ -113,6 +113,65 @@ assert.equal(h.run('s.world[0].relation'),beforeDecline-1,'failed negotiations a
 assert.equal(h.run('s.cash'),beforeDeclineCash,'refusal never pays an upfront fee');
 assert.equal(h.run('s.draft.features.length'),0,'declined deal does not grant a feature');
 
+
+// Separate composition and master credits must never overcommit new agreements.
+h.run(`
+ s.studioIdea=ensureStudioIdeaSchema({title:'Fictional Royalty Session'});
+ s.studioIdea.credits=[];
+ s.draft={id:880,title:'Fictional Royalty Session',features:[],credits:[],development:s.development};
+ s.fans=1e10;s.reputation=100;s.energy=200;s.cash=1000000;
+ s.world[0].relation=90;s.world[1].relation=90;s.world[2].relation=90;
+ $('v125-credit-fee').value='0';$('v125-credit-share').value='25';$('v125-credit-name').checked=true;
+ Math.random=()=>0;
+`);
+assert.equal(h.run("V125_sendCreditOffer('producer',0)"),true,'producer can agree to 25 master points');
+assert.equal(h.run('V125_idea().credits.length'),1);
+assert.equal(h.run('V125_idea().credits[0].share'),25);
+assert.equal(h.run('V125_masterCommitment(s.draft,V125_idea().credits)'),.25);
+assert.equal(h.run('s.world[0].relation'),93,'accepted credit improves persistent artist chemistry');
+const paidCash=h.run('s.cash'),paidEnergy=h.run('s.energy');
+assert.equal(h.run("V125_sendCreditOffer('producer',0)"),false,'same contributor cannot sign twice in the same role');
+assert.equal(h.run('s.energy'),paidEnergy,'duplicate offer must not consume energy');
+assert.equal(h.run('s.cash'),paidCash,'duplicate offer must not create charges');
+h.run(`s.draft.features=[{id:11,name:'Fictional Guest',royaltyRate:.5}];$('v125-credit-share').value='20'`);
+assert.equal(h.run("V125_sendCreditOffer('producer',1)"),false,'master producer points must share cap with booked features');
+assert.equal(h.run('V092_featureSplitFits(s.draft,.15)'),true,'15% more fits 90% including producer points');
+assert.equal(h.run('V092_featureSplitFits(s.draft,.20)'),false,'20% more would exceed 90% master rights');
+assert.equal(h.run('V125_idea().credits.length'),1);
+h.run(`s.draft.features=[];s.studioIdea.credits=[{id:10,name:'Fictional Writer',role:'writer',share:95,agreement:'accepted',credited:true}];$('v125-credit-share').value='10'`);
+assert.equal(h.run("V125_sendCreditOffer('composer',2)"),false,'composition ownership cannot exceed 100%');
+h.run(`$('v125-credit-share').value='5'`);
+assert.equal(h.run("V125_sendCreditOffer('composer',2)"),true,'composition ownership may reach exactly 100%');
+assert.equal(h.run('V125_compUsed()'),100);
+h.run(`$('v125-credit-share').value='Infinity'`);
+assert.equal(h.run("V125_sendCreditOffer('writer',1)"),false,'non-finite composition shares rejected');
+h.run(`$('v125-credit-share').value='5.1'`);
+assert.equal(h.run("V125_sendCreditOffer('writer',1)"),false,'unsupported share precision rejected');
+h.run(`$('v125-credit-share').value='5';$('v125-credit-fee').value='-1'`);
+assert.equal(h.run("V125_sendCreditOffer('writer',1)"),false,'negative fee rejected');
+assert.equal(h.run('V125_idea().credits.length'),2);
+
+h.run(`
+ s.songs=[
+  {id:900,title:'Fictional Paid Master',released:1,streams:1000,credits:[
+   {id:0,role:'writer',share:10,agreement:'accepted'},
+   {id:1,role:'composer',share:10,agreement:'accepted'},
+   {id:2,role:'producer',share:5,agreement:'accepted'},
+   {id:3,role:'writer',share:10,agreement:'unauthorized'}
+  ]},
+  {id:901,title:'Fictional Unreleased',released:0,streams:2000,credits:[{id:4,role:'writer',share:50,agreement:'accepted'}]}
+ ];
+`);
+const royalty=h.run('V125_creditRoyaltyBreakdown()');
+assert.equal(royalty.composition,100,'writer and composer split their 20% composition share');
+assert.equal(royalty.producer,25,'producer 5% share is separately attributed to master');
+assert.equal(royalty.total,125,'unreleased and unauthorized credits generate no paid royalties');
+assert.equal(h.run('V125_creditRoyaltyExpense()'),125,'finance charge uses the same single breakdown');
+h.run("s.songs[0].streams=0");
+assert.equal(h.run('V125_creditRoyaltyExpense()'),0,'zero streams do not incur royalties');
+h.run("s.songs[0].streams=NaN");
+assert.equal(h.run('V125_creditRoyaltyExpense()'),0,'invalid saved stream counts do not incur royalties');
+
 const js=fs.readFileSync(new URL('../src/v125-collaboration-splits.js',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/v125-collaboration-splits.css',import.meta.url),'utf8');
 const build=fs.readFileSync(new URL('../build.mjs',import.meta.url),'utf8');
