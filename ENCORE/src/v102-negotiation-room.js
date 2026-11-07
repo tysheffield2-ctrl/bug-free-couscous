@@ -23,7 +23,7 @@ function V102_useCounter(id){
  if(!offer||n.status!=='active')return false;
  // Applying a counteroffer edits only the form. It does not sign, spend, or
  // consume another negotiation round until the player presents it.
- return V102_renderNegotiation(id,{...offer})
+ return V102_renderNegotiation(id,{...offer,rights:globalThis.V102_activeNegotiation?.terms?.rights})
 }
 function V102_submitRosterOffer(e,id){
  e.preventDefault();
@@ -39,7 +39,7 @@ function V102_submitRosterOffer(e,id){
    V102_closeNegotiation();render();toast(a.name+' ended negotiations. Trust will take time to rebuild.');return false
   }
   if(result.status==='accepted'){
-   pendingRosterOffer={...result.terms,artist:Number(id),buyout:npcBuyout(id)};
+   pendingRosterOffer={...result.terms,rights:t.rights,artist:Number(id),buyout:npcBuyout(id)};
    const shell=document.querySelector?.('#v102-negotiation-shell');
    if(shell)shell.classList.add('negotiation-to-contract');
    setTimeout(()=>{V102_clearNegotiationState();shell?.remove?.();V101_openRosterContract()},260);
