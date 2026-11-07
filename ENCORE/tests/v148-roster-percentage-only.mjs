@@ -5,7 +5,7 @@ import {harness} from './harness.mjs';
 const h=harness('/sandbox',148011);
 await h.run('boot()');
 h.c.document.documentElement.classList={add(){},remove(){}};
-h.run("s.started=true;s.cash=1000000;s.energy=200;foundLabel({preventDefault(){},target:{name:'Fictional Cassette Records'}})");
+h.run("s.started=true;s.cash=1000000;s.energy=200;s.reputation=100;s.world[23].relation=50;foundLabel({preventDefault(){},target:{name:'Fictional Cassette Records'}})");
 for(const type of ['record','distribution','360']){
  assert.equal(h.run("V102_renderNegotiation(23,{type:'"+type+"',share:.1,weeks:26,advance:20000})"),true);
  const markup=h.bodyChildren.at(-1).innerHTML;
