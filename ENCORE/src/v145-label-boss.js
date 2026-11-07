@@ -29,8 +29,8 @@ function V145_staff(role){
 }
 function V145_candidate(role,index=0){
  if(!V145_ROLES[role]||!Number.isInteger(index)||index<0||index>2)return null;
- const seed=String(role).split('').reduce((n,c)=>n+c.charCodeAt(0),0)+(s.labelBusiness?.company?.started||1);
- return {id:role+'-'+index,name:V145_NAMES[(seed+index*3)%V145_NAMES.length],role,skill:48+index*14,fee:[0,1500,4000][index],salary:V145_ROLES[role].salary};
+ const roleIndex=Object.keys(V145_ROLES).indexOf(role),offset=(s.labelBusiness?.company?.started||1)%V145_NAMES.length;
+ return {id:role+'-'+index,name:V145_NAMES[(roleIndex*3+index+offset)%V145_NAMES.length],role,skill:48+index*14,fee:[0,1500,4000][index],salary:V145_ROLES[role].salary};
 }
 function V145_extras(){const b=V145_read();return b?['development','producer'].reduce((n,k)=>n+(b.team?.[k]?V145_ROLES[k].salary:0),0):0}
 function V145_payroll(){return labelPayroll()+V145_extras()}
