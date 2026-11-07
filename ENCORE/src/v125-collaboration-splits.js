@@ -74,15 +74,59 @@ newSong=function(e){
    to the existing quick structures. */
 const V125_studioGuestBase=studioGuest;
 studioGuest=function(id){
- const a=s.world?.[id],d=s.draft;if(!a||!d||guestList(d).some(g=>g.id===id)||guestList(d).length>=6)return;const t=V092_outgoingFeatureTerms(a);
+ const a=s.world?.[id],d=s.draft;if(!a||!d||guestList(d).some(g=>Number(g.id)===Number(id))||guestList(d).length>=6)return;const t=V092_outgoingFeatureTerms(a);
  modal(`${personPhoto('artist-'+(a.directoryKey??a.id),a.name,true)}<span class="eyebrow">FEATURE NEGOTIATION</span><h2>${esc(a.name)}</h2><p>Use a quick structure or type the exact fee and master royalty split you want. A $0 deal is valid if they agree.</p><div class="feature-deal-grid"><button class="feature-deal" onclick="V092_bookFeatureDeal(${id},'cash')"><strong>Cash</strong><span>${money(t.cash.upfront)}</span><small>No backend</small></button><button class="feature-deal" onclick="V092_bookFeatureDeal(${id},'hybrid')"><strong>Hybrid</strong><span>${money(t.hybrid.upfront)} + ${(t.hybrid.rate*100).toFixed(1)}%</span><small>Fee + split</small></button><button class="feature-deal" onclick="V092_bookFeatureDeal(${id},'royalty')"><strong>Royalty</strong><span>${(t.royalty.rate*100).toFixed(0)}%</span><small>No upfront</small></button></div><section class="v125-custom-feature"><h3>Custom feature terms</h3><div class="v125-term-grid"><label>Upfront fee ($)<input id="v125-feature-fee" type="number" min="0" step="1" value="${t.hybrid.upfront}"></label><label>Artist royalty split (%)<input id="v125-feature-share" type="number" min="0" max="50" step="0.5" value="${(t.hybrid.rate*100).toFixed(1)}"></label></div><label class="v125-check"><input id="v125-feature-credit" type="checkbox" checked> Credit ${esc(a.name)} on the release</label><button class="primary" onclick="V125_offerFeature(${id})">Send custom offer</button></section>${featureRequirements(a)}`)
 };
-function V125_offerFeature(id){
- const a=s.world?.[id],d=s.draft;if(!a||!d)return;const fee=Math.max(0,Math.round(Number($('v125-feature-fee')?.value)||0)),rate=clamp((Number($('v125-feature-share')?.value)||0)/100,0,.5),credited=!!$('v125-feature-credit')?.checked,t=V092_outgoingFeatureTerms(a),feeScore=t.fee?fee/t.fee:(fee===0?1:1.2),shareScore=rate/.15,chance=clamp(t.cash.chance*.35+Math.min(1.5,feeScore)*.28+Math.min(1.5,shareScore)*.24+(a.relation||0)/260,.03,.98);
- if((Number(s.cash)||0)<fee){toast('You do not have enough cash for that offer.');return}if(!spend(5))return;if(Math.random()>chance){modal(`<span class="eyebrow">FEATURE OFFER DECLINED</span><h2>${esc(a.name)} did not clear the feature.</h2><p>Revise the deal or deliberately use the unapproved contribution. Releasing an uncleared or uncredited feature creates a song-specific legal risk.</p><div class="controls"><button class="secondary" onclick="studioGuest(${id})">Revise offer</button><button class="danger" onclick="V125_useFeatureWithoutClearance(${id},${credited})">Use it anyway</button></div>`);return}
- if(fee){changeCash(-fee);s.finance.week.expenses=cents((Number(s.finance.week.expenses)||0)+fee);moneyEvent(a.name+' feature fee',-fee)}d.features=[...guestList(d),{id:a.id,name:a.name,fans:a.fans,fee,dealType:'custom',royaltyRate:rate,agreement:'accepted',credited,usualShare:.15,usualFee:t.fee}];d.feature=d.features[0];a.relation=clamp((a.relation||0)+5,-100,100);$('modal').close();queueSave();render();toast(a.name+' accepted the custom feature terms.')
+function V125_featureSlotAvailable(id,requireAccess=true){
+ const a=s.world?.[id],d=s.draft;if(!a||!d)return false;
+ if(guestList(d).length>=6||guestList(d).some(g=>Number(g.id)===Number(id)))return false;
+ return !requireAccess||accessible(a)
 }
-function V125_useFeatureWithoutClearance(id,credited=false){const a=s.world?.[id],d=s.draft;if(!a||!d)return;const t=V092_outgoingFeatureTerms(a);d.features=[...guestList(d),{id:a.id,name:a.name,fans:a.fans,fee:0,dealType:'unauthorized',royaltyRate:0,agreement:'unauthorized',credited:!!credited,usualShare:.15,usualFee:t.fee}];d.feature=d.features[0];$('modal').close();queueSave();render();toast('Unapproved feature attached. Releasing it can trigger a rights dispute.')}
+function V125_offerFeature(id){
+ if(!V125_featureSlotAvailable(id))return false;
+ const a=s.world[id],d=s.draft;
+ const feeRaw=$('v125-feature-fee')?.value,shareRaw=$('v125-feature-share')?.value;
+ const fee=Number(feeRaw),percent=Number(shareRaw),credited=!!$('v125-feature-credit')?.checked;
+ // Reject invalid values; silently clamping a deal changes what the player agreed to.
+ if(feeRaw==null||String(feeRaw).trim()===''||!Number.isSafeInteger(fee)||fee<0||
+    shareRaw==null||String(shareRaw).trim()===''||!Number.isFinite(percent)||
+    percent<0||percent>50||Math.abs(percent*2-Math.round(percent*2))>1e-8){
+  toast('Enter a non-negative whole-dollar fee and a 0–50% split in 0.5% steps.');
+  return false
+ }
+ const rate=percent/100;
+ if(!V092_featureSplitFits(d,rate)){
+  toast('This deal exceeds the song’s 90% combined feature royalty limit. Lower the percentage.');
+  return false
+ }
+ const t=V092_outgoingFeatureTerms(a);
+ if((Number(s.cash)||0)<fee){toast('You do not have enough cash for that offer.');return false}
+ if(!spend(5))return false;
+ const feeScore=t.fee?fee/t.fee:(fee===0?1:1.2),shareScore=rate/.15;
+ const chance=clamp(t.cash.chance*.35+Math.min(1.5,feeScore)*.28+Math.min(1.5,shareScore)*.24+(a.relation||0)/260,.03,.98);
+ if(Math.random()>chance){
+  // The relationship feeds directly back into the existing quote / acceptance engine.
+  a.relation=clamp((Number(a.relation)||0)-1,-100,100);
+  queueSave?.();
+  modal(`<span class="eyebrow">FEATURE OFFER DECLINED</span><h2>${esc(a.name)} did not clear the feature.</h2><p>Revise the deal or deliberately use the unapproved contribution. Releasing an uncleared or uncredited feature creates a song-specific legal risk.</p><div class="controls"><button class="secondary" onclick="studioGuest(${id})">Revise offer</button><button class="danger" onclick="V125_useFeatureWithoutClearance(${id},${credited})">Use it anyway</button></div>`);
+  return false
+ }
+ if(fee){changeCash(-fee);s.finance.week.expenses=cents((Number(s.finance.week.expenses)||0)+fee);moneyEvent(a.name+' feature fee',-fee)}
+ d.features=[...guestList(d),{id:a.id,name:a.name,fans:a.fans,fee,dealType:'custom',royaltyRate:rate,agreement:'accepted',credited,usualShare:.15,usualFee:t.fee}];
+ d.feature=d.features[0];
+ a.relation=clamp((Number(a.relation)||0)+5,-100,100);
+ $('modal').close();queueSave();render();toast(a.name+' accepted the custom feature terms.');
+ return true
+}
+function V125_useFeatureWithoutClearance(id,credited=false){
+ // Unauthorized work still creates real rights-chain risk, but cannot silently
+ // bypass song capacity or book the same artist twice.
+ if(!V125_featureSlotAvailable(id,false))return false;
+ const a=s.world[id],d=s.draft,t=V092_outgoingFeatureTerms(a);
+ d.features=[...guestList(d),{id:a.id,name:a.name,fans:a.fans,fee:0,dealType:'unauthorized',royaltyRate:0,agreement:'unauthorized',credited:!!credited,usualShare:.15,usualFee:t.fee}];
+ d.feature=d.features[0];$('modal').close();queueSave();render();toast('Unapproved feature attached. Releasing it can trigger a rights dispute.');
+ return true
+}
 
 function V125_risky(track){
  const credits=V125_credits(track).map(x=>({song:track,credit:x,role:x.role,kind:x.role==='producer'?'producer':'credit'})),features=guestList(track).filter(x=>x.agreement==='unauthorized'||x.credited===false).map(x=>({song:track,credit:x,role:'feature',kind:'credit'}));
