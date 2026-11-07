@@ -48,4 +48,37 @@ h.run(`modal('<h2>First</h2>');modal('<h2>Second</h2>');EUI.dialogBack()`);asser
 // Appearance is a routed screen with explicit save/discard, never an extra overlay.
 h.run(`go('ArtistFile');V129_open();V129_draft.skin=4;EUI.saveAppearance()`);assert.equal(h.run('s.appearance.skin'),4);assert.equal(h.run('tab'),'ArtistFile');
 const exported=h.run('JSON.stringify(saveBundle())');h.run(`validateBundle(JSON.parse(${JSON.stringify(exported)}))`);
+
+// Restored Charts uses only saved issues: no speculative rankings or new save fields.
+h.run('s.chartBook.issuedWeek=null;go("Charts")');
+assert.match(h.elements.app.innerHTML,/No chart issue published yet/);
+assert.equal(h.elements.modal.open,false,'opening Charts must not create a modal');
+const ownSongId=Number(h.run('s.songs[0].id'));
+const ownAlbumId=Number(h.run('s.albums[0].id'));
+const aiEntries=Array.from({length:21},(_,i)=>({key:'npc:s:'+i,id:i,title:'Fiction Track '+i,artist:'Fictional Artist '+i,you:false,rank:i+2,last:i+3,peak:i+2,weeks:2,streams:390000-i*1000,movement:'UP'}));
+const chartBook={version:1,sinceWeek:1,issuedWeek:7,songs:{current:[{key:'you:s:'+ownSongId,id:ownSongId,title:'Afterglow',artist:'Fictional Player',you:true,rank:1,last:4,peak:1,weeks:3,streams:600000,movement:'UP'},...aiEntries],previous:[],records:{}},albums:{current:[{key:'you:a:'+ownAlbumId,id:ownAlbumId,title:'Late Light',artist:'Fictional Player',you:true,rank:5,last:null,peak:5,weeks:1,units:10000,movement:'NEW'}],previous:[],records:{}}};
+for(const kind of ['songs','albums'])for(const row of chartBook[kind].current)chartBook[kind].records[row.key]={title:row.title,artist:row.artist,you:row.you,id:row.id,peak:row.peak,weeks:row.weeks,partial:false,debutRank:row.rank,debutWeek:7,numberOneWeeks:0,history:[{week:7,rank:row.rank}]};
+h.run('s.chartBook='+JSON.stringify(chartBook)+';render()');
+assert.match(h.elements.app.innerHTML,/Global Top 100/);
+assert.match(h.elements.app.innerHTML,/#1 Afterglow/);
+assert.match(h.elements.app.innerHTML,/↑ 3/);
+assert.match(h.elements.app.innerHTML,/1 \/ 2/,'charts show only 20 entries per page');
+assert.doesNotMatch(h.elements.app.innerHTML,/Fiction Track 20/,'later pages are not rendered unnecessarily');
+h.run('EUI.chartPage=1;render()');
+assert.match(h.elements.app.innerHTML,/Fiction Track 20/);
+h.run('EUI.myCharts=true;EUI.chartPage=0;render()');
+assert.match(h.elements.app.innerHTML,/#1 Afterglow/);
+assert.doesNotMatch(h.elements.app.innerHTML,/Fiction Track 0/);
+h.run('EUI.myCharts=false;EUI.openChartEntry(0)');
+assert.equal(h.run('tab'),'ChartDetail');
+assert.match(h.elements.app.innerHTML,/Recorded chart path/);
+assert.match(h.elements.app.innerHTML,/Open song/);
+assert.equal(h.elements.modal.open,false,'chart details must use a routed screen');
+h.run('EUI.back()');
+assert.equal(h.run('tab'),'Charts');
+h.run("EUI.chooseChart('albums')");
+assert.match(h.elements.app.innerHTML,/Global Albums 50/);
+assert.match(h.elements.app.innerHTML,/Late Light/);
+h.run('go("Songs")');
+assert.equal(h.run('s.chartBook.songs.current.length'),22,'chart navigation does not change simulation results');
 console.log('PASS focused UI: all routes, draft continuity, feature booking, release, ordered album persistence, tour settlement, save round-trip, modal back/close, appearance and sandbox isolation.');
