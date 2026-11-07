@@ -21,7 +21,23 @@ function V125_terms(a,role){
  share=clamp(Math.round(share*2)/2,role==='producer'?1:5,spec.max);
  return {fee,share,rel,leverage}
 }
-function V125_compUsed(list=V125_idea().credits){return list.filter(x=>['writer','composer'].includes(x.role)).reduce((n,x)=>n+(Number(x.share)||0),0)}
+function V125_compUsed(list=V125_idea().credits){return list.filter(x=>['writer','composer'].includes(x.role)&&x.agreement==='accepted').reduce((n,x)=>n+(Number(x.share)||0),0)}
+/* Composition is a separate 100% rights pool. Producer points participate in
+   the master alongside guests and must fit the same shared 90% ceiling.
+   A legacy signed song is never rewritten; these checks apply to new offers. */
+function V125_masterCommitment(track,credits=V125_credits(track)){
+ const producers=credits.filter(x=>x?.role==='producer'&&x.agreement==='accepted')
+  .reduce((sum,x)=>sum+Math.max(0,Number(x.share)||0)/100,0);
+ return V092_featureSplitTotal(track)+producers
+}
+function V125_creditOfferAllowed(role,id,fee,share){
+ const spec=V125_ROLES[role],idea=V125_idea(),list=idea.credits;
+ if(!spec||!Number.isSafeInteger(fee)||fee<0||!Number.isFinite(share)||share<0||
+   share>spec.max||Math.abs(share*2-Math.round(share*2))>1e-8)return false;
+ if(list.some(x=>x.role===role&&Number(x.id)===Number(id)))return false;
+ if(['writer','composer'].includes(role))return V125_compUsed(list)+share<=100+1e-9;
+ return V125_masterCommitment(s.draft||idea,list)+share/100<=V092_FEATURE_MAX_SPLIT+1e-9
+}
 function V125_acceptChance(a,role,fee,share){
  const t=V125_terms(a,role),cash=t.fee?fee/t.fee:(fee===0?1:1.4),split=t.share?share/t.share:1,rel=(Number(a?.relation)||0)/220,lev=clamp(t.leverage,-2,2)*.08;
  let p=.12+Math.min(1.5,cash)*.24+Math.min(1.5,split)*.38+rel+lev;
@@ -42,13 +58,38 @@ function V125_openCreditTerms(role,id,fee=null,share=null,credited=true){
  modal(`${personPhoto('artist-'+(a.directoryKey??a.id),a.name,true)}<span class="eyebrow">${esc(spec.name.toUpperCase())} AGREEMENT</span><h2>${esc(a.name)}</h2><p>The numbers below are their usual terms for this session. Edit either field and send a custom offer.</p>${profileRows([['Usual upfront',money(t.fee)],['Usual '+(role==='producer'?'producer points':'composition split'),t.share+'%'],['Relationship',String(Math.round(a.relation||0))],['Career leverage',t.leverage>=.35?'You have more leverage':t.leverage<=-.35?'They have more leverage':'Similar leverage']])}<div class="v125-term-grid"><label>Upfront fee ($)<input id="v125-credit-fee" type="number" min="0" step="1" value="${Math.max(0,Number(f)||0)}"></label><label>${role==='producer'?'Producer royalty points (%)':'Composition ownership (%)'}<input id="v125-credit-share" type="number" min="0" max="${spec.max}" step="0.5" value="${Math.max(0,Number(p)||0)}"></label></div><label class="v125-check"><input id="v125-credit-name" type="checkbox" ${credited?'checked':''}> Give ${esc(a.name)} an on-record credit</label><p class="fine">A free contribution can be legitimate. What matters is whether both sides agreed to the $0 / 0% terms. Removing credit after they contributed creates separate risk.</p><div class="controls"><button class="secondary" onclick="V125_openCreditPicker('${role}')">Back</button><button class="primary" onclick="V125_sendCreditOffer('${role}',${id})">Send offer</button></div>`)
 }
 function V125_sendCreditOffer(role,id){
- const a=s.world?.[id],spec=V125_ROLES[role];if(!a||!spec)return;const fee=Math.max(0,Math.round(Number($('v125-credit-fee')?.value)||0)),share=Math.max(0,Number($('v125-credit-share')?.value)||0),credited=!!$('v125-credit-name')?.checked;if(share>spec.max){toast('That split is above this role’s allowed range.');return}
- if(['writer','composer'].includes(role)&&V125_compUsed()+share>100){toast('Writing/composition ownership cannot exceed 100%.');return}
- const t=V125_terms(a,role),chance=V125_acceptChance(a,role,fee,share);if(Math.random()<=chance){V125_attachCredit(a,role,{fee,share,credited,agreement:'accepted',usualFee:t.fee,usualShare:t.share});$('modal').close();render();toast(a.name+' agreed to the '+spec.name.toLowerCase()+' terms.');return}
- modal(`${personPhoto('artist-'+(a.directoryKey??a.id),a.name,true)}<span class="eyebrow">OFFER DECLINED</span><h2>${esc(a.name)} did not approve those terms.</h2><p>You can revise the offer—or deliberately use the contribution without an agreement. Doing that is recorded as a rights-chain violation and can become a lawsuit after release.</p><div class="controls"><button class="secondary" onclick="V125_openCreditTerms('${role}',${id},${fee},${share},${credited})">Revise offer</button><button class="danger" onclick="V125_useWithoutAgreement('${role}',${id},${fee},${share},${credited})">Use it anyway</button></div>`)
+ const a=s.world?.[id],spec=V125_ROLES[role];if(!a||!spec)return false;
+ const feeRaw=$('v125-credit-fee')?.value,shareRaw=$('v125-credit-share')?.value;
+ const fee=Number(feeRaw),share=Number(shareRaw),credited=!!$('v125-credit-name')?.checked;
+ if(feeRaw==null||String(feeRaw).trim()===''||shareRaw==null||String(shareRaw).trim()===''||
+    !V125_creditOfferAllowed(role,id,fee,share)){
+  toast('Check the fee and split. Credit offers must be unique, use 0.5% steps, and fit the composition or shared master pool.');
+  return false
+ }
+ const t=V125_terms(a,role),chance=V125_acceptChance(a,role,fee,share);
+ if(Math.random()<=chance){
+  V125_attachCredit(a,role,{fee,share,credited,agreement:'accepted',usualFee:t.fee,usualShare:t.share});
+  a.relation=clamp((Number(a.relation)||0)+3,-100,100);
+  queueSave?.();$('modal').close();render();
+  toast(a.name+' agreed to the '+spec.name.toLowerCase()+' terms.');
+  return true
+ }
+ a.relation=clamp((Number(a.relation)||0)-1,-100,100);
+ queueSave?.();
+ modal(`${personPhoto('artist-'+(a.directoryKey??a.id),a.name,true)}<span class="eyebrow">OFFER DECLINED</span><h2>${esc(a.name)} did not approve those terms.</h2><p>You can revise the offer—or deliberately use the contribution without an agreement. Doing that is recorded as a rights-chain violation and can become a lawsuit after release.</p><div class="controls"><button class="secondary" onclick="V125_openCreditTerms('${role}',${id},${fee},${share},${credited})">Revise offer</button><button class="danger" onclick="V125_useWithoutAgreement('${role}',${id},${fee},${share},${credited})">Use it anyway</button></div>`);
+ return false
 }
 function V125_attachCredit(a,role,x){const i=V125_idea();i.credits.push({id:a.id,name:a.name,role,fee:x.agreement==='accepted'?x.fee:0,share:x.agreement==='accepted'?x.share:0,offeredFee:x.fee,offeredShare:x.share,credited:!!x.credited,agreement:x.agreement,usualFee:x.usualFee,usualShare:x.usualShare,addedWeek:s.week});queueSave?.()}
-function V125_useWithoutAgreement(role,id,fee,share,credited){const a=s.world?.[id];if(!a)return;const t=V125_terms(a,role);V125_attachCredit(a,role,{fee:Number(fee)||0,share:Number(share)||0,credited:!!credited,agreement:'unauthorized',usualFee:t.fee,usualShare:t.share});$('modal').close();render();toast('Unapproved contribution attached. Legal risk will follow the release.')}
+function V125_useWithoutAgreement(role,id,fee,share,credited){
+ const a=s.world?.[id],list=V125_idea().credits;
+ if(!a||!V125_ROLES[role]||list.some(x=>x.role===role&&Number(x.id)===Number(id)))return false;
+ const t=V125_terms(a,role);
+ V125_attachCredit(a,role,{fee:Number(fee)||0,share:Number(share)||0,credited:!!credited,agreement:'unauthorized',usualFee:t.fee,usualShare:t.share});
+ a.relation=clamp((Number(a.relation)||0)-5,-100,100);
+ queueSave?.();$('modal').close();render();
+ toast('Unapproved contribution attached. Legal risk will follow the release.');
+ return true
+}
 function V125_removeCredit(index){const i=V125_idea();i.credits.splice(index,1);queueSave?.();render()}
 function V125_creditSummary(track){const list=V125_credits(track),used=list.filter(x=>['writer','composer'].includes(x.role)&&x.agreement==='accepted').reduce((n,x)=>n+(Number(x.share)||0),0),rows=list.map(x=>`<div class="v125-credit-row static"><span><b>${esc(x.name)}</b><small>${V125_ROLES[x.role]?.name||x.role} · ${x.agreement==='accepted'?'agreed':'UNAPPROVED'}${x.credited?' · credited':' · no credit'}</small></span><strong>${x.fee?money(x.fee)+' + ':''}${Number(x.share)||0}%</strong></div>`).join('');return `<section class="v125-session-credits"><header><span>RIGHTS & CREDITS</span><strong>${list.length?list.length+' outside contributor'+(list.length===1?'':'s'):'Self-contained record'}</strong></header>${list.length?rows:'<p>No outside writing, composition or production credits.</p>'}<footer><span>Your composition share</span><b>${Math.max(0,100-used)}%</b></footer></section>`}
 
@@ -141,9 +182,32 @@ releaseShelf=function(id,confirmed=false){const x=s.songs?.find(x=>String(x.id)=
 /* Accepted backend terms become real weekly expenses. Unauthorized contributors
    receive nothing automatically; that missing agreement/payment is part of the
    damages model if they later sue. */
-function V125_creditRoyaltyExpense(){let due=0;for(const song of s.songs||[]){if(!song.released||!song.streams)continue;for(const x of V125_credits(song)){if(x.agreement!=='accepted')continue;const rate=clamp((Number(x.share)||0)/100,0,1);if(rate)due+=(Number(song.streams)||0)*.50*rate}}return cents(due)}
+function V125_creditRoyaltyBreakdown(){
+ let composition=0,producer=0;
+ for(const song of s.songs||[]){
+  const streams=Number(song.streams);
+  if(!song.released||!Number.isFinite(streams)||streams<=0)continue;
+  let writers=0,points=0;
+  for(const x of V125_credits(song)){
+   if(x.agreement!=='accepted')continue;
+   const share=Number(x.share);
+   if(!Number.isFinite(share)||share<=0)continue;
+   if(x.role==='writer'||x.role==='composer')writers+=share/100;
+   else if(x.role==='producer')points+=share/100;
+  }
+  // The simulation currently prices a stream at $0.50. Keep the established
+  // contract basis for legacy saves; do not rewrite signed royalty rates.
+  // Calculate by rights pool, rounding at each song rather than per contributor.
+  const base=streams*.50;
+  composition+=cents(base*writers);
+  producer+=cents(base*points);
+ }
+ composition=cents(composition);producer=cents(producer);
+ return {composition,producer,total:cents(composition+producer)}
+}
+function V125_creditRoyaltyExpense(){return V125_creditRoyaltyBreakdown().total}
 const V125_closeFinancesBase=closeFinances;
-closeFinances=function(royalties,rate){const due=V125_creditRoyaltyExpense();if(due){changeCash(-due);s.finance.week.expenses=cents((Number(s.finance.week.expenses)||0)+due);moneyEvent('Songwriter / producer splits',-due)}const r=V125_closeFinancesBase(royalties,rate);r.collaboratorRoyalty=due;return r};
+closeFinances=function(royalties,rate){const breakdown=V125_creditRoyaltyBreakdown(),due=breakdown.total;if(due){changeCash(-due);s.finance.week.expenses=cents((Number(s.finance.week.expenses)||0)+due);moneyEvent('Songwriter / producer splits',-due)}const r=V125_closeFinancesBase(royalties,rate);r.collaboratorRoyalty=due;r.compositionRoyalty=breakdown.composition;r.producerRoyalty=breakdown.producer;return r};
 const V125_financeRowsBase=financeRows;
 financeRows=function(r,full=false){const a=r.collaboratorRoyalty?{...r,actionExpenses:Math.max(0,(Number(r.actionExpenses)||0)-r.collaboratorRoyalty)}:r,rows=V125_financeRowsBase(a,full);if(r.collaboratorRoyalty){const i=Math.max(0,rows.findIndex(x=>String(x[0]).startsWith('Career/action expenses')));rows.splice(i,0,['Songwriter / producer royalty splits','−'+money(r.collaboratorRoyalty)])}return rows};
 
