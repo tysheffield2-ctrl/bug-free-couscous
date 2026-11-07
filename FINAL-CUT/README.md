@@ -1,19 +1,20 @@
-# FINAL CUT — Entertainment Empire Simulator
+# FINAL CUT v0.3 — Cloudflare Workers (separate from ENCORE)
 
-This is the isolated FINAL CUT v0.3 playable browser game. It is hosted in its own GitHub branch to avoid changing ENCORE's production source or deployment.
+The standalone game is at `FINAL-CUT/public/index.html`. Cloudflare Workers static assets configuration is `FINAL-CUT/wrangler.jsonc`, with Worker name `final-cut-entertainment`.
 
-## Cloudflare Pages Git integration
+## Git-connected Cloudflare Worker
 
-In Cloudflare Dashboard → Workers & Pages → Create application → Pages → Connect to Git:
+Use the existing GitHub repository `tysheffield2-ctrl/bug-free-couscous`, but set up a **new Worker project** named `final-cut-entertainment`.
 
-- GitHub repository: `tysheffield2-ctrl/bug-free-couscous`
-- Project name: `final-cut-entertainment` (or any available unique name)
-- Production branch: `final-cut-cloudflare` (NOT `main`)
-- Framework preset: None
-- Root directory: `FINAL-CUT`
-- Build command: blank, or `exit 0`
-- Build output directory: `public`
+For the Worker setup screen:
+- Project name: `final-cut-entertainment`
+- Build command: leave blank (no compilation required)
+- Deploy command: `npx wrangler deploy --config FINAL-CUT/wrangler.jsonc`
+- Preview command: `npx wrangler preview --config FINAL-CUT/wrangler.jsonc`
+- Preview builds: leave disabled until production deployment works
 
-All game assets are in `FINAL-CUT/public/index.html` and do not require an external build. Once the user authorizes this new Pages project in Cloudflare, updates pushed to `final-cut-cloudflare` will deploy automatically. Browser saves persist in local storage per domain; export backups before moving domains.
+CRITICAL: Set this Worker's production branch to `final-cut-cloudflare` in **Settings → Build → Branch control**. Cloudflare may initially default to the GitHub repository's `main` branch; that does not contain the FINAL CUT Worker config and cannot deploy FINAL CUT. After changing the production branch, run the deployment from the new branch (for example by committing a safe documentation update). Do not deploy FINAL CUT's Worker as ENCORE or change ENCORE's existing Worker project.
 
-ENCORE remains in `main/ENCORE` and is not modified by this branch. Cloudflare connection and new Pages project creation still require the Cloudflare account owner's explicit action.
+The two games have separate Cloudflare Worker names and independent deployment branches. This branch contains copies of ENCORE from main because it is a Git branch, but the FINAL CUT deploy command points only to `FINAL-CUT/wrangler.jsonc`.
+
+Game saves persist in local storage per domain. Export a backup before changing game domains.
